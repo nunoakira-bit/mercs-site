@@ -61,10 +61,9 @@
   /* ---------- topbar ---------- */
   .topbar{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.9) !important;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:70px}
-  .logo{display:flex;align-items:center;gap:11px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.03em;color:var(--petrol-deep)}
-  .logo-mark{width:34px;height:34px;border-radius:10px;background:var(--petrol-deep);display:grid;place-items:center;position:relative;overflow:hidden}
-  .logo-mark::after{content:"";position:absolute;right:-6px;bottom:-6px;width:18px;height:18px;border-radius:50%;background:var(--lime)}
-  .logo-mark span{position:relative;z-index:1;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;color:#fff;line-height:1}
+  .logo{display:inline-flex;align-items:center}
+  .logo img{display:block;height:38px;width:auto}
+  footer .logo img{height:32px}
   .nav{display:flex;align-items:center;gap:26px;font-size:15px;font-weight:500;color:var(--ink-soft)}
   .nav a:not(.btn):hover{color:var(--petrol-deep)}
 
@@ -76,7 +75,7 @@
   /* ---------- hero ---------- */
   .hero{padding:76px 0 92px;position:relative;overflow:hidden}
   .hero::before{content:"";position:absolute;top:-160px;right:-160px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle at center,var(--petrol-tint),transparent 70%);opacity:.6;z-index:0}
-  .hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.02fr .98fr;gap:60px;align-items:center}
+  .hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1.06fr;gap:48px;align-items:center}
   .hero h1{font-size:55px;font-weight:800;letter-spacing:-.03em;margin:22px 0}
   .hero h1 .hl{color:var(--petrol)}
   .hero p.lead{font-size:19px;color:var(--ink-soft);max-width:520px;margin-bottom:32px}
@@ -86,19 +85,21 @@
   .trust .stars{color:#E4A93C;letter-spacing:2px;font-size:15px}
 
   /* palco do hero: telefone + cartão flutuante */
-  .stage{position:relative;display:flex;justify-content:center}
-  .stage-inner{position:relative;width:380px;max-width:100%}
-  .float-card{
-    position:absolute;left:-8px;bottom:70px;z-index:3;
+  .stage{position:relative;display:flex;align-items:center;justify-content:center;gap:22px}
+  .stage .phone{flex-shrink:0}
+  .side-cards{display:flex;flex-direction:column;gap:14px;width:210px;flex-shrink:0}
+  .scard{
     background:var(--white) !important;border:1px solid var(--line);
-    border-radius:16px;box-shadow:var(--shadow);
-    padding:13px 15px;display:flex;align-items:center;gap:11px;max-width:216px;
+    border-radius:15px;box-shadow:var(--shadow-sm);
+    padding:15px 16px;display:flex;align-items:flex-start;gap:12px;
+    transition:box-shadow .22s ease,transform .22s ease,border-color .22s ease;
   }
-  .float-card .ic{width:38px;height:38px;border-radius:11px;background:var(--petrol-tint) !important;color:var(--petrol-deep);display:grid;place-items:center;flex-shrink:0}
-  .float-card .ic svg{width:20px;height:20px}
-  .float-card .t{font-size:13.5px;font-weight:700;line-height:1.25}
-  .float-card .s{font-size:12px;color:var(--ink-soft)}
-  .float-card.top{left:auto;right:-8px;bottom:auto;top:96px}
+  .scard:hover{box-shadow:var(--shadow);transform:translateY(-3px);border-color:var(--petrol-tint)}
+  .scard .ic{width:38px;height:38px;border-radius:11px;background:var(--petrol-tint) !important;color:var(--petrol-deep);display:grid;place-items:center;flex-shrink:0;transition:background .22s,color .22s}
+  .scard:hover .ic{background:var(--petrol-deep) !important;color:#fff}
+  .scard .ic svg{width:20px;height:20px}
+  .scard .t{font-size:14px;font-weight:700;line-height:1.2;margin-bottom:2px}
+  .scard .s{font-size:12px;color:var(--ink-soft);line-height:1.3}
 
   /* ---------- iPhone ---------- */
   .phone{width:380px;max-width:100%;background:var(--white) !important;border:11px solid #10161C;border-radius:52px;box-shadow:var(--shadow);overflow:hidden;position:relative}
@@ -173,7 +174,38 @@
   .feature-img .badge-float .bic{width:26px;height:26px;border-radius:8px;background:var(--petrol-tint) !important;display:grid;place-items:center;color:var(--petrol-deep)}
   .feature-img .badge-float .bic svg{width:15px;height:15px}
 
-  /* ---------- ciclo da venda (6 passos) ---------- */
+  /* ---------- por que vende mais (competências) ---------- */
+  .why{background:var(--white) !important}
+  .why-lead{text-align:center;max-width:640px;margin:0 auto 44px}
+  .why-lead .big{font-size:26px;font-weight:800;font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.02em;line-height:1.25;color:var(--ink)}
+  .why-lead .big .hl{color:var(--petrol)}
+  .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .skill{
+    display:flex;align-items:center;gap:13px;
+    background:var(--ice) !important;border:1px solid var(--line);
+    border-radius:13px;padding:16px 18px;
+    transition:background .2s ease,border-color .2s ease,transform .2s ease;
+  }
+  .skill:hover{background:var(--white) !important;border-color:var(--petrol-tint);transform:translateX(3px)}
+  .skill .ck{
+    flex-shrink:0;width:28px;height:28px;border-radius:8px;
+    background:var(--petrol-tint) !important;color:var(--petrol-deep);
+    display:grid;place-items:center;transition:background .2s,color .2s;
+  }
+  .skill:hover .ck{background:var(--lime) !important;color:var(--petrol-deep)}
+  .skill .ck svg{width:16px;height:16px}
+  .skill span{font-size:15px;font-weight:600;color:var(--ink);line-height:1.3}
+  .why-closer{
+    margin-top:36px;background:var(--petrol-deep) !important;color:#fff;
+    border-radius:var(--radius);padding:40px 44px;text-align:center;
+    position:relative;overflow:hidden;
+  }
+  .why-closer::before{content:"";position:absolute;top:-120px;right:-80px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(127,201,63,.18),transparent 70%)}
+  .why-closer p{position:relative;z-index:1;font-size:22px;font-weight:700;font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.02em;line-height:1.35}
+  .why-closer p .dim{color:#8FB0B8;font-weight:400}
+  .why-closer p .hl{color:var(--lime)}
+
+
   .cycle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   .cyc{
     position:relative;background:var(--white) !important;border:1px solid var(--line);
@@ -290,10 +322,13 @@
     .feature.flip .feature-media{order:0}
     .diag-grid{grid-template-columns:repeat(2,1fr)}
     .cycle-grid{grid-template-columns:repeat(2,1fr)}
+    .skills-grid{grid-template-columns:repeat(2,1fr)}
     .quote-grid{grid-template-columns:repeat(2,1fr)}
     .steps,.manage-points{grid-template-columns:1fr;gap:16px}
     .panel{grid-template-columns:240px 1fr}
-    .float-card.top{display:none}
+    .stage{flex-direction:column;gap:20px}
+    .side-cards{flex-direction:row;flex-wrap:wrap;width:100%;max-width:420px;justify-content:center}
+    .side-cards .scard{flex:1 1 calc(50% - 7px);min-width:180px}
   }
   @media (max-width:640px){
     .nav a:not(.btn){display:none}
@@ -303,16 +338,21 @@
     .hero h1{font-size:35px}
     .hero p.lead{font-size:17px}
     .hero-ctas{flex-direction:column;align-items:stretch}
-    .stage{margin-top:8px}
+    .stage{margin-top:8px;flex-direction:column}
     .phone{border-radius:44px;border-width:9px}
     .chat{height:772px}
-    .float-card{left:0;bottom:16px;max-width:210px}
+    .side-cards{flex-direction:column;width:100%;max-width:340px}
+    .side-cards .scard{flex:none;width:100%}
     section{padding:60px 0}
     .sec-head{margin-bottom:38px}
     .sec-head h2{font-size:29px}
     .sec-head p{font-size:16px}
     .quote-grid{grid-template-columns:1fr}
     .cycle-grid{grid-template-columns:1fr}
+    .skills-grid{grid-template-columns:1fr}
+    .why-lead .big{font-size:22px}
+    .why-closer{padding:32px 24px}
+    .why-closer p{font-size:19px}
     .quote p{font-size:17px}
     .quote-solve h3{font-size:25px}
     .diag-grid{grid-template-columns:1fr}
@@ -327,9 +367,25 @@
     .final p{font-size:16px}
     footer .wrap{flex-direction:column;text-align:center}
   }
+  /* ---------- scroll reveal (sutil) ---------- */
+  [data-reveal]{opacity:0;transform:translateY(16px);transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1)}
+  [data-reveal].in{opacity:1;transform:none}
+  [data-reveal-group]>*{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.22,.61,.36,1),transform .55s cubic-bezier(.22,.61,.36,1)}
+  [data-reveal-group].in>*{opacity:1;transform:none}
+  [data-reveal-group].in>*:nth-child(1){transition-delay:0ms}
+  [data-reveal-group].in>*:nth-child(2){transition-delay:70ms}
+  [data-reveal-group].in>*:nth-child(3){transition-delay:140ms}
+  [data-reveal-group].in>*:nth-child(4){transition-delay:210ms}
+  [data-reveal-group].in>*:nth-child(5){transition-delay:280ms}
+  [data-reveal-group].in>*:nth-child(6){transition-delay:350ms}
+  /* micro-interação de botões */
+  .btn{will-change:transform}
+  .btn:active{transform:translateY(1px) scale(.99)}
+
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important;transition:none !important}
     .msg{opacity:1;transform:none}
+    [data-reveal],[data-reveal-group]>*{opacity:1 !important;transform:none !important}
   }
 </style>
 </head>
@@ -337,9 +393,10 @@
 
 <header class="topbar">
   <div class="wrap">
-    <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"><span>M</span></span>Mercs</a>
+    <a class="logo" href="#top" aria-label="Mercs — página inicial"><img src="assets/logo-mercs.svg" alt="Mercs" width="241" height="101"></a>
     <nav class="nav">
       <a href="#dores">O problema</a>
+      <a href="#por-que">Por que a Mercs</a>
       <a href="#funcoes">O que ele faz</a>
       <a href="#gestao">Gestão</a>
       <a href="#como-funciona">Como funciona</a>
@@ -353,8 +410,8 @@
   <div class="wrap">
     <div>
       <span class="eyebrow"><span class="dot"></span>Vendendo agora, enquanto você lê isto</span>
-      <h1>O <span class="hl">funcionário digital</span> que vende no seu WhatsApp. E nunca vai dormir.</h1>
-      <p class="lead">A Mercs responde seus clientes na hora, negocia dentro das regras que você define e fecha a venda — inclusive de madrugada, no fim de semana e quando sua equipe não pode.</p>
+      <h1>Seu melhor vendedor agora atende no <span class="hl">WhatsApp</span> 24 horas por dia.</h1>
+      <p class="lead">A Mercs aprende seus produtos, conhece sua estratégia comercial e usa técnicas profissionais de vendas para convencer, negociar e fechar negócios automaticamente pelo WhatsApp.</p>
       <div class="hero-ctas">
         <a class="btn big accent" href="https://nunoakira-bit.github.io/negotia/">Contratar meu funcionário digital</a>
         <a class="btn big ghost" href="#funcoes">Ver o que ele faz</a>
@@ -363,12 +420,6 @@
     </div>
 
     <div class="stage">
-      <div class="stage-inner">
-      <div class="float-card top">
-        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-        <div><div class="t">Responde em segundos</div><div class="s">a qualquer hora do dia</div></div>
-      </div>
-
       <div class="phone" aria-label="Simulação de uma negociação real conduzida pela Mercs no WhatsApp, incluindo cobrança">
         <span class="island" aria-hidden="true"></span>
         <div class="phone-top">
@@ -392,10 +443,23 @@
         <div class="home-bar" aria-hidden="true"><i></i></div>
       </div>
 
-      <div class="float-card">
-        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-        <div><div class="t">Venda fechada</div><div class="s">dentro das suas regras</div></div>
-      </div>
+      <div class="side-cards">
+        <div class="scard" data-reveal>
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div><div class="t">Responde em segundos</div><div class="s">a qualquer hora do dia</div></div>
+        </div>
+        <div class="scard" data-reveal>
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.6 8.6 0 0 1-3.9-.9L3 21l2-5.4a8.3 8.3 0 0 1-1-4A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z"/><path d="M12 8v.01M12 11v3"/></svg></span>
+          <div><div class="t">Tira dúvidas</div><div class="s">sobre produtos e prazos</div></div>
+        </div>
+        <div class="scard" data-reveal>
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M10 18h4"/></svg></span>
+          <div><div class="t">Negocia descontos</div><div class="s">dentro da sua margem</div></div>
+        </div>
+        <div class="scard" data-reveal>
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <div><div class="t">Fecha e cobra</div><div class="s">Pix ou link na conversa</div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -404,11 +468,11 @@
 <!-- DORES -->
 <section class="pains" id="dores">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head" data-reveal>
       <span class="eyebrow"><span class="dot"></span>O problema</span>
       <h2>Você já disse alguma dessas frases?</h2>
     </div>
-    <div class="quote-grid">
+    <div class="quote-grid" data-reveal-group>
       <div class="quote"><span class="mk" aria-hidden="true">“</span><p>Eu perco venda no WhatsApp.</p></div>
       <div class="quote"><span class="mk" aria-hidden="true">“</span><p>Demoro pra responder.</p></div>
       <div class="quote"><span class="mk" aria-hidden="true">“</span><p>Não consigo treinar funcionário.</p></div>
@@ -422,16 +486,45 @@
   </div>
 </section>
 
+<!-- POR QUE VENDE MAIS -->
+<section class="why" id="por-que">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <span class="eyebrow"><span class="dot"></span>Por que a Mercs vende mais?</span>
+      <h2>Ela não apenas responde. Vende como um profissional.</h2>
+      <p>Não listamos funcionalidades — listamos as competências de um vendedor de alta performance, que a Mercs aplica em cada conversa.</p>
+    </div>
+
+    <div class="skills-grid" data-reveal-group>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Descobre a necessidade do cliente</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Faz perguntas inteligentes</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Cria percepção de valor</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Quebra objeções</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Contorna comparações com concorrentes</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Negocia dentro das suas regras</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Sugere produtos complementares</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Identifica intenção de compra</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Conduz naturalmente até o fechamento</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Fecha o pedido</span></div>
+      <div class="skill"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Envia a cobrança</span></div>
+    </div>
+
+    <div class="why-closer" data-reveal>
+      <p><span class="dim">Muitos chatbots simplesmente informam.</span><br>Um bom vendedor <span class="hl">conduz</span>.</p>
+    </div>
+  </div>
+</section>
+
 <!-- FUNÇÕES -->
 <section id="funcoes">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head" data-reveal>
       <span class="eyebrow"><span class="dot"></span>O que ele faz</span>
       <h2>Um funcionário comercial que trabalha 24 horas por dia</h2>
       <p>Ele conduz a venda inteira, sozinho — do momento em que o cliente manda a primeira mensagem até a cobrança na mão.</p>
     </div>
 
-    <div class="cycle-grid">
+    <div class="cycle-grid" data-reveal-group>
       <div class="cyc">
         <div class="cyc-top">
           <span class="cyc-num">1</span>
@@ -482,7 +575,7 @@
       </div>
     </div>
 
-    <div class="feature" style="margin-top:84px">
+    <div class="feature" style="margin-top:84px" data-reveal>
       <div class="feature-media">
         <div class="feature-img">
           <img src="assets/atendimento.jpg" alt="Empreendedora atendendo um cliente pelo WhatsApp no celular" loading="lazy" width="900" height="1125">
@@ -501,7 +594,7 @@
       </div>
     </div>
 
-    <div class="feature flip">
+    <div class="feature flip" data-reveal>
       <div class="feature-media">
         <div class="feature-img wide">
           <img src="assets/base-conhecimento.jpg" alt="Notebook com planilha e catálogo, catálogo impresso e tabela de preços sobre a mesa" loading="lazy" width="1000" height="750">
@@ -525,12 +618,12 @@
 <!-- DIAGNÓSTICO -->
 <section class="diag">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head" data-reveal>
       <span class="eyebrow"><span class="dot"></span>Mais recursos</span>
       <h2>Tudo sob o seu controle</h2>
       <p>Além de vender, seu funcionário digital vem com as ferramentas que faltavam pra você enxergar e comandar a operação.</p>
     </div>
-    <div class="diag-grid">
+    <div class="diag-grid" data-reveal-group>
       <div class="cap">
         <span class="cap-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v3l2 2"/></svg></span>
         <h3>Diagnóstico de leads quentes</h3>
@@ -568,13 +661,13 @@
 <!-- GESTÃO -->
 <section id="gestao">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head" data-reveal>
       <span class="eyebrow"><span class="dot"></span>Gestão em tempo real</span>
       <h2>Acompanhe cada conversa. Assuma quando quiser.</h2>
       <p>No painel, você vê todas as negociações ao vivo. Se quiser entrar em uma conversa, é um clique: a Mercs pausa naquele atendimento e você fala direto com o cliente.</p>
     </div>
 
-    <div class="browser" role="img" aria-label="Painel de gestão da Mercs mostrando a lista de conversas e o gestor assumindo um atendimento">
+    <div class="browser" data-reveal role="img" aria-label="Painel de gestão da Mercs mostrando a lista de conversas e o gestor assumindo um atendimento">
       <div class="browser-bar">
         <span class="dots"><i></i><i></i><i></i></span>
         <span class="url">app.mercs.com.br/conversas</span>
@@ -602,7 +695,7 @@
       </div>
     </div>
 
-    <div class="manage-points">
+    <div class="manage-points" data-reveal-group>
       <div class="mpoint"><h3>Visão ao vivo de tudo</h3><p>Todas as conversas, vendas e leads em um painel só — com o status de cada atendimento sinalizado.</p></div>
       <div class="mpoint"><h3>Transição sem atrito</h3><p>Ao assumir, a Mercs pausa só naquela conversa e continua vendendo nas outras. O cliente nem percebe.</p></div>
       <div class="mpoint"><h3>Devolva quando quiser</h3><p>Resolveu o caso? Reative a Mercs naquele atendimento com um clique e ela retoma de onde parou.</p></div>
@@ -613,12 +706,12 @@
 <!-- COMO FUNCIONA -->
 <section class="how" id="como-funciona">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head" data-reveal>
       <span class="eyebrow"><span class="dot"></span>Como funciona</span>
       <h2>Do zero à primeira venda em três passos</h2>
       <p>Sem instalação, sem treinamento técnico. Você configura pelo painel e seu funcionário digital assume a linha de frente.</p>
     </div>
-    <div class="steps">
+    <div class="steps" data-reveal-group>
       <div class="step"><span class="n">1</span><h3>Cadastre produtos e regras</h3><p>Adicione seu catálogo com fotos e preços, defina o desconto máximo e envie seus documentos para a base de conhecimento.</p></div>
       <div class="step"><span class="n">2</span><h3>Conecte seu WhatsApp</h3><p>Vincule o número da sua empresa. A partir daí, toda mensagem recebida é respondida pela Mercs — o cliente sempre dá o primeiro passo.</p></div>
       <div class="step"><span class="n">3</span><h3>Acompanhe as vendas</h3><p>Veja conversas, vendas fechadas e leads quentes no painel. O agente de monitoramento avisa se algo precisar da sua atenção.</p></div>
@@ -629,11 +722,11 @@
 <!-- FAQ -->
 <section id="faq">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head" data-reveal>
       <span class="eyebrow"><span class="dot"></span>Perguntas frequentes</span>
       <h2>O que os gestores nos perguntam</h2>
     </div>
-    <div class="faq-list">
+    <div class="faq-list" data-reveal-group>
       <details><summary>A Mercs pode dar um desconto maior do que eu autorizei?</summary><p>Não. O desconto máximo é uma regra rígida configurada por você. A Mercs negocia com o cliente, mas nunca ultrapassa esse limite — como você viu na simulação do topo.</p></details>
       <details><summary>Ela vai mandar mensagem para os meus clientes sem eu pedir?</summary><p>Nunca. A Mercs só responde quando o cliente inicia a conversa. Nada de disparos em massa nem mensagens invasivas que queimam sua marca.</p></details>
       <details><summary>E se ela não souber responder algo?</summary><p>Ela responde com base no seu catálogo e nos documentos que você enviou. Quando o assunto foge disso, conduz o cliente para o atendimento humano — e o agente de monitoramento avisa se a resposta humana demorar.</p></details>
@@ -654,11 +747,29 @@
 
 <footer>
   <div class="wrap">
-    <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"><span>M</span></span>Mercs</a>
+    <a class="logo" href="#top" aria-label="Mercs — página inicial"><img src="assets/logo-mercs.svg" alt="Mercs" width="241" height="101"></a>
     <span>© 2026 Mercs — Seu funcionário digital no WhatsApp</span>
     <a href="https://nunoakira-bit.github.io/negotia/">Acessar a plataforma</a>
   </div>
 </footer>
+
+<script>
+/* Scroll reveal — sutil, com IntersectionObserver */
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var items = document.querySelectorAll('[data-reveal],[data-reveal-group]');
+  if (reduced || !('IntersectionObserver' in window)) {
+    items.forEach(function(el){ el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  items.forEach(function(el){ io.observe(el); });
+})();
+</script>
 
 <script>
 (function(){
