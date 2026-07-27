@@ -66,7 +66,9 @@
   .topbar{position:fixed;top:0;left:0;right:0;z-index:80;transition:background .3s,border-color .3s,backdrop-filter .3s;border-bottom:1px solid transparent}
   .topbar.scrolled{background:rgba(6,32,40,.82) !important;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
   .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:76px}
-  .logo img{display:block;height:34px;width:auto}
+  .logo{display:inline-flex;align-items:center}
+  .logo svg{display:block;height:34px;width:auto}
+  footer .logo svg{height:32px}
   .nav{display:flex;align-items:center;gap:28px;font-size:14.5px;font-weight:500;color:var(--mist)}
   .nav a:not(.btn){position:relative;transition:color .2s}
   .nav a:not(.btn)::after{content:"";position:absolute;left:0;bottom:-6px;width:0;height:2px;background:var(--lime);transition:width .25s}
@@ -301,13 +303,14 @@
   .tl-ph .plbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lime);background:rgba(139,212,80,.1);padding:5px 12px;border-radius:999px}
   .tl-ph .pcap{font-size:13px;max-width:220px;color:var(--mist)}
   /* barra de progresso da timeline */
-  .tl-progress{position:relative;height:4px;background:var(--line);border-radius:2px;margin:44px auto 0;max-width:600px}
+  .tl-progress{position:relative;height:4px;background:var(--line);border-radius:2px;margin:52px auto 0;max-width:640px}
   .tl-progress-fill{position:absolute;left:0;top:0;height:100%;width:0;background:linear-gradient(90deg,var(--lime),var(--petrol-soft));border-radius:2px;transition:width .1s linear}
-  .tl-dots{display:flex;justify-content:space-between;max-width:600px;margin:16px auto 0}
-  .tl-dot{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--mist);transition:color .3s}
+  .tl-dots{display:flex;max-width:640px;margin:20px auto 0}
+  .tl-dot{flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--mist);transition:color .3s;text-align:center;padding:0 8px}
   .tl-dot.on{color:var(--lime)}
-  .tl-dot i{width:12px;height:12px;border-radius:50%;background:var(--line-2);transition:background .3s,transform .3s}
-  .tl-dot.on i{background:var(--lime);transform:scale(1.3)}
+  .tl-dot .num{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;background:var(--bg-3) !important;border:2px solid var(--line-2);color:var(--mist);transition:background .3s,border-color .3s,color .3s,transform .3s}
+  .tl-dot.on .num{background:var(--lime) !important;border-color:var(--lime);color:#06231A;transform:scale(1.08)}
+  .tl-dot .lbl{line-height:1.2}
 
 
   .step{background:var(--bg-2) !important;border:1px solid var(--line);border-radius:var(--radius);padding:32px;transition:transform .3s,border-color .3s}
@@ -339,8 +342,81 @@
   footer a.flink{font-size:13.5px;color:var(--mist)}
   footer a.flink:hover{color:var(--lime)}
 
-  /* ============ responsivo ============ */
-  @media (max-width:1024px){
+  /* ============ SEÇÕES CLARAS (alternadas) ============ */
+  .light{
+    background:#F4F8F9 !important;color:#0E1A24;
+    --mist:#4A5B67; --ink-hi:#0E1A24; --line:rgba(14,60,72,.12); --line-2:rgba(14,60,72,.2);
+  }
+  .light .sec-head h2,.light .tl-head h2,.light .why-left h2{color:#0E1A24}
+  .light .sec-head p,.light .tl-head p,.light .why-left p{color:#4A5B67}
+  .light .eyebrow{color:#0C6B44;background:rgba(127,201,63,.16) !important;padding:7px 14px;border-radius:999px}
+  .light .eyebrow .dot{background:#5FA82E;box-shadow:none}
+  /* cartões claros */
+  .light .quote,.light .cyc,.light .skill,.light .step,.light details,.light .mpoint,.light .tl-card{
+    background:#FFFFFF !important;border-color:rgba(14,60,72,.1);
+  }
+  .light .quote:hover,.light .cyc:hover{background:#FFFFFF !important;border-color:rgba(127,201,63,.4);box-shadow:0 16px 40px rgba(14,60,72,.1)}
+  .light .quote p{color:#0E1A24}
+  .light .quote .mk{color:#9FC7CF}
+  .light .quote-solve h3,.light .cyc h3,.light .skill span,.light .step h3{color:#0E1A24}
+  .light .quote-solve p,.light .cyc p,.light .step p{color:#4A5B67}
+  .light .quote-solve h3 .hl,.light .why-left h2 .hl{color:#0C6B44}
+  /* ícones/acentos claros */
+  .light .cyc .ic,.light .skill .ck,.light .flist li .ck{background:rgba(127,201,63,.15) !important;color:#0C6B44}
+  .light .skill:hover .ck{background:#7FC93F !important;color:#06231A}
+  .light .cyc::before{color:rgba(12,107,68,.14)}
+  .light .cyc:hover::before{color:rgba(12,107,68,.4)}
+  /* zigzag no claro */
+  .light .fbody h3{color:#0E1A24}
+  .light .fbody p{color:#4A5B67}
+  .light .fbody .eyebrow{display:inline-flex}
+  /* timeline no claro */
+  .light .tl-card{opacity:.5}
+  .light .tl-card.active{opacity:1}
+  .light .tl-ph{background:repeating-linear-gradient(45deg,#EAF1F2 0 16px,#DFE9EB 16px 32px);color:#4A5B67}
+  .light .tl-ph .pico{background:rgba(127,201,63,.15) !important;color:#0C6B44}
+  .light .tl-ph .plbl{color:#0C6B44;background:rgba(127,201,63,.12)}
+  .light .tl-dot .num{background:#FFFFFF !important;border-color:rgba(14,60,72,.2);color:#4A5B67}
+  .light .tl-dot.on .num{background:#7FC93F !important;border-color:#7FC93F;color:#06231A}
+  .light .tl-dot.on{color:#0C6B44}
+  .light .tl-progress{background:rgba(14,60,72,.12)}
+  /* por que: closer no claro */
+  .light .why-closer{background:#FFFFFF !important;border-color:rgba(14,60,72,.1);border-left-color:#7FC93F}
+  .light .why-closer p{color:#0E1A24}
+  .light .why-closer .dim{color:#4A5B67}
+  .light .why-closer .hl{color:#0C6B44}
+  /* gestão no claro */
+  .light .browser{background:#EAF1F2 !important;box-shadow:0 20px 50px rgba(14,60,72,.12)}
+  .light .bbar{background:#DFE9EB !important}
+  .light .bbar .url{background:#FFFFFF !important;color:#4A5B67}
+  .light .clist{background:#FFFFFF !important}
+  .light .clist h4{color:#4A5B67}
+  .light .conv .nm{color:#0E1A24}.light .conv .prev{color:#4A5B67}
+  .light .conv.active{background:rgba(127,201,63,.12) !important;border-right-color:#7FC93F}
+  .light .conv .avatar{background:#E2ECEE !important;color:#4A5B67}
+  .light .conv.active .avatar{background:#0C6B44 !important;color:#fff}
+  .light .cview{background:#F4F8F9 !important}
+  .light .chead{border-color:rgba(14,60,72,.1)}
+  .light .chead .nm{color:#0E1A24}.light .chead .ph{color:#4A5B67}
+  .light .msg.lead-msg{background:#E7EFF1 !important;color:#0E1A24;box-shadow:0 1px 2px rgba(14,60,72,.08)}
+  .light .msg.ai-msg{background:#D7F0DE !important;color:#0E3A24}
+  .light .msg.human{background:rgba(127,201,63,.18) !important;color:#0E3A24}
+  .light .msg .tag{color:#0C6B44}
+  .light .sysline{background:rgba(127,201,63,.14) !important;border-color:rgba(127,201,63,.3);color:#0C6B44}
+  .light .sysline i{background:#5FA82E}
+  .light .pill.ia{background:rgba(28,122,140,.18) !important;color:#0E5C6B}
+  .light .pill.you{background:rgba(127,201,63,.2) !important;color:#0C6B44}
+  .light .mpoint h3{color:#0E1A24}.light .mpoint p{color:#4A5B67}
+  /* FAQ no claro */
+  .light details[open]{border-color:rgba(127,201,63,.4)}
+  .light summary{color:#0E1A24}
+  .light summary::after{color:#0C6B44}
+  .light details p{color:#4A5B67}
+  /* botão accent segue lima; ghost precisa ajustar no claro */
+  .light .btn.ghost{background:rgba(14,60,72,.04) !important;color:#0C6B44;border-color:rgba(14,60,72,.2)}
+  .light .btn.ghost:hover{background:rgba(14,60,72,.08) !important}
+
+
     .hero-grid{grid-template-columns:1fr;gap:40px;text-align:left}
     .why-layout{grid-template-columns:1fr;gap:40px}
     .why-sticky{position:static}
@@ -416,7 +492,7 @@
 
 <header class="topbar" id="topbar">
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="Mercs — início"><img src="assets/logo-mercs-light.svg" alt="Mercs" width="241" height="101"></a>
+    <a class="logo" href="#top" aria-label="Mercs — início"><svg viewBox="0 0 241 101" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mercs"><path fill-rule="evenodd" clip-rule="evenodd" d="M30.1005 0H73.1116C84.541 0 93.8913 9.35032 93.8913 20.7797V63.7908C93.8913 75.2202 84.541 84.5705 73.1116 84.5705H30.1005C18.6711 84.5705 9.3208 75.2188 9.3208 63.7908V20.7797C9.3208 9.35032 18.6725 0 30.1005 0Z" fill="#7FC93F"/><path fill-rule="evenodd" clip-rule="evenodd" d="M82.2021 71.0049C70.9387 71.2444 64.4553 78.019 57.7188 83.9215C60.4509 89.7722 71.004 95.7196 76.1922 98C75.8534 88.3925 75.0982 79.5089 82.2021 71.0036V71.0049Z" fill="#7FC93F"/><path d="M28.1543 56.1533C33.0395 56.1533 36.9999 60.1139 37 64.999V83.3086C36.9998 88.1937 33.0394 92.1533 28.1543 92.1533H16.2549C14.9056 94.553 10.6612 96.9364 8.53418 97.8711C8.60509 95.8598 8.71743 93.9235 8.45508 92.0439C4.2306 91.3769 1.00015 87.7206 1 83.3086V64.999C1.00012 60.1139 4.96054 56.1533 9.8457 56.1533H28.1543Z" fill="#FFFFFF"/><path d="M167.449 42.2178C173.922 42.2178 177.991 46.8419 177.991 54.0078V56.1807H161.901C162.456 58.8163 164.444 60.5273 167.126 60.5273C169.25 60.5272 170.723 59.511 171.851 58.0889L172.073 57.7998L176.927 61.3594C174.708 64.1794 171.055 65.7979 167.449 65.7979C160.513 65.7978 154.966 61.1739 154.966 54.0078C154.966 46.8415 160.514 42.2179 167.449 42.2178ZM211.972 42.2178C214.608 42.2178 217.798 43.0043 219.971 45.2236L215.394 50.0312C214.701 49.0607 213.406 48.3214 211.973 48.3213C208.506 48.3213 206.425 50.6331 206.425 54.0078C206.425 57.3827 208.506 59.6953 211.973 59.6953C213.499 59.6952 214.608 58.9093 215.394 57.9844L219.971 62.793C217.798 65.0122 214.608 65.7979 211.972 65.7979C205.037 65.7977 199.489 61.1739 199.489 54.0078C199.489 46.8416 205.037 42.2179 211.972 42.2178ZM231.114 42.2178C233.981 42.2178 237.151 42.9125 239.238 44.9736L239.436 45.1777L235.182 49.3848C234.165 48.1363 232.824 47.4893 231.16 47.4893C230.004 47.4893 228.617 47.9977 228.617 49.3379C228.617 52.6666 240.314 49.8471 240.314 58.4004C240.314 64.1335 234.766 65.7978 229.958 65.7979C226.814 65.7979 223.346 65.0116 221.127 62.7461L225.335 58.0771C226.629 59.6487 228.155 60.5273 230.235 60.5273C231.807 60.5273 233.379 60.1108 233.38 58.9092C233.38 55.3028 221.682 58.3539 221.682 49.8008C221.682 44.53 226.398 42.2178 231.114 42.2178ZM131.339 53.8691H131.431L139.014 32.5088H149.88V65.2432H142.667V40.1377H142.574L133.974 65.2432H128.472L120.197 40.1377H120.104V65.2432H112.891V32.5088H123.803L131.339 53.8691ZM195.698 42.2178C196.484 42.2178 197.364 42.2644 198.01 42.4492V48.7832C197.039 48.506 196.068 48.3213 195.052 48.3213C189.781 48.3213 189.133 51.3726 189.133 55.8574V65.2432H182.198V42.7734H189.134V46.3789H189.225C190.704 43.6514 192.647 42.2179 195.698 42.2178ZM166.802 47.2119C163.75 47.2121 162.086 49.2928 161.901 51.4658H171.055C171.102 49.1541 169.298 47.2119 166.802 47.2119Z" fill="#EAF4F6"/></svg></a>
     <nav class="nav">
       <a href="#dores">O problema</a>
       <a href="#por-que">Por que a Mercs</a>
@@ -505,7 +581,7 @@
 </div>
 
 <!-- ================= DORES ================= -->
-<section class="sec" id="dores">
+<section class="sec light" id="dores">
   <div class="wrap">
     <div class="sec-head" data-fade>
       <span class="eyebrow"><span class="dot"></span>O problema</span>
@@ -525,8 +601,78 @@
   </div>
 </section>
 
+<!-- ================= COMO FUNCIONA (timeline) ================= -->
+<div class="tl-scroll" id="como-funciona">
+  <div class="tl-pin">
+    <div class="wrap">
+      <div class="tl-head" data-fade>
+        <span class="eyebrow"><span class="dot"></span>Como funciona</span>
+        <h2>Do zero à primeira venda em três passos</h2>
+        <p>Sem instalação, sem treinamento técnico. Role para ver cada etapa.</p>
+      </div>
+    </div>
+    <div class="tl-viewport">
+      <div class="tl-track" id="tlTrack">
+        <div class="tl-card active">
+          <div class="tl-body">
+            <span class="step-n">1</span>
+            <h3>Cadastre produtos e regras</h3>
+            <p>Adicione seu catálogo com fotos e preços, defina o desconto máximo e o frete, e envie seus documentos para o Mercs aprender.</p>
+          </div>
+          <div class="tl-shot">
+            <!-- PRINT 1 -->
+            <div class="tl-ph">
+              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M12 8v8"/></svg></span>
+              <span class="plbl">Print 1</span>
+              <span class="pcap">Tela de cadastro de produtos e regras (desconto, frete). Formato quadrado.</span>
+            </div>
+          </div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-body">
+            <span class="step-n">2</span>
+            <h3>Conecte seu WhatsApp</h3>
+            <p>Vincule o número da sua empresa. A partir daí, toda mensagem recebida é respondida pelo Mercs — o cliente sempre dá o primeiro passo.</p>
+          </div>
+          <div class="tl-shot">
+            <!-- PRINT 2 -->
+            <div class="tl-ph">
+              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.6 8.6 0 0 1-3.9-.9L3 21l2-5.4a8.3 8.3 0 0 1-1-4A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z"/></svg></span>
+              <span class="plbl">Print 2</span>
+              <span class="pcap">Tela de conexão do WhatsApp (QR code / status conectado). Formato quadrado.</span>
+            </div>
+          </div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-body">
+            <span class="step-n">3</span>
+            <h3>Acompanhe as vendas</h3>
+            <p>Veja conversas, vendas fechadas e leads quentes no painel, com alertas quando algo precisar de você.</p>
+          </div>
+          <div class="tl-shot">
+            <!-- PRINT 3 -->
+            <div class="tl-ph">
+              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>
+              <span class="plbl">Print 3</span>
+              <span class="pcap">Painel de acompanhamento de vendas e conversas. Formato quadrado.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="tl-progress"><div class="tl-progress-fill" id="tlFill"></div></div>
+      <div class="tl-dots">
+        <div class="tl-dot on"><span class="num">1</span><span class="lbl">Cadastro</span></div>
+        <div class="tl-dot"><span class="num">2</span><span class="lbl">Conexão</span></div>
+        <div class="tl-dot"><span class="num">3</span><span class="lbl">Acompanhamento</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ================= POR QUE (pin) ================= -->
-<div class="why-scroll" id="por-que">
+<div class="why-scroll light" id="por-que">
   <div class="why">
     <div class="wrap">
       <div class="why-layout">
@@ -616,7 +762,7 @@
 </section>
 
 <!-- ================= GESTÃO ================= -->
-<section class="sec" id="gestao">
+<section class="sec light" id="gestao">
   <div class="wrap">
     <div class="sec-head" data-fade>
       <span class="eyebrow"><span class="dot"></span>Gestão em tempo real</span>
@@ -655,76 +801,6 @@
   </div>
 </section>
 
-<!-- ================= COMO FUNCIONA (timeline) ================= -->
-<div class="tl-scroll" id="como-funciona">
-  <div class="tl-pin">
-    <div class="wrap">
-      <div class="tl-head" data-fade>
-        <span class="eyebrow"><span class="dot"></span>Como funciona</span>
-        <h2>Do zero à primeira venda em três passos</h2>
-        <p>Sem instalação, sem treinamento técnico. Role para ver cada etapa.</p>
-      </div>
-    </div>
-    <div class="tl-viewport">
-      <div class="tl-track" id="tlTrack">
-        <div class="tl-card active">
-          <div class="tl-body">
-            <span class="step-n">1</span>
-            <h3>Cadastre produtos e regras</h3>
-            <p>Adicione seu catálogo com fotos e preços, defina o desconto máximo e o frete, e envie seus documentos para o Mercs aprender.</p>
-          </div>
-          <div class="tl-shot">
-            <!-- PRINT 1 -->
-            <div class="tl-ph">
-              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M12 8v8"/></svg></span>
-              <span class="plbl">Print 1</span>
-              <span class="pcap">Tela de cadastro de produtos e regras (desconto, frete). Formato quadrado.</span>
-            </div>
-          </div>
-        </div>
-        <div class="tl-card">
-          <div class="tl-body">
-            <span class="step-n">2</span>
-            <h3>Conecte seu WhatsApp</h3>
-            <p>Vincule o número da sua empresa. A partir daí, toda mensagem recebida é respondida pelo Mercs — o cliente sempre dá o primeiro passo.</p>
-          </div>
-          <div class="tl-shot">
-            <!-- PRINT 2 -->
-            <div class="tl-ph">
-              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.6 8.6 0 0 1-3.9-.9L3 21l2-5.4a8.3 8.3 0 0 1-1-4A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z"/></svg></span>
-              <span class="plbl">Print 2</span>
-              <span class="pcap">Tela de conexão do WhatsApp (QR code / status conectado). Formato quadrado.</span>
-            </div>
-          </div>
-        </div>
-        <div class="tl-card">
-          <div class="tl-body">
-            <span class="step-n">3</span>
-            <h3>Acompanhe as vendas</h3>
-            <p>Veja conversas, vendas fechadas e leads quentes no painel, com alertas quando algo precisar de você.</p>
-          </div>
-          <div class="tl-shot">
-            <!-- PRINT 3 -->
-            <div class="tl-ph">
-              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>
-              <span class="plbl">Print 3</span>
-              <span class="pcap">Painel de acompanhamento de vendas e conversas. Formato quadrado.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="wrap">
-      <div class="tl-progress"><div class="tl-progress-fill" id="tlFill"></div></div>
-      <div class="tl-dots">
-        <div class="tl-dot on"><i></i>Cadastro</div>
-        <div class="tl-dot"><i></i>Conexão</div>
-        <div class="tl-dot"><i></i>Acompanhamento</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ================= FAQ ================= -->
 <section class="sec" id="faq">
   <div class="wrap">
@@ -751,7 +827,7 @@
 
 <footer>
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="Mercs — início"><img src="assets/logo-mercs-light.svg" alt="Mercs" width="241" height="101"></a>
+    <a class="logo" href="#top" aria-label="Mercs — início"><svg viewBox="0 0 241 101" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mercs"><path fill-rule="evenodd" clip-rule="evenodd" d="M30.1005 0H73.1116C84.541 0 93.8913 9.35032 93.8913 20.7797V63.7908C93.8913 75.2202 84.541 84.5705 73.1116 84.5705H30.1005C18.6711 84.5705 9.3208 75.2188 9.3208 63.7908V20.7797C9.3208 9.35032 18.6725 0 30.1005 0Z" fill="#7FC93F"/><path fill-rule="evenodd" clip-rule="evenodd" d="M82.2021 71.0049C70.9387 71.2444 64.4553 78.019 57.7188 83.9215C60.4509 89.7722 71.004 95.7196 76.1922 98C75.8534 88.3925 75.0982 79.5089 82.2021 71.0036V71.0049Z" fill="#7FC93F"/><path d="M28.1543 56.1533C33.0395 56.1533 36.9999 60.1139 37 64.999V83.3086C36.9998 88.1937 33.0394 92.1533 28.1543 92.1533H16.2549C14.9056 94.553 10.6612 96.9364 8.53418 97.8711C8.60509 95.8598 8.71743 93.9235 8.45508 92.0439C4.2306 91.3769 1.00015 87.7206 1 83.3086V64.999C1.00012 60.1139 4.96054 56.1533 9.8457 56.1533H28.1543Z" fill="#FFFFFF"/><path d="M167.449 42.2178C173.922 42.2178 177.991 46.8419 177.991 54.0078V56.1807H161.901C162.456 58.8163 164.444 60.5273 167.126 60.5273C169.25 60.5272 170.723 59.511 171.851 58.0889L172.073 57.7998L176.927 61.3594C174.708 64.1794 171.055 65.7979 167.449 65.7979C160.513 65.7978 154.966 61.1739 154.966 54.0078C154.966 46.8415 160.514 42.2179 167.449 42.2178ZM211.972 42.2178C214.608 42.2178 217.798 43.0043 219.971 45.2236L215.394 50.0312C214.701 49.0607 213.406 48.3214 211.973 48.3213C208.506 48.3213 206.425 50.6331 206.425 54.0078C206.425 57.3827 208.506 59.6953 211.973 59.6953C213.499 59.6952 214.608 58.9093 215.394 57.9844L219.971 62.793C217.798 65.0122 214.608 65.7979 211.972 65.7979C205.037 65.7977 199.489 61.1739 199.489 54.0078C199.489 46.8416 205.037 42.2179 211.972 42.2178ZM231.114 42.2178C233.981 42.2178 237.151 42.9125 239.238 44.9736L239.436 45.1777L235.182 49.3848C234.165 48.1363 232.824 47.4893 231.16 47.4893C230.004 47.4893 228.617 47.9977 228.617 49.3379C228.617 52.6666 240.314 49.8471 240.314 58.4004C240.314 64.1335 234.766 65.7978 229.958 65.7979C226.814 65.7979 223.346 65.0116 221.127 62.7461L225.335 58.0771C226.629 59.6487 228.155 60.5273 230.235 60.5273C231.807 60.5273 233.379 60.1108 233.38 58.9092C233.38 55.3028 221.682 58.3539 221.682 49.8008C221.682 44.53 226.398 42.2178 231.114 42.2178ZM131.339 53.8691H131.431L139.014 32.5088H149.88V65.2432H142.667V40.1377H142.574L133.974 65.2432H128.472L120.197 40.1377H120.104V65.2432H112.891V32.5088H123.803L131.339 53.8691ZM195.698 42.2178C196.484 42.2178 197.364 42.2644 198.01 42.4492V48.7832C197.039 48.506 196.068 48.3213 195.052 48.3213C189.781 48.3213 189.133 51.3726 189.133 55.8574V65.2432H182.198V42.7734H189.134V46.3789H189.225C190.704 43.6514 192.647 42.2179 195.698 42.2178ZM166.802 47.2119C163.75 47.2121 162.086 49.2928 161.901 51.4658H171.055C171.102 49.1541 169.298 47.2119 166.802 47.2119Z" fill="#EAF4F6"/></svg></a>
     <span class="fnote">© 2026 Mercs — Seu vendedor digital no WhatsApp</span>
     <a class="flink" href="https://www.mercs.com.br/acesso/">Acessar a plataforma</a>
   </div>
