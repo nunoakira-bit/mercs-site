@@ -991,6 +991,62 @@
 .wa-qr-box.visible{display:block;}
 .wa-qr-box img{width:220px;height:220px;image-rendering:pixelated;border-radius:8px;}
 .wa-privacy{margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--accent-soft);font-size:13px;line-height:1.55;color:var(--text-primary);}
+
+  /* ===================== RECEBIMENTO (BaaS/Asaas) ===================== */
+  #view-recebimento .rcb-steps{display:flex;gap:8px;margin:2px 0 6px;}
+  #view-recebimento .rcb-seg{height:5px;flex:1;border-radius:999px;background:var(--border);}
+  #view-recebimento .rcb-seg.done{background:var(--accent);}
+  #view-recebimento .rcb-seg.now{background:var(--accent);opacity:.45;}
+  .rcb-field{display:block;margin:0 0 14px;}
+  .rcb-field>span{display:block;font-size:13px;font-weight:600;color:var(--text-primary);margin:0 0 6px;}
+  .rcb-field small{display:block;color:var(--text-secondary);font-weight:400;font-size:12.5px;margin-top:5px;}
+  .rcb-input,.rcb-select{width:100%;padding:11px 12px;font-size:14.5px;font-family:inherit;color:var(--text-primary) !important;background:#fff !important;border:1px solid var(--border-strong);border-radius:var(--radius-sm);outline:none;}
+  .rcb-input:focus,.rcb-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+  .rcb-row{display:flex;gap:12px;}
+  .rcb-row>*{flex:1;min-width:0;}
+  .rcb-err{color:var(--red);font-size:12.5px;margin:-8px 0 12px;}
+  .rcb-opt{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;cursor:pointer;border:1px solid var(--border-strong);border-radius:var(--radius-sm);margin-bottom:10px;background:#fff !important;}
+  .rcb-opt:hover{border-color:var(--accent);}
+  .rcb-opt.on{border-color:var(--accent);background:var(--accent-soft) !important;}
+  .rcb-cbox{width:20px;height:20px;border-radius:6px;border:2px solid var(--border-strong);display:grid;place-items:center;flex:0 0 auto;margin-top:1px;background:#fff !important;}
+  .rcb-opt.on .rcb-cbox{background:var(--accent);border-color:var(--accent);}
+  .rcb-cbox svg{width:12px;height:12px;display:none;}
+  .rcb-opt.on .rcb-cbox svg{display:block;}
+  .rcb-opt .t{font-weight:600;font-size:14px;color:var(--text-primary);}
+  .rcb-opt .d{color:var(--text-secondary);font-size:12.5px;margin-top:2px;}
+  .rcb-asaas{display:flex;gap:10px;align-items:flex-start;background:#F0F6FA !important;border:1px solid #D8E6EE;border-radius:var(--radius-sm);padding:11px 12px;font-size:12.5px;color:#37505C !important;margin:6px 0;}
+  .rcb-asaas .b{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.03em;color:#0A6CB0 !important;border:1px solid #B9D6E8;border-radius:6px;padding:2px 6px;background:#fff !important;}
+  .rcb-doc{border:1px solid var(--border-strong);border-radius:var(--radius-sm);margin-bottom:12px;overflow:hidden;}
+  .rcb-doc .bd{max-height:140px;overflow:auto;padding:13px 14px;font-size:12.5px;color:var(--text-secondary);background:var(--bg-card-alt) !important;}
+  .rcb-doc .ft{display:flex;align-items:center;gap:10px;padding:11px 14px;border-top:1px solid var(--border);}
+  .rcb-doc .ft.locked{opacity:.55;}
+  .rcb-doc .ft .hint{font-size:12px;color:var(--text-secondary);}
+  .rcb-chk{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--text-primary);}
+  .rcb-chk input{width:17px;height:17px;accent-color:var(--accent);}
+  .rcb-nav{display:flex;gap:10px;margin-top:18px;}
+  .rcb-btn{padding:12px 16px;font-size:14.5px;font-weight:600;border-radius:var(--radius-sm);border:1px solid transparent;cursor:pointer;font-family:inherit;}
+  .rcb-btn.primary{flex:1;background:var(--accent) !important;color:#fff !important;}
+  .rcb-btn.primary:disabled{background:#B9B4EE !important;cursor:not-allowed;}
+  .rcb-btn.ghost{background:#fff !important;color:var(--text-primary) !important;border-color:var(--border-strong);padding:12px 20px;}
+  .rcb-center{text-align:center;padding:14px 6px;}
+  .rcb-spin{width:36px;height:36px;border-radius:999px;border:3px solid var(--border);border-top-color:var(--accent);margin:6px auto 14px;animation:rcbspin 1s linear infinite;}
+  @keyframes rcbspin{to{transform:rotate(360deg);}}
+  .rcb-icon-ok{width:54px;height:54px;border-radius:999px;display:grid;place-items:center;margin:6px auto 12px;background:var(--green-bg) !important;}
+  .rcb-badge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;margin:4px 0 10px;}
+  .rcb-badge.pending{background:var(--amber-bg) !important;color:var(--amber) !important;}
+  .rcb-badge.ok{background:var(--green-bg) !important;color:var(--green) !important;}
+  .rcb-mini{max-width:360px;margin:14px auto 0;text-align:left;}
+  .rcb-mini .li{display:flex;gap:10px;align-items:center;padding:7px 0;font-size:13.5px;color:var(--text-secondary);}
+  .rcb-mini .dot{width:17px;height:17px;border-radius:999px;border:2px solid var(--border-strong);flex:0 0 auto;}
+  .rcb-mini .li.done{color:var(--text-primary);}
+  .rcb-mini .li.done .dot{background:var(--green) !important;border-color:var(--green);}
+  .rcb-mini .li.active .dot{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-bg);}
+  .rcb-preview{font-size:12.5px;color:var(--text-secondary);background:var(--bg-card-alt) !important;border:1px dashed var(--border-strong);border-radius:var(--radius-sm);padding:10px 12px;margin-top:2px;}
+  .rcb-preview b{color:var(--text-primary);}
+  .rcb-srow{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .rcb-srow:last-child{border-bottom:none;}
+  .rcb-srow .k{color:var(--text-secondary);}
+  .rcb-srow .v{font-weight:600;color:var(--text-primary);text-align:right;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -1153,6 +1209,11 @@
       <div class="nav-item nav-company-item" data-view="vendas" title="Vendas">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 016 0"/></svg>
         <span class="nav-label">Vendas</span>
+      </div>
+      <!-- RECEBIMENTO: item de menu -->
+      <div class="nav-item nav-company-item" data-view="recebimento" title="Recebimento">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>
+        <span class="nav-label">Recebimento</span>
       </div>
       <div class="nav-item nav-company-item" data-view="saude" title="Saúde da Operação">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg>
@@ -1851,6 +1912,17 @@
         </div>
       </section>
 
+      <!-- RECEBIMENTO: tela -->
+      <section class="view" id="view-recebimento">
+        <div class="page-head">
+          <div>
+            <h1>Recebimento</h1>
+            <p class="page-sub">Configure como você recebe pelas vendas fechadas pelo agente.</p>
+          </div>
+        </div>
+        <div id="rcb-mount"></div>
+      </section>
+
       <!-- ===================== CONFIGURAÇÕES ===================== -->
       <section class="view" id="view-configuracoes">
         <div class="page-head">
@@ -2491,6 +2563,7 @@ async function onAuthReady(session){
   await refreshKbDocsFromDb();
   await syncAtendimentoStatus();
   await loadCompanyPaymentMethods();
+  try{ await RCB.afterLogin(); }catch(e){ console.warn('RCB afterLogin', e); } /* RECEBIMENTO */
   await refreshOperacao();
   iaDiagUpdateVisibility('dashboard');
   setMode('empresa');
@@ -5727,6 +5800,308 @@ document.querySelectorAll('.agente-filtro').forEach(btn=>{
 document.getElementById('agente-cta-btn').addEventListener('click',()=>{
   showToast('Pedido registrado! A equipe Negotia vai entrar em contato para liberar seu teste.');
 });
+
+/* RECEBIMENTO: módulo */
+/* ===================== RECEBIMENTO (BaaS/Asaas) ===================== */
+const RCB = (function(){
+  const CHK='<svg viewBox="0 0 12 12" fill="none"><path d="M2 6.2l2.5 2.5L10 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const VERSOES={termos_uso:'1.0',privacidade:'1.0',aviso_asaas:'1.0',marketing:'1.0'};
+  const TITULOS=['Dados da empresa','Meios de cobrança','Destino do repasse','Termos'];
+  let st=null, pollTimer=null, navAttached=false;
+
+  function novoEstado(){
+    return {
+      loaded:false,status:null,walletId:null,destinoDisplay:null,onboardingUrl:null,
+      step:0,phase:'form',
+      dados:{name:'',cpfCnpj:'',companyType:'MEI',email:'',mobilePhone:'',postalCode:'',address:'',addressNumber:'',province:''},
+      cobranca:{pix:true,boleto:false,cartao:false},
+      repasse:{pixAddressKeyType:'CNPJ',pixAddressKey:''},
+      termos:{termos_uso:false,privacidade:false,aviso_asaas:false,marketing:false},
+      erros:{}
+    };
+  }
+
+  const mount=()=>document.getElementById('rcb-mount');
+  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function maskCNPJ(v){v=v.replace(/\D/g,'').slice(0,14);return v.replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d)/,'$1-$2');}
+  function maskCEP(v){v=v.replace(/\D/g,'').slice(0,8);return v.replace(/^(\d{5})(\d)/,'$1-$2');}
+  function maskFone(v){v=v.replace(/\D/g,'').slice(0,11);return v.replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d{1,4})$/,'$1-$2');}
+  function maskPix(t,c){if(!c)return '—';t=(t||'').toUpperCase();if(t==='EMAIL'){const p=c.split('@');return '•••@'+(p[1]||'');}const d=c.replace(/\D/g,'');if(t==='CPF'||t==='CNPJ'||t==='PHONE')return '•••'+d.slice(-4);return '•••'+c.slice(-6);}
+  function asaasNote(txt){return '<div class="rcb-asaas"><span class="b">Asaas</span><div>'+txt+'</div></div>';}
+
+  async function carregarStatus(){
+    if(!currentProfile||!currentProfile.company_id) return;
+    const cid=currentProfile.company_id;
+    if(!st) st=novoEstado();
+    try{
+      const [c,r,s]=await Promise.all([
+        sb.from('companies').select('asaas_account_status,asaas_wallet_id,payment_methods,name').eq('id',cid).single(),
+        sb.from('repasse_config').select('destino_display,tipo_destino').eq('company_id',cid).maybeSingle(),
+        sb.from('subcontas_asaas').select('asaas_onboarding_url').eq('company_id',cid).maybeSingle()
+      ]);
+      const comp=c.data, rep=r.data, sub=s.data;
+      st.loaded=true;
+      st.status=(comp&&comp.asaas_account_status)||'nao_configurado';
+      st.walletId=comp?comp.asaas_wallet_id:null;
+      st.destinoDisplay=rep?rep.destino_display:null;
+      st.onboardingUrl=sub?sub.asaas_onboarding_url:null;
+      if(comp&&comp.name&&!st.dados.name) st.dados.name=comp.name;
+      if(comp&&comp.payment_methods) st.cobranca={pix:true,boleto:false,cartao:false,...comp.payment_methods};
+    }catch(e){ st.loaded=true; st.status=st.status||'nao_configurado'; console.warn('RCB status',e); }
+  }
+
+  /* ---------- render raiz (dirigido por status) ---------- */
+  function render(){
+    const m=mount(); if(!m) return;
+    if(!st||!st.loaded){ m.innerHTML='<div class="card"><div class="rcb-center"><div class="rcb-spin"></div><p class="page-sub">Carregando…</p></div></div>'; return; }
+    const s=st.status;
+    if(s==='ativo') return renderAtivo();
+    if(s==='aguardando_prova_vida') return renderVerificacao();
+    if(s==='pendente') return renderPendente();
+    if(s==='recusado'||s==='bloqueada') return renderBloqueado();
+    if(st.phase==='criando') return renderCriando();
+    m.innerHTML='<div class="card">'+stepper()+'<div id="rcb-body"></div></div>';
+    renderStep();
+  }
+  function stepper(){
+    if(st.phase!=='form') return '';
+    let seg='';for(let i=0;i<4;i++){seg+='<div class="rcb-seg '+(i<st.step?'done':(i===st.step?'now':''))+'"></div>';}
+    return '<div class="rcb-steps">'+seg+'</div><p class="page-sub" style="margin:2px 0 16px">Passo '+(st.step+1)+' de 4 · '+TITULOS[st.step]+'</p>';
+  }
+  function renderStep(){
+    if(st.step===0) return stepDados();
+    if(st.step===1) return stepCobranca();
+    if(st.step===2) return stepRepasse();
+    if(st.step===3) return stepTermos();
+  }
+
+  /* ---------- passo 1 ---------- */
+  function fld(label,key,val,err,type,ph){
+    return '<label class="rcb-field"><span>'+label+'</span>'+
+      '<input class="rcb-input" data-k="'+key+'" type="'+(type||'text')+'" value="'+esc(val)+'" '+(ph?'placeholder="'+ph+'"':'')+' autocomplete="off"></label>'+
+      (err?'<div class="rcb-err">'+err+'</div>':'');
+  }
+  function selFld(label,key,val,opts){
+    const o=opts.map(x=>'<option value="'+x[0]+'"'+(x[0]===val?' selected':'')+'>'+x[1]+'</option>').join('');
+    return '<label class="rcb-field"><span>'+label+'</span><select class="rcb-select" data-k="'+key+'">'+o+'</select></label>';
+  }
+  function stepDados(){
+    const d=st.dados,e=st.erros;
+    document.getElementById('rcb-body').innerHTML=
+      '<p class="page-sub" style="margin:0 0 16px">A conta de recebimento é uma subconta em nome da sua empresa. Por exigência do Banco Central, é necessário um CNPJ ativo.</p>'+
+      fld('Razão social ou nome da empresa','name',d.name,e.name)+
+      '<div class="rcb-row">'+fld('CNPJ','cpfCnpj',d.cpfCnpj,e.cpfCnpj,'text','00.000.000/0000-00')+
+        selFld('Tipo de empresa','companyType',d.companyType,[['MEI','MEI'],['INDIVIDUAL','Empresário individual'],['LIMITED','Ltda / EIRELI'],['ASSOCIATION','Associação']])+'</div>'+
+      fld('E-mail','email',d.email,e.email,'email')+
+      fld('Celular','mobilePhone',d.mobilePhone,e.mobilePhone,'tel','(00) 00000-0000')+
+      '<div class="rcb-row">'+fld('CEP','postalCode',d.postalCode,e.postalCode,'text','00000-000')+fld('Número','addressNumber',d.addressNumber,e.addressNumber)+'</div>'+
+      fld('Endereço','address',d.address,e.address)+
+      fld('Bairro','province',d.province,e.province)+
+      nav(false,'Continuar');
+    mount().querySelectorAll('[data-k]').forEach(el=>{
+      el.addEventListener('input',()=>{let v=el.value;const k=el.getAttribute('data-k');if(k==='cpfCnpj')v=el.value=maskCNPJ(v);if(k==='postalCode')v=el.value=maskCEP(v);if(k==='mobilePhone')v=el.value=maskFone(v);st.dados[k]=v;});
+      el.addEventListener('change',()=>{st.dados[el.getAttribute('data-k')]=el.value;});
+    });
+    bindNav(validarDados);
+  }
+  function validarDados(){
+    const d=st.dados,e={};
+    if(!d.name.trim())e.name='Informe o nome da empresa.';
+    if(d.cpfCnpj.replace(/\D/g,'').length!==14)e.cpfCnpj='CNPJ deve ter 14 dígitos.';
+    if(!/^\S+@\S+\.\S+$/.test(d.email))e.email='E-mail inválido.';
+    if(d.mobilePhone.replace(/\D/g,'').length<10)e.mobilePhone='Celular incompleto.';
+    if(!d.address.trim())e.address='Informe o endereço.';
+    if(!d.addressNumber.trim())e.addressNumber='Nº';
+    if(d.postalCode.replace(/\D/g,'').length!==8)e.postalCode='CEP incompleto.';
+    if(!d.province.trim())e.province='Informe o bairro.';
+    st.erros=e;return Object.keys(e).length===0;
+  }
+
+  /* ---------- passo 2 ---------- */
+  function optRow(on,titulo,desc,attr){
+    return '<div class="rcb-opt '+(on?'on':'')+'" '+attr+'><div class="rcb-cbox">'+CHK+'</div><div><div class="t">'+titulo+'</div><div class="d">'+desc+'</div></div></div>';
+  }
+  function stepCobranca(){
+    const c=st.cobranca;
+    document.getElementById('rcb-body').innerHTML=
+      '<p class="page-sub" style="margin:0 0 16px">Escolha os meios de pagamento que o agente pode oferecer ao fechar uma venda. Você pode mudar depois.</p>'+
+      optRow(c.pix,'PIX','Aprovação na hora.','data-c="pix"')+
+      optRow(c.boleto,'Boleto','Compensa em 1 a 2 dias úteis.','data-c="boleto"')+
+      optRow(c.cartao,'Cartão de crédito','Permite parcelamento.','data-c="cartao"')+
+      asaasNote('Os pagamentos são processados por <b>Asaas</b>, instituição de pagamento responsável pela liquidação e custódia dos valores.')+
+      nav(true,'Continuar');
+    mount().querySelectorAll('[data-c]').forEach(el=>el.addEventListener('click',()=>{const k=el.getAttribute('data-c');st.cobranca[k]=!st.cobranca[k];renderStep();}));
+    bindNav(()=>{if(!c.pix&&!c.boleto&&!c.cartao){toast('Selecione ao menos um meio de pagamento.');return false;}return true;});
+  }
+
+  /* ---------- passo 3 ---------- */
+  function stepRepasse(){
+    const r=st.repasse;
+    document.getElementById('rcb-body').innerHTML=
+      '<p class="page-sub" style="margin:0 0 16px">Informe a chave PIX onde o valor das suas vendas será depositado. Ela cai em qualquer banco.</p>'+
+      selFld('Tipo de chave','pixAddressKeyType',r.pixAddressKeyType,[['CNPJ','CNPJ'],['EMAIL','E-mail'],['PHONE','Celular'],['EVP','Chave aleatória']])+
+      '<label class="rcb-field"><span>Chave PIX</span><input class="rcb-input" id="rcb-pix" type="text" value="'+esc(r.pixAddressKey)+'" autocomplete="off"><small>Preferimos PIX porque a chave já está vinculada a uma conta verificada — reduz o risco de depósito errado.</small></label>'+
+      '<div class="rcb-preview">No painel a chave aparece mascarada: <b id="rcb-pixprev">'+maskPix(r.pixAddressKeyType,r.pixAddressKey)+'</b></div>'+
+      nav(true,'Continuar');
+    mount().querySelector('[data-k="pixAddressKeyType"]').addEventListener('change',ev=>{st.repasse.pixAddressKeyType=ev.target.value;document.getElementById('rcb-pixprev').textContent=maskPix(st.repasse.pixAddressKeyType,st.repasse.pixAddressKey);});
+    document.getElementById('rcb-pix').addEventListener('input',ev=>{st.repasse.pixAddressKey=ev.target.value;document.getElementById('rcb-pixprev').textContent=maskPix(st.repasse.pixAddressKeyType,ev.target.value);});
+    bindNav(()=>{if(!st.repasse.pixAddressKey.trim()){toast('Informe a chave PIX.');return false;}return true;});
+  }
+
+  /* ---------- passo 4 ---------- */
+  function docBlock(key,titulo,corpo){
+    return '<div class="rcb-doc"><div class="bd" id="rcb-bd-'+key+'"><strong>'+titulo+'</strong><br><br>'+corpo+'</div>'+
+      '<div class="ft locked" id="rcb-ft-'+key+'"><label class="rcb-chk"><input type="checkbox" id="rcb-ck-'+key+'" disabled> Li e aceito</label>'+
+      '<span class="hint" id="rcb-hi-'+key+'">Role até o fim para habilitar.</span></div></div>';
+  }
+  function stepTermos(){
+    const t=st.termos;
+    document.getElementById('rcb-body').innerHTML=
+      '<p class="page-sub" style="margin:0 0 16px">Role cada documento até o fim para habilitar o aceite.</p>'+
+      docBlock('termos_uso','Termos de Uso da Mercs',LOREM.termos)+
+      docBlock('privacidade','Política de Privacidade (LGPD)',LOREM.priv)+
+      docBlock('aviso_asaas','Aviso de responsabilidade — Asaas',LOREM.asaas)+
+      '<label class="rcb-chk" style="margin:8px 2px 2px"><input type="checkbox" id="rcb-mkt" '+(t.marketing?'checked':'')+'> Quero receber novidades por e-mail <span style="font-weight:400;color:var(--text-secondary)">(opcional)</span></label>'+
+      nav(true,'Criar conta');
+    ['termos_uso','privacidade','aviso_asaas'].forEach(k=>{
+      const bd=document.getElementById('rcb-bd-'+k),ft=document.getElementById('rcb-ft-'+k),ck=document.getElementById('rcb-ck-'+k);
+      const unlock=()=>{if(ft.classList.contains('locked')){ft.classList.remove('locked');ck.disabled=false;document.getElementById('rcb-hi-'+k).textContent='Você já pode marcar o aceite.';}};
+      bd.addEventListener('scroll',()=>{if(bd.scrollTop+bd.clientHeight>=bd.scrollHeight-8)unlock();});
+      if(bd.scrollHeight<=bd.clientHeight+8)unlock();
+      ck.addEventListener('change',ev=>{st.termos[k]=ev.target.checked;refreshCriar();});
+    });
+    document.getElementById('rcb-mkt').addEventListener('change',ev=>{st.termos.marketing=ev.target.checked;});
+    bindNav(()=>{if(!(t.termos_uso&&t.privacidade&&t.aviso_asaas)){toast('É necessário aceitar os três documentos.');return false;}return true;},criar);
+    refreshCriar();
+  }
+  function refreshCriar(){const b=document.getElementById('rcb-primary');if(b)b.disabled=!(st.termos.termos_uso&&st.termos.privacidade&&st.termos.aviso_asaas);}
+
+  /* ---------- criação (chamada real) ---------- */
+  async function criar(){
+    st.phase='criando';render();
+    try{
+      const {data:{session}}=await sb.auth.getSession();
+      const token=session?session.access_token:null;
+      const resp=await fetch(SUPABASE_URL+'/functions/v1/criar-subconta',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body:JSON.stringify({
+          cadastro:st.dados,
+          payment_methods:st.cobranca,
+          repasse:{tipo:'pix',pixAddressKey:st.repasse.pixAddressKey,pixAddressKeyType:st.repasse.pixAddressKeyType},
+          aceites:{termos_uso_versao:VERSOES.termos_uso,privacidade_versao:VERSOES.privacidade,aviso_asaas_versao:st.termos.aviso_asaas?VERSOES.aviso_asaas:null,marketing_versao:st.termos.marketing?VERSOES.marketing:null}
+        })
+      });
+      const j=await resp.json().catch(()=>({}));
+      if(!resp.ok||!j.ok) throw new Error(j.erro||'Não foi possível criar a conta agora.');
+      await carregarStatus();
+      st.status=j.accountStatus||st.status||'aguardando_prova_vida';
+      st.onboardingUrl=j.onboardingUrl||st.onboardingUrl;
+      st.phase='form';render();
+      if(st.status==='aguardando_prova_vida') iniciarPoll();
+      if(window.companyPaymentMethods) window.companyPaymentMethods={...window.companyPaymentMethods,...st.cobranca};
+    }catch(e){ st.phase='form'; render(); toast(e.message||'Erro ao criar a conta.'); }
+  }
+  function renderCriando(){mount().innerHTML='<div class="card"><div class="rcb-center"><div class="rcb-spin"></div><h2 class="card-title" style="text-align:center">Criando sua conta de recebimento…</h2><p class="page-sub">Só um instante. Estamos abrindo sua subconta e registrando seus dados com segurança.</p></div></div>';}
+
+  /* ---------- verificação (prova de vida) ---------- */
+  function miniLi(cls,txt){return '<div class="li '+cls+'"><span class="dot"></span><span>'+txt+'</span></div>';}
+  function renderVerificacao(){
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<span class="rcb-badge pending">● Verificação de identidade pendente</span>'+
+      '<h2 class="card-title" style="text-align:center">Falta um passo rápido</h2>'+
+      '<p class="page-sub">A verificação é feita no ambiente do Asaas, a instituição que cuida dos seus recebimentos. Abre em uma nova aba e leva cerca de 5 minutos.</p></div>'+
+      asaasNote('Você será direcionado ao <b>Asaas</b> para enviar uma selfie e concluir a verificação. A Mercs não tem acesso a esses dados.')+
+      '<div class="rcb-mini">'+miniLi('done','Conta de recebimento criada')+miniLi('active','Verificação de identidade (selfie)')+miniLi('','Recebimentos liberados')+'</div>'+
+      '<div class="rcb-nav"><button class="rcb-btn primary" id="rcb-pv">Fazer verificação agora</button></div>'+
+      '<div class="rcb-nav" style="margin-top:10px"><button class="rcb-btn ghost" id="rcb-check" style="flex:1">Já concluí — verificar status</button></div>'+
+      '<p class="page-sub" style="text-align:center;margin:14px 0 0">Pode fechar esta tela. Assim que o Asaas aprovar, seus recebimentos são liberados automaticamente.</p></div>';
+    document.getElementById('rcb-pv').addEventListener('click',()=>{ if(st.onboardingUrl) window.open(st.onboardingUrl,'_blank','noopener'); else toast('Link de verificação indisponível. Tente recarregar.'); });
+    document.getElementById('rcb-check').addEventListener('click',async()=>{ await carregarStatus(); render(); if(st.status!=='ativo') toast('Ainda em análise. Assim que aprovar, liberamos automaticamente.'); });
+    iniciarPoll();
+  }
+  function iniciarPoll(){
+    pararPoll();
+    pollTimer=setInterval(async()=>{
+      if(!currentProfile) return;
+      const {data}=await sb.from('companies').select('asaas_account_status').eq('id',currentProfile.company_id).single();
+      if(data&&data.asaas_account_status&&data.asaas_account_status!==st.status){ st.status=data.asaas_account_status; if(st.status==='ativo') pararPoll(); render(); }
+    },8000);
+  }
+  function pararPoll(){ if(pollTimer){clearInterval(pollTimer);pollTimer=null;} }
+
+  /* ---------- estados finais ---------- */
+  function renderAtivo(){
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<div class="rcb-icon-ok"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'+
+      '<span class="rcb-badge ok">● Conta ativa</span>'+
+      '<h2 class="card-title" style="text-align:center">Tudo pronto</h2>'+
+      '<p class="page-sub">Suas vendas caem direto para você, com a comissão da Mercs separada automaticamente.</p></div>'+
+      '<div style="margin-top:8px">'+
+        '<div class="rcb-srow"><span class="k">Destino do repasse</span><span class="v">'+esc(st.destinoDisplay||'PIX cadastrado')+'</span></div>'+
+        '<div class="rcb-srow"><span class="k">Carteira Asaas</span><span class="v">'+esc(st.walletId||'—')+'</span></div>'+
+        '<div class="rcb-srow"><span class="k">Meios de cobrança</span><span class="v">'+(['pix','boleto','cartao'].filter(k=>st.cobranca[k]).map(k=>({pix:'PIX',boleto:'Boleto',cartao:'Cartão'}[k])).join(', ')||'—')+'</span></div>'+
+      '</div>'+
+      asaasNote('Pagamentos processados e custodiados por <b>Asaas</b>, instituição de pagamento autorizada pelo Banco Central.')+'</div>';
+  }
+  function renderPendente(){
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<span class="rcb-badge pending">● Em análise</span>'+
+      '<h2 class="card-title" style="text-align:center">Sua conta está em análise</h2>'+
+      '<p class="page-sub">O Asaas está validando seus dados. Assim que concluir, seus recebimentos são liberados.</p>'+
+      '<div class="rcb-nav" style="justify-content:center"><button class="rcb-btn ghost" id="rcb-check2">Verificar status</button></div></div></div>';
+    document.getElementById('rcb-check2').addEventListener('click',async()=>{await carregarStatus();render();});
+    iniciarPoll();
+  }
+  function renderBloqueado(){
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<span class="rcb-badge pending" style="background:var(--red-bg) !important;color:var(--red) !important">● Não aprovada</span>'+
+      '<h2 class="card-title" style="text-align:center">Não foi possível ativar sua conta</h2>'+
+      '<p class="page-sub">O Asaas não aprovou a conta de recebimento. Fale com o suporte da Mercs para entender o motivo e reenviar seus dados.</p></div></div>';
+  }
+
+  /* ---------- navegação do wizard ---------- */
+  function nav(hasBack,label){
+    return '<div class="rcb-nav">'+(hasBack?'<button class="rcb-btn ghost" id="rcb-back">Voltar</button>':'')+'<button class="rcb-btn primary" id="rcb-primary">'+label+'</button></div>';
+  }
+  function bindNav(validate,override){
+    const back=document.getElementById('rcb-back');
+    if(back) back.addEventListener('click',()=>{st.erros={};st.step--;render();});
+    const p=document.getElementById('rcb-primary');
+    if(p) p.addEventListener('click',()=>{ if(validate&&!validate()){render();return;} if(override){override();return;} st.step++; render(); });
+  }
+  function toast(msg){ if(window.showToast) showToast(msg); else alert(msg); }
+
+  /* ---------- integração com o painel ---------- */
+  function attachNav(){
+    if(navAttached) return; navAttached=true;
+    document.querySelectorAll('.nav-item[data-view]').forEach(it=>{
+      it.addEventListener('click',()=>{
+        if(it.dataset.view==='recebimento'){ carregarStatus().then(render); }
+        else pararPoll();
+      });
+    });
+  }
+  async function afterLogin(){
+    st=novoEstado();
+    attachNav();
+    await carregarStatus();
+    if(st.status==='nao_configurado'){
+      if(typeof switchView==='function') switchView('recebimento');
+      render();
+    }
+  }
+
+  const LOREM={
+    termos:'Texto de exemplo do Termo de Uso. O documento final define objeto do serviço, responsabilidades da Mercs como operadora, obrigações do contratante, uso do agente de vendas e regras de cancelamento. '.repeat(6),
+    priv:'Texto de exemplo da Política de Privacidade (LGPD). Descreve dados tratados, base legal, o papel da Mercs como operadora e do contratante como controlador, direitos do titular e o encarregado (DPO). '.repeat(6),
+    asaas:'Texto de exemplo do aviso de responsabilidade do Asaas — o conteúdo oficial vem no Playbook de adequação. Esclarece que os pagamentos são processados e custodiados pelo Asaas, instituição autorizada pelo Banco Central. '.repeat(6)
+  };
+
+  return { afterLogin, render, carregarStatus };
+})();
+window.RCB=RCB;
+
 
 /* ===================== inicialização ===================== */
 showProductList();
