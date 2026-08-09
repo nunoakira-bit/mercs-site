@@ -1029,6 +1029,40 @@
   #view-recebimento .rcb-seg{height:5px;flex:1;border-radius:999px;background:var(--border);}
   #view-recebimento .rcb-seg.done{background:var(--accent);}
   #view-recebimento .rcb-seg.now{background:var(--accent);opacity:.45;}
+  /* RECEBIMENTO — modal de configuração inicial.
+     Bloqueante por decisão de produto: sem conta de recebimento o resto do
+     painel produz telas que falham na venda. A única saída é concluir ou sair. */
+  .rcb-modal-overlay{position:fixed;inset:0;z-index:900;display:none;
+    align-items:center;justify-content:center;padding:24px;
+    background:rgba(16,24,40,.55);backdrop-filter:blur(2px);}
+  .rcb-modal-overlay.open{display:flex;}
+  body.rcb-modal-aberto{overflow:hidden;}
+  .rcb-modal{width:100%;max-width:620px;max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+    background:#fff !important;border-radius:var(--radius-lg);box-shadow:var(--shadow-pop);overflow:hidden;}
+  .rcb-modal-head{padding:22px 26px 0;flex-shrink:0;}
+  .rcb-modal-marca{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+  .rcb-modal-titulo{font-size:15px;font-weight:600;color:var(--text-secondary);margin:0;}
+  .rcb-modal-corpo{padding:18px 26px 4px;overflow-y:auto;flex:1;min-height:0;}
+  /* dentro do modal o wizard nao repete a moldura de card */
+  .rcb-modal-corpo .card{background:transparent !important;border:none;box-shadow:none;padding:0;margin:0;}
+  .rcb-modal-pe{padding:12px 26px 20px;flex-shrink:0;text-align:center;}
+  .rcb-modal-sair{background:none;border:none;padding:6px 10px;cursor:pointer;font-family:inherit;
+    font-size:13px;color:var(--text-tertiary);text-decoration:underline;border-radius:var(--radius-sm);}
+  .rcb-modal-sair:hover{color:var(--text-secondary);}
+  .rcb-modal-sair:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  @media (max-width:620px){
+    .rcb-modal-overlay{padding:0;}
+    .rcb-modal{max-width:none;max-height:100vh;height:100vh;border-radius:0;}
+    .rcb-modal-head{padding:18px 18px 0;}
+    .rcb-modal-corpo{padding:16px 18px 4px;}
+    .rcb-modal-pe{padding:10px 18px 16px;}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .rcb-modal-overlay.open .rcb-modal{animation:rcbModalIn .18s ease-out;}
+    @keyframes rcbModalIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  }
+
   /* RECEBIMENTO — acolhimento (passo 0). Alvos grandes e uma acao so:
      a tela precisa funcionar para quem tem pouca familiaridade digital. */
   .rcb-bv{max-width:520px;margin:0 auto;padding:14px 4px 6px;text-align:center;}
@@ -1049,6 +1083,9 @@
     .rcb-bv-titulo{font-size:21px;}
     .rcb-bv .rcb-btn.primary{width:100%;min-width:0;}
   }
+  .rcb-req{color:var(--red);margin-left:3px;font-weight:700;text-decoration:none;
+    border:none;cursor:help;}
+  .rcb-legenda{font-size:12.5px;color:var(--text-tertiary);margin:0 0 16px;}
   .rcb-field{display:block;margin:0 0 14px;}
   .rcb-field>span{display:block;font-size:13px;font-weight:600;color:var(--text-primary);margin:0 0 6px;}
   .rcb-field small{display:block;color:var(--text-secondary);font-weight:400;font-size:12.5px;margin-top:5px;}
@@ -1062,7 +1099,7 @@
   .rcb-opt:hover{border-color:var(--accent);}
   .rcb-opt.on{border-color:var(--accent);background:var(--accent-soft) !important;}
   .rcb-cbox{width:20px;height:20px;border-radius:6px;border:2px solid var(--border-strong);display:grid;place-items:center;flex:0 0 auto;margin-top:1px;background:#fff !important;}
-  .rcb-opt.on .rcb-cbox{background:var(--accent);border-color:var(--accent);}
+  .rcb-opt.on .rcb-cbox{background:var(--accent) !important;border-color:var(--accent);}
   .rcb-cbox svg{width:12px;height:12px;display:none;}
   .rcb-opt.on .rcb-cbox svg{display:block;}
   .rcb-opt .t{font-weight:600;font-size:14px;color:var(--text-primary);}
@@ -1070,10 +1107,13 @@
   .rcb-asaas{display:flex;gap:10px;align-items:flex-start;background:#F0F6FA !important;border:1px solid #D8E6EE;border-radius:var(--radius-sm);padding:11px 12px;font-size:12.5px;color:#37505C !important;margin:6px 0;}
   .rcb-asaas .b{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.03em;color:#0A6CB0 !important;border:1px solid #B9D6E8;border-radius:6px;padding:2px 6px;background:#fff !important;}
   .rcb-doc{border:1px solid var(--border-strong);border-radius:var(--radius-sm);margin-bottom:12px;overflow:hidden;}
+  .rcb-doc .hd{padding:12px 14px 10px;border-bottom:1px solid var(--border);background:#fff !important;}
+  .rcb-doc .hd .num{display:block;font-size:11.5px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
+  .rcb-doc .hd h3{margin:0;font-size:15.5px;font-weight:650;color:var(--text-primary);line-height:1.3;}
   .rcb-doc .bd{max-height:140px;overflow:auto;padding:13px 14px;font-size:12.5px;color:var(--text-secondary);background:var(--bg-card-alt) !important;}
-  .rcb-doc .ft{display:flex;align-items:center;gap:10px;padding:11px 14px;border-top:1px solid var(--border);}
-  .rcb-doc .ft.locked{opacity:.55;}
-  .rcb-doc .ft .hint{font-size:12px;color:var(--text-secondary);}
+  .rcb-doc .ft{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--border);}
+  .rcb-doc .ft .rcb-chk{min-height:32px;}
   .rcb-chk{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--text-primary);}
   .rcb-chk input{width:17px;height:17px;accent-color:var(--accent);}
   .rcb-nav{display:flex;gap:10px;margin-top:18px;}
@@ -2849,7 +2889,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.8.0';
+const APP_VERSION='1.10.0';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -2950,12 +2990,20 @@ document.getElementById('shortcut-add-pdf').addEventListener('click',()=>switchV
 document.getElementById('shortcut-ver-vendas').addEventListener('click',()=>switchView('vendas'));
 
 /* ===================== toast ===================== */
+/* Duracao proporcional ao texto: 2,6s fixos nao davam tempo de ler os avisos
+   longos do Asaas. Toque fecha antes, para quem ja leu. */
 function showToast(msg){
   const t=document.getElementById('toast');
   document.getElementById('toast-msg').textContent=msg;
   t.classList.add('show');
   clearTimeout(window._toastTimer);
-  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+  const ms=Math.min(12000, Math.max(3200, String(msg).length*70));
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),ms);
+  if(!t.dataset.dismissBound){
+    t.dataset.dismissBound='1';
+    t.addEventListener('click',()=>{clearTimeout(window._toastTimer);t.classList.remove('show');});
+    t.style.cursor='pointer';
+  }
 }
 
 /* ===================== notificações ===================== */
@@ -6144,7 +6192,31 @@ const RCB = (function(){
     };
   }
 
-  const mount=()=>document.getElementById('rcb-mount');
+  /* O wizard e renderizado no modal enquanto a conta nao existe, e na secao
+     Recebimento depois disso. Um mount() dinamico evita duplicar render(). */
+  let modalAberto=false;
+  const mount=()=>document.getElementById(modalAberto?'rcb-mount-modal':'rcb-mount');
+
+  function abrirModal(){
+    if(modalAberto) return;
+    modalAberto=true;
+    document.getElementById('rcb-modal-overlay').classList.add('open');
+    document.body.classList.add('rcb-modal-aberto');
+  }
+  function fecharModal(){
+    if(!modalAberto) return;
+    modalAberto=false;
+    document.getElementById('rcb-modal-overlay').classList.remove('open');
+    document.body.classList.remove('rcb-modal-aberto');
+    document.getElementById('rcb-mount-modal').innerHTML='';
+  }
+  document.getElementById('rcb-modal-sair').addEventListener('click',()=>{
+    /* confirmacao porque no celular este link fica na base da tela, onde o
+       toque acidental e comum, e sair no meio do cadastro perde o preenchido */
+    if(!confirm('Sair da conta? O que você preencheu até aqui será perdido.')) return;
+    const btn=document.getElementById('logout-btn');
+    if(btn) btn.click(); else sb.auth.signOut().then(()=>location.reload());
+  });
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function maskCNPJ(v){v=v.replace(/\D/g,'').slice(0,14);return v.replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d)/,'$1-$2');}
   function maskCEP(v){v=v.replace(/\D/g,'').slice(0,8);return v.replace(/^(\d{5})(\d)/,'$1-$2');}
@@ -6186,6 +6258,9 @@ const RCB = (function(){
       st.destinoDisplay=rep?rep.destino_display:null;
       st.onboardingUrl=sub?sub.asaas_onboarding_url:null;
       if(comp&&comp.name&&!st.dados.name) st.dados.name=comp.name;
+      /* o e-mail da conta ja e conhecido: pedir de novo em campo vazio faz o
+         usuario achar que errou algo no cadastro */
+      if(!st.dados.email && currentSession && currentSession.user) st.dados.email=currentSession.user.email||'';
       if(comp&&comp.payment_methods) st.cobranca={pix:true,boleto:false,cartao:false,...comp.payment_methods};
     }catch(e){ st.loaded=true; st.status=st.status||'nao_configurado'; console.warn('RCB status',e); }
   }
@@ -6241,19 +6316,23 @@ const RCB = (function(){
   }
 
   /* ---------- passo 1 ---------- */
-  function fld(label,key,val,err,type,ph){
-    return '<label class="rcb-field"><span>'+label+'</span>'+
-      '<input class="rcb-input" data-k="'+key+'" type="'+(type||'text')+'" value="'+esc(val)+'" '+(ph?'placeholder="'+ph+'"':'')+' autocomplete="off"></label>'+
+  /* Todo campo do cadastro e exigido pelo Asaas: o asterisco marca isso de
+     forma visivel para quem nao esta habituado a formulario. */
+  const REQ='<abbr class="rcb-req" title="Campo obrigatório">*</abbr>';
+  function fld(label,key,val,err,type,ph,opcional){
+    return '<label class="rcb-field"><span>'+label+(opcional?'':REQ)+'</span>'+
+      '<input class="rcb-input" data-k="'+key+'" type="'+(type||'text')+'" value="'+esc(val)+'" '+(ph?'placeholder="'+ph+'"':'')+(opcional?'':' aria-required="true"')+' autocomplete="off"></label>'+
       (err?'<div class="rcb-err">'+err+'</div>':'');
   }
-  function selFld(label,key,val,opts){
+  function selFld(label,key,val,opts,opcional){
     const o=opts.map(x=>'<option value="'+x[0]+'"'+(x[0]===val?' selected':'')+'>'+x[1]+'</option>').join('');
-    return '<label class="rcb-field"><span>'+label+'</span><select class="rcb-select" data-k="'+key+'">'+o+'</select></label>';
+    return '<label class="rcb-field"><span>'+label+(opcional?'':REQ)+'</span><select class="rcb-select" data-k="'+key+'"'+(opcional?'':' aria-required="true"')+'>'+o+'</select></label>';
   }
   function stepDados(){
     const d=st.dados,e=st.erros;
     document.getElementById('rcb-body').innerHTML=
-      '<p class="page-sub" style="margin:0 0 16px">Essa conta fica no nome da sua empresa — é por isso que o CNPJ é obrigatório.</p>'+
+      '<p class="page-sub" style="margin:0 0 6px">Essa conta fica no nome da sua empresa — é por isso que o CNPJ é obrigatório.</p>'+
+      '<p class="rcb-legenda">Os campos com '+REQ+' são obrigatórios.</p>'+
       fld('Razão social ou nome da empresa','name',d.name,e.name)+
       '<div class="rcb-row">'+fld('CNPJ','cpfCnpj',d.cpfCnpj,e.cpfCnpj,'text','00.000.000/0000-00')+
         selFld('Tipo de empresa','companyType',d.companyType,[['MEI','MEI'],['INDIVIDUAL','Empresário individual'],['LIMITED','Ltda / EIRELI'],['ASSOCIATION','Associação']])+'</div>'+
@@ -6317,8 +6396,8 @@ const RCB = (function(){
     const r=st.repasse;
     document.getElementById('rcb-body').innerHTML=
       '<p class="page-sub" style="margin:0 0 16px">Informe a chave PIX onde o valor das suas vendas será depositado. Ela cai em qualquer banco.</p>'+
-      selFld('Tipo de chave','pixAddressKeyType',r.pixAddressKeyType,[['CNPJ','CNPJ'],['EMAIL','E-mail'],['PHONE','Celular'],['EVP','Chave aleatória']])+
-      '<label class="rcb-field"><span>Chave PIX</span><input class="rcb-input" id="rcb-pix" type="text" value="'+esc(r.pixAddressKey)+'" autocomplete="off"><small>Preferimos PIX porque a chave já está vinculada a uma conta verificada — reduz o risco de depósito errado.</small></label>'+
+      selFld('Tipo de chave','pixAddressKeyType',r.pixAddressKeyType,[['CNPJ','CNPJ'],['CPF','CPF'],['EMAIL','E-mail'],['PHONE','Celular'],['EVP','Chave aleatória']])+
+      '<label class="rcb-field"><span>Chave PIX'+REQ+'</span><input class="rcb-input" id="rcb-pix" type="text" value="'+esc(r.pixAddressKey)+'" aria-required="true" autocomplete="off"><small>Preferimos PIX porque a chave já está vinculada a uma conta verificada — reduz o risco de depósito errado.</small></label>'+
       '<div class="rcb-preview">No painel a chave aparece mascarada: <b id="rcb-pixprev">'+maskPix(r.pixAddressKeyType,r.pixAddressKey)+'</b></div>'+
       nav(true,'Continuar');
     mount().querySelector('[data-k="pixAddressKeyType"]').addEventListener('change',ev=>{st.repasse.pixAddressKeyType=ev.target.value;document.getElementById('rcb-pixprev').textContent=maskPix(st.repasse.pixAddressKeyType,st.repasse.pixAddressKey);});
@@ -6327,25 +6406,25 @@ const RCB = (function(){
   }
 
   /* ---------- passo 4 ---------- */
-  function docBlock(key,titulo,corpo){
-    return '<div class="rcb-doc"><div class="bd" id="rcb-bd-'+key+'"><strong>'+titulo+'</strong><br><br>'+corpo+'</div>'+
-      '<div class="ft locked" id="rcb-ft-'+key+'"><label class="rcb-chk"><input type="checkbox" id="rcb-ck-'+key+'" disabled> Li e aceito</label>'+
-      '<span class="hint" id="rcb-hi-'+key+'">Role até o fim para habilitar.</span></div></div>';
+  /* Titulo fora da caixa de rolagem: dentro dela ele sumia junto com o texto e
+     os tres documentos pareciam o mesmo passo repetido. */
+  function docBlock(key,titulo,corpo,ordem,marcado){
+    return '<div class="rcb-doc">'+
+      '<div class="hd"><span class="num">'+ordem+' de 3</span><h3>'+titulo+'</h3></div>'+
+      '<div class="bd" id="rcb-bd-'+key+'">'+corpo+'</div>'+
+      '<div class="ft" id="rcb-ft-'+key+'"><label class="rcb-chk"><input type="checkbox" id="rcb-ck-'+key+'"'+(marcado?' checked':'')+'> Li e aceito</label></div></div>';
   }
   function stepTermos(){
     const t=st.termos;
     document.getElementById('rcb-body').innerHTML=
-      '<p class="page-sub" style="margin:0 0 16px">Role cada documento até o fim para habilitar o aceite.</p>'+
-      docBlock('termos_uso','Termos de Uso da Mercs',LOREM.termos)+
-      docBlock('privacidade','Política de Privacidade (LGPD)',LOREM.priv)+
-      docBlock('aviso_asaas','Aviso de responsabilidade — Asaas',LOREM.asaas)+
+      '<p class="page-sub" style="margin:0 0 16px">São três documentos. Marque <b>Li e aceito</b> em cada um para continuar.</p>'+
+      docBlock('termos_uso','Termos de Uso da Mercs',LOREM.termos,1,t.termos_uso)+
+      docBlock('privacidade','Política de Privacidade (LGPD)',LOREM.priv,2,t.privacidade)+
+      docBlock('aviso_asaas','Aviso de responsabilidade — Asaas',LOREM.asaas,3,t.aviso_asaas)+
       '<label class="rcb-chk" style="margin:8px 2px 2px"><input type="checkbox" id="rcb-mkt" '+(t.marketing?'checked':'')+'> Quero receber novidades por e-mail <span style="font-weight:400;color:var(--text-secondary)">(opcional)</span></label>'+
       nav(true,'Criar conta');
     ['termos_uso','privacidade','aviso_asaas'].forEach(k=>{
-      const bd=document.getElementById('rcb-bd-'+k),ft=document.getElementById('rcb-ft-'+k),ck=document.getElementById('rcb-ck-'+k);
-      const unlock=()=>{if(ft.classList.contains('locked')){ft.classList.remove('locked');ck.disabled=false;document.getElementById('rcb-hi-'+k).textContent='Você já pode marcar o aceite.';}};
-      bd.addEventListener('scroll',()=>{if(bd.scrollTop+bd.clientHeight>=bd.scrollHeight-8)unlock();});
-      if(bd.scrollHeight<=bd.clientHeight+8)unlock();
+      const ck=document.getElementById('rcb-ck-'+k);
       ck.addEventListener('change',ev=>{st.termos[k]=ev.target.checked;refreshCriar();});
     });
     document.getElementById('rcb-mkt').addEventListener('change',ev=>{st.termos.marketing=ev.target.checked;});
@@ -6376,6 +6455,9 @@ const RCB = (function(){
       travarPainel(false);
       st.status=j.accountStatus||st.status||'aguardando_prova_vida';
       st.onboardingUrl=j.onboardingUrl||st.onboardingUrl;
+      /* conta criada: o painel abre e o acompanhamento sai do modal para a
+         seção Recebimento, que é onde ele vive daqui em diante */
+      fecharModal();
       st.phase='form';render();
       if(st.status==='aguardando_prova_vida') iniciarPoll();
       if(window.companyPaymentMethods) window.companyPaymentMethods={...window.companyPaymentMethods,...st.cobranca};
@@ -6485,7 +6567,10 @@ const RCB = (function(){
     travarPainel(semConta);
     if(semConta){
       if(typeof switchView==='function') switchView('recebimento');
+      abrirModal();
       render();
+    }else{
+      fecharModal();
     }
   }
 
@@ -6504,5 +6589,18 @@ window.RCB=RCB;
 showProductList();
 renderKbDocs();
 </script>
+<!-- RECEBIMENTO: modal de configuração inicial -->
+<div class="rcb-modal-overlay" id="rcb-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rcb-modal-titulo">
+  <div class="rcb-modal">
+    <div class="rcb-modal-head">
+      <span class="rcb-modal-marca">Mercs</span>
+      <h2 class="rcb-modal-titulo" id="rcb-modal-titulo">Conta de recebimento</h2>
+    </div>
+    <div class="rcb-modal-corpo" id="rcb-mount-modal"></div>
+    <div class="rcb-modal-pe">
+      <button type="button" class="rcb-modal-sair" id="rcb-modal-sair">Sair da conta</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
