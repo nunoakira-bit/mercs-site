@@ -1083,6 +1083,21 @@
     .rcb-bv-titulo{font-size:21px;}
     .rcb-bv .rcb-btn.primary{width:100%;min-width:0;}
   }
+  /* Testar com a IA — contexto do produto em foco */
+  .ia-test-contexto{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:0 28px 14px;}
+  .ia-test-foco{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .ia-test-foco .rot{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--text-tertiary);}
+  .ia-test-foco strong{font-size:14px;font-weight:600;color:var(--text-primary);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ia-test-foco strong.indefinido{color:var(--text-secondary);font-style:italic;font-weight:500;}
+  .ia-test-reset{flex-shrink:0;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);
+    padding:7px 12px;font-family:inherit;font-size:13px;color:var(--text-secondary);cursor:pointer;}
+  .ia-test-reset:hover{background:var(--bg-card-alt) !important;color:var(--text-primary);}
+  .ia-test-vazio{margin:auto;padding:24px 18px;text-align:center;font-size:13.5px;line-height:1.5;
+    color:var(--text-tertiary);max-width:280px;}
+
   .rcb-req{color:var(--red);margin-left:3px;font-weight:700;text-decoration:none;
     border:none;cursor:help;}
   .rcb-legenda{font-size:12.5px;color:var(--text-tertiary);margin:0 0 16px;}
@@ -2309,12 +2324,16 @@
     </div>
   </div>
 
-  <div style="padding:0 28px 14px;">
-    <label class="field-label" for="ia-test-product-select">Produto</label>
-    <div class="select-wrap">
-      <select class="std" id="ia-test-product-select"></select>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  <!-- A IA conhece o catálogo inteiro e troca de produto sozinha conforme o
+       cliente pede: escolher o produto antes de começar não refletiria o que
+       acontece no WhatsApp. Aqui o produto vira um indicador do que a IA está
+       tratando agora. -->
+  <div class="ia-test-contexto">
+    <div class="ia-test-foco">
+      <span class="rot">Produto em foco</span>
+      <strong id="ia-test-foco-nome">—</strong>
     </div>
+    <button type="button" class="ia-test-reset" id="ia-test-reset">Nova conversa</button>
   </div>
 
   <div class="phone-frame" id="ia-test-phone-frame"></div>
@@ -2889,7 +2908,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.10.0';
+const APP_VERSION='1.11.0';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -4561,8 +4580,8 @@ function iaTestSetSending(sending){
   document.getElementById('ia-test-composer-send').disabled=sending||iaTestClosed;
 }
 
-async function iaTestCallNegotiate(message, start){
-  const body = start ? {product_id:iaTestProduct.id, history:iaTestHistory, start:true} : {product_id:iaTestProduct.id, history:iaTestHistory, message};
+async function iaTestCallNegotiate(message){
+  const body={product_id:iaTestProduct.id, history:iaTestHistory, message};
   body.cliente_nome='Teste do gestor';
   if(iaTestConversationId) body.conversation_id=iaTestConversationId;
   const {data, error}=await sb.functions.invoke('negotiate', { body });
@@ -4573,31 +4592,34 @@ async function iaTestCallNegotiate(message, start){
   }
   if(data?.error) throw new Error(data.error);
   if(data.conversation_id) iaTestConversationId=data.conversation_id;
+  /* a IA pode ter trocado de produto sozinha: o painel acompanha o foco real */
+  if(data.produto_foco && data.produto_foco.id){
+    const noCache=productsCache.find(p=>p.id===data.produto_foco.id);
+    if(noCache) iaTestProduct=noCache;
+    iaTestSetFoco(data.produto_foco.nome, data.ambiguidade);
+  }
   iaTestHistory.push({role:'user', content:data.userTurn});
   iaTestHistory.push({role:'assistant', content:data.reply});
   return data.reply;
 }
 
-async function iaTestStartConversation(){
-  const frame=document.getElementById('ia-test-phone-frame');
-  iaTestSetSending(true);
-  const typingId=iaTestShowTyping();
-  try{
-    const reply=await iaTestCallNegotiate(null, true);
-    iaTestRemoveTyping(typingId);
-    frame.insertAdjacentHTML('beforeend', `<div class="bubble out">${reply}</div>`);
-    frame.scrollTop=frame.scrollHeight;
-  }catch(e){
-    iaTestRemoveTyping(typingId);
-    frame.insertAdjacentHTML('beforeend', `<div class="bubble out">Desculpe, tive um problema para iniciar a conversa.</div>`);
-    showToast('Erro ao falar com a IA: '+e.message);
+function iaTestSetFoco(nome, ambiguidade){
+  const el=document.getElementById('ia-test-foco-nome');
+  if(!el) return;
+  if(ambiguidade && ambiguidade.length){
+    el.textContent='aguardando o cliente escolher';
+    el.classList.add('indefinido');
+    return;
   }
-  iaTestSetSending(false);
+  el.textContent=nome||'—';
+  el.classList.remove('indefinido');
 }
 
 async function iaTestSend(text){
   if(!text.trim() || iaTestSending || iaTestClosed || !iaTestProduct) return;
   const frame=document.getElementById('ia-test-phone-frame');
+  const vazio=frame.querySelector('.ia-test-vazio');
+  if(vazio) vazio.remove();
   frame.insertAdjacentHTML('beforeend', `<div class="bubble in">${text}</div>`);
   frame.scrollTop=frame.scrollHeight;
   iaTestSetSending(true);
@@ -4627,27 +4649,30 @@ document.getElementById('ia-test-composer-input').addEventListener('keydown',e=>
   }
 });
 
-document.getElementById('ia-test-product-select').addEventListener('change',(e)=>{
-  iaTestProduct=productsCache.find(p=>p.id===e.target.value);
+/* A conversa comeca vazia: quem fala primeiro e o cliente, igual ao WhatsApp.
+   O produto de entrada e apenas o ponto de partida — a IA troca sozinha. */
+function iaTestReset(){
+  iaTestProduct=productsCache[0]||null;
   iaTestHistory=[];
   iaTestConversationId=null;
   iaTestClosed=false;
   iaTestSetSending(false);
+  iaTestSetFoco(iaTestProduct?iaTestProduct.nome:null, null);
   const frame=document.getElementById('ia-test-phone-frame');
-  frame.innerHTML='';
+  frame.innerHTML=iaTestProduct
+    ? '<div class="ia-test-vazio">Escreva abaixo como se fosse o cliente para começar a conversa.</div>'
+    : '<div class="ia-test-vazio">Cadastre pelo menos um produto para testar a IA.</div>';
   const btn=document.getElementById('ia-test-close-venda-btn');
-  btn.disabled=false;
+  btn.disabled=!iaTestProduct;
   btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9"/></svg>Fechar venda';
-  if(iaTestProduct){
-    iaTestStartConversation();
-  }
-});
+  const input=document.getElementById('ia-test-composer-input');
+  input.disabled=!iaTestProduct;
+}
+document.getElementById('ia-test-reset').addEventListener('click', iaTestReset);
 
 function openIaTestDrawer(){
-  const select=document.getElementById('ia-test-product-select');
-  select.innerHTML=productsCache.map(p=>`<option value="${p.id}">${p.nome}</option>`).join('');
+  iaTestReset();
   iaTestOverlay.classList.add('open'); iaTestDrawer.classList.add('open');
-  select.dispatchEvent(new Event('change'));
 }
 document.getElementById('btn-testar-ia').addEventListener('click', openIaTestDrawer);
 function closeIaTestDrawer(){ iaTestOverlay.classList.remove('open'); iaTestDrawer.classList.remove('open'); }
