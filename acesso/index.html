@@ -1116,6 +1116,11 @@
   .wa-catalogo-nota svg{width:19px;height:19px;flex-shrink:0;margin-top:1px;color:var(--accent);}
   .wa-catalogo-nota b{color:var(--text-primary);font-weight:650;}
 
+  .rcb-edit-bloco{margin-top:22px;padding-top:20px;border-top:1px solid var(--border);}
+  .rcb-edit-titulo{font-size:15px;font-weight:650;color:var(--text-primary);margin:0 0 4px;}
+  .rcb-link-suporte{display:inline-block;margin-top:6px;font-size:13.5px;color:var(--accent-dark);
+    text-decoration:underline;}
+
   .rcb-req{color:var(--red);margin-left:3px;font-weight:700;text-decoration:none;
     border:none;cursor:help;}
   .rcb-legenda{font-size:12.5px;color:var(--text-tertiary);margin:0 0 16px;}
@@ -3049,7 +3054,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.13.0';
+const APP_VERSION='1.14.0';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -6429,6 +6434,15 @@ const RCB = (function(){
   function render(){
     const m=mount(); if(!m) return;
     if(!st||!st.loaded){ m.innerHTML='<div class="card"><div class="rcb-center"><div class="rcb-spin"></div><p class="page-sub">Carregando…</p></div></div>'; return; }
+    /* A conta da Mercs nao vende pela plataforma: mostrar o wizard de abertura
+       de subconta aqui seria oferecer algo que o admin nao deve fazer. */
+    if(document.body.classList.contains('is-admin-user') && st.status==='nao_configurado'){
+      m.innerHTML='<div class="card"><div class="rcb-center">'+
+        '<h2 class="card-title" style="text-align:center">Esta é a conta da Mercs</h2>'+
+        '<p class="page-sub">A conta de recebimento é criada por cada cliente na própria conta dele. Para ver a situação de um cliente, abra o ambiente dele em Administração.</p>'+
+        '</div></div>';
+      return;
+    }
     const s=st.status;
     if(s==='ativo') return renderAtivo();
     if(s==='aguardando_prova_vida') return renderVerificacao();
@@ -6653,17 +6667,77 @@ const RCB = (function(){
 
   /* ---------- estados finais ---------- */
   function renderAtivo(){
+    const pixLabel=st.destinoDisplay||'PIX cadastrado';
     mount().innerHTML='<div class="card"><div class="rcb-center">'+
       '<div class="rcb-icon-ok"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'+
       '<span class="rcb-badge ok">● Conta ativa</span>'+
       '<h2 class="card-title" style="text-align:center">Tudo pronto</h2>'+
       '<p class="page-sub">Suas vendas caem direto para você, com a comissão da Mercs separada automaticamente.</p></div>'+
       '<div style="margin-top:8px">'+
-        '<div class="rcb-srow"><span class="k">Destino do repasse</span><span class="v">'+esc(st.destinoDisplay||'PIX cadastrado')+'</span></div>'+
+        '<div class="rcb-srow"><span class="k">Destino do repasse</span><span class="v">'+esc(pixLabel)+'</span></div>'+
         '<div class="rcb-srow"><span class="k">Carteira Asaas</span><span class="v">'+esc(st.walletId||'—')+'</span></div>'+
-        '<div class="rcb-srow"><span class="k">Meios de cobrança</span><span class="v">'+(['pix','boleto','cartao'].filter(k=>st.cobranca[k]).map(k=>({pix:'PIX',boleto:'Boleto',cartao:'Cartão'}[k])).join(', ')||'—')+'</span></div>'+
+      '</div>'+
+      /* Os meios de cobranca sao configuracao da propria empresa (payment_methods),
+         entao podem ser editados aqui. Ja a chave PIX e os dados cadastrais vivem
+         na subconta do Asaas e nao sao alteraveis por este painel. */
+      '<div class="rcb-edit-bloco">'+
+        '<h3 class="rcb-edit-titulo">Como seus clientes podem pagar</h3>'+
+        '<p class="page-sub" style="margin:0 0 12px">Marque as formas de pagamento que a IA pode oferecer ao fechar uma venda.</p>'+
+        optRow(st.cobranca.pix,'PIX','Aprovação na hora.','data-c="pix"')+
+        optRow(st.cobranca.boleto,'Boleto','Compensa em 1 a 2 dias úteis.','data-c="boleto"')+
+        optRow(st.cobranca.cartao,'Cartão de crédito','Permite parcelamento.','data-c="cartao"')+
+        '<p class="rcb-err" id="rcb-cobranca-err" style="display:none"></p>'+
+        '<button class="rcb-btn primary" id="rcb-salvar-cobranca" style="margin-top:6px">Salvar formas de pagamento</button>'+
+      '</div>'+
+      '<div class="rcb-edit-bloco">'+
+        '<h3 class="rcb-edit-titulo">Dados bancários e cadastrais</h3>'+
+        '<p class="page-sub" style="margin:0 0 4px">Sua chave PIX de repasse e os dados da empresa ficam guardados no Asaas, que é quem custodia o dinheiro. Para alterá-los, fale com o nosso suporte — assim conseguimos validar a mudança com segurança.</p>'+
+        '<a class="rcb-link-suporte" id="rcb-suporte-dados" href="#">Falar com o suporte</a>'+
       '</div>'+
       asaasNote('Pagamentos processados e custodiados por <b>Asaas</b>, instituição de pagamento autorizada pelo Banco Central.')+'</div>';
+
+    bindCobrancaRows();
+    const link=document.getElementById('rcb-suporte-dados');
+    if(link && typeof SUPORTE_URL==='string'){
+      link.setAttribute('href', SUPORTE_URL.replace('Conta%20bloqueada','Alterar%20dados%20de%20recebimento'));
+    }
+    document.getElementById('rcb-salvar-cobranca').addEventListener('click', salvarCobranca);
+  }
+
+  /* Liga os cliques dos meios de cobranca reaproveitando o mesmo markup do
+     passo 2 do wizard, para nao existirem dois componentes com regras
+     diferentes para a mesma configuracao. */
+  function bindCobrancaRows(){
+    mount().querySelectorAll('.rcb-opt').forEach(row=>{
+      row.addEventListener('click',()=>{
+        const k=row.dataset.c;
+        if(!k) return;
+        st.cobranca[k]=!st.cobranca[k];
+        row.classList.toggle('on', st.cobranca[k]);
+      });
+    });
+  }
+
+  async function salvarCobranca(){
+    const err=document.getElementById('rcb-cobranca-err');
+    const btn=document.getElementById('rcb-salvar-cobranca');
+    err.style.display='none';
+    if(!st.cobranca.pix && !st.cobranca.boleto && !st.cobranca.cartao){
+      err.textContent='Escolha pelo menos uma forma de pagamento.';
+      err.style.display='block';
+      return;
+    }
+    btn.disabled=true; btn.textContent='Salvando…';
+    const {error}=await sb.from('companies')
+      .update({payment_methods:{pix:!!st.cobranca.pix, boleto:!!st.cobranca.boleto, cartao:!!st.cobranca.cartao}})
+      .eq('id', currentProfile.company_id);
+    btn.disabled=false; btn.textContent='Salvar formas de pagamento';
+    if(error){
+      err.textContent='Não foi possível salvar: '+error.message;
+      err.style.display='block';
+      return;
+    }
+    toast('Formas de pagamento atualizadas.');
   }
   function renderPendente(){
     mount().innerHTML='<div class="card"><div class="rcb-center">'+
@@ -6698,7 +6772,12 @@ const RCB = (function(){
     if(navAttached) return; navAttached=true;
     document.querySelectorAll('.nav-item[data-view]').forEach(it=>{
       it.addEventListener('click',()=>{
-        if(it.dataset.view==='recebimento'){ sincronizarStatus().then(carregarStatus).then(render); }
+        if(it.dataset.view==='recebimento'){
+          /* pinta o que ja se sabe na hora; a sincronizacao com o Asaas e
+             lenta e, se falhasse, a tela ficava em branco esperando */
+          render();
+          sincronizarStatus().then(carregarStatus).then(render).catch(()=>{});
+        }
         else pararPoll();
       });
     });
@@ -6731,6 +6810,10 @@ const RCB = (function(){
       render();
     }else{
       fecharModal();
+      /* Sem este render a secao Recebimento ficava literalmente em branco para
+         quem nao passa pelo wizard (admin, ou conta ja configurada): o mount
+         so era preenchido dentro do fluxo do modal. */
+      render();
     }
   }
 
