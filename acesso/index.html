@@ -319,6 +319,11 @@
   .pw-reqs li.ok::before{content:'✓';font-weight:700;}
   .auth-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;margin-bottom:22px;}
   .auth-logo .dot{width:9px;height:9px;border-radius:50%;background:var(--green);display:inline-block;}
+  .auth-link-btn{display:block;margin:12px auto 0;background:none;border:none;padding:4px 6px;
+    font-family:inherit;font-size:13px;color:var(--text-secondary);text-decoration:underline;cursor:pointer;}
+  .auth-link-btn:hover{color:var(--accent-dark);}
+  .auth-form-intro{font-size:13.5px;line-height:1.55;color:var(--text-secondary);margin:0 0 16px;}
+
   .auth-tabs{display:flex;background:#F2F3F5;border-radius:10px;padding:3px;margin-bottom:20px;}
   .auth-tab{flex:1;height:34px;border:none;background:transparent;border-radius:8px;font-size:13px;font-weight:600;
     color:var(--text-secondary);cursor:pointer;font-family:var(--font-sans);transition:.15s;}
@@ -1211,6 +1216,38 @@
       <input type="password" id="login-senha" class="auth-input" placeholder="••••••••" required autocomplete="current-password">
       <p class="auth-error" id="login-error"></p>
       <button type="submit" class="btn-primary auth-submit" id="login-submit" style="justify-content:center;">Entrar</button>
+      <button type="button" class="auth-link-btn" id="link-esqueci-senha">Esqueci minha senha</button>
+    </form>
+
+    <!-- Recuperar senha: passo 1, pedir o e-mail -->
+    <form id="form-recuperar" class="auth-form" style="display:none;">
+      <p class="auth-form-intro">Digite o e-mail da sua conta. Enviamos um link para você criar uma senha nova.</p>
+      <label class="field-label" for="recuperar-email">E-mail</label>
+      <input type="email" id="recuperar-email" class="auth-input" placeholder="voce@empresa.com" required autocomplete="username">
+      <p class="auth-error" id="recuperar-error"></p>
+      <button type="submit" class="btn-primary auth-submit" id="recuperar-submit" style="justify-content:center;">Enviar link</button>
+      <button type="button" class="auth-link-btn" id="link-voltar-login">Voltar para o login</button>
+    </form>
+
+    <!-- Recuperar senha: passo 2, definir a nova senha (chega aqui pelo link do e-mail) -->
+    <form id="form-nova-senha" class="auth-form" style="display:none;">
+      <p class="auth-form-intro">Crie sua nova senha.</p>
+      <label class="field-label" for="nova-senha-1">Nova senha</label>
+      <input type="password" id="nova-senha-1" class="auth-input" placeholder="Crie uma senha forte" required minlength="8" autocomplete="new-password">
+      <div class="pw-meter" id="pw-meter-recuperar" aria-live="polite">
+        <div class="pw-bar"><span id="pw-bar-fill-recuperar"></span></div>
+        <ul class="pw-reqs">
+          <li data-req="len">Pelo menos 8 caracteres</li>
+          <li data-req="case">Maiúscula e minúscula</li>
+          <li data-req="num">Ao menos um número</li>
+          <li data-req="sym">Ao menos um símbolo</li>
+          <li data-req="obv">Não conter seu e-mail nem sequências óbvias</li>
+        </ul>
+      </div>
+      <label class="field-label" for="nova-senha-2">Confirme a nova senha</label>
+      <input type="password" id="nova-senha-2" class="auth-input" placeholder="Repita a senha" required autocomplete="new-password">
+      <p class="auth-error" id="nova-senha-error"></p>
+      <button type="submit" class="btn-primary auth-submit" id="nova-senha-submit" style="justify-content:center;">Salvar nova senha</button>
     </form>
 
     <!-- Cadastro -->
@@ -2647,6 +2684,8 @@ document.getElementById('tab-login').addEventListener('click',()=>{
   document.getElementById('tab-signup').classList.remove('active');
   document.getElementById('form-login').style.display='flex';
   document.getElementById('form-signup').style.display='none';
+  document.getElementById('form-recuperar').style.display='none';
+  document.getElementById('form-nova-senha').style.display='none';
   clearAuthSuccess();
 });
 document.getElementById('tab-signup').addEventListener('click',()=>{
@@ -2654,6 +2693,8 @@ document.getElementById('tab-signup').addEventListener('click',()=>{
   document.getElementById('tab-login').classList.remove('active');
   document.getElementById('form-signup').style.display='flex';
   document.getElementById('form-login').style.display='none';
+  document.getElementById('form-recuperar').style.display='none';
+  document.getElementById('form-nova-senha').style.display='none';
   clearAuthSuccess();
 });
 
@@ -2677,6 +2718,91 @@ document.getElementById('form-login').addEventListener('submit', async (e)=>{
 document.getElementById('blocked-back').addEventListener('click', ()=>{
   esconderContaBloqueada();
   document.getElementById('form-login').reset();
+});
+
+/* ===================== recuperação de senha =====================
+   Passo 1: pede o e-mail e chama resetPasswordForEmail. Passo 2: o link do
+   e-mail volta para esta mesma página com uma sessão de recuperação; o
+   evento PASSWORD_RECOVERY do onAuthStateChange abre o formulário de nova
+   senha automaticamente — o usuário não precisa saber que isso existe. */
+function mostrarTelaAuth(id){
+  ['form-login','form-recuperar','form-nova-senha'].forEach(f=>{
+    document.getElementById(f).style.display = (f===id ? 'flex' : 'none');
+  });
+  document.getElementById('form-signup').style.display='none';
+  document.querySelector('.auth-tabs').style.display = (id==='form-login') ? 'flex' : 'none';
+  clearAuthSuccess();
+}
+
+document.getElementById('link-esqueci-senha').addEventListener('click', ()=>{
+  document.getElementById('recuperar-email').value=document.getElementById('login-email').value;
+  mostrarTelaAuth('form-recuperar');
+});
+document.getElementById('link-voltar-login').addEventListener('click', ()=>mostrarTelaAuth('form-login'));
+
+document.getElementById('form-recuperar').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  clearAuthError('recuperar-error');
+  const email=document.getElementById('recuperar-email').value.trim();
+  const btn=document.getElementById('recuperar-submit');
+  btn.disabled=true; btn.textContent='Enviando...';
+  const {error}=await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href.split('#')[0].split('?')[0],
+  });
+  btn.disabled=false; btn.textContent='Enviar link';
+  /* Mesma resposta exista ou não a conta — não revela quais e-mails têm
+     cadastro. O comportamento é idêntico ao do cadastro, por consistência. */
+  if(error){ showAuthError('recuperar-error', error.message); return; }
+  document.getElementById('form-recuperar').reset();
+  mostrarTelaAuth('form-login');
+  showAuthSuccess('Se este e-mail tiver uma conta, enviamos um link para redefinir a senha. Confira também a caixa de spam.');
+});
+
+function renderForcaSenhaRecuperar(){
+  const senha=document.getElementById('nova-senha-1').value;
+  const email=(currentSession && currentSession.user && currentSession.user.email) || '';
+  const {req, pontos}=avaliarSenha(senha, email);
+  document.querySelectorAll('#pw-meter-recuperar .pw-reqs li').forEach(li=>{
+    li.classList.toggle('ok', !!req[li.dataset.req]);
+  });
+  const bar=document.querySelector('#pw-meter-recuperar .pw-bar');
+  const fill=document.getElementById('pw-bar-fill-recuperar');
+  bar.className='pw-bar'+(pontos>=4?' n4':pontos===3?' n3':pontos===2?' n2':'');
+  fill.style.width=(senha?Math.max(pontos,1)*20:0)+'%';
+}
+document.getElementById('nova-senha-1').addEventListener('input', renderForcaSenhaRecuperar);
+
+document.getElementById('form-nova-senha').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  clearAuthError('nova-senha-error');
+  const senha=document.getElementById('nova-senha-1').value;
+  const senha2=document.getElementById('nova-senha-2').value;
+  if(senha!==senha2){ showAuthError('nova-senha-error','As senhas não coincidem.'); return; }
+  const email=(currentSession && currentSession.user && currentSession.user.email) || '';
+  const forca=avaliarSenha(senha, email);
+  if(!forca.ok){
+    showAuthError('nova-senha-error','A senha ainda não atende aos requisitos listados abaixo do campo.');
+    document.getElementById('nova-senha-1').focus();
+    return;
+  }
+  const btn=document.getElementById('nova-senha-submit');
+  btn.disabled=true; btn.textContent='Salvando...';
+  const {error}=await sb.auth.updateUser({password:senha});
+  btn.disabled=false; btn.textContent='Salvar nova senha';
+  if(error){ showAuthError('nova-senha-error', error.message); return; }
+  document.getElementById('form-nova-senha').reset();
+  const {data}=await sb.auth.getSession();
+  mostrarTelaAuth('form-login');
+  showAuthSuccess('Senha atualizada! Você já está conectado.');
+  if(data.session) await onAuthReady(data.session);
+});
+
+sb.auth.onAuthStateChange((event, session)=>{
+  if(event==='PASSWORD_RECOVERY'){
+    document.body.classList.remove('authed');
+    document.getElementById('login-card').style.display='block';
+    mostrarTelaAuth('form-nova-senha');
+  }
 });
 
 /* ===================== força da senha =====================
@@ -2818,8 +2944,12 @@ async function onAuthReady(session){
 }
 
 (async function initSession(){
+  /* Um link de recuperação também chega com uma sessão válida. Sem esta
+     checagem, o boot normal entraria direto no painel e a pessoa nunca veria
+     a tela de nova senha — o evento PASSWORD_RECOVERY cuida disso sozinho. */
+  const isRecovery = /type=recovery/.test(window.location.hash) || /type=recovery/.test(window.location.search);
   const {data}=await sb.auth.getSession();
-  if(data.session){ await onAuthReady(data.session); }
+  if(data.session && !isRecovery){ await onAuthReady(data.session); }
 })();
 
 /* ===================== status do atendimento por IA (topbar) ===================== */
@@ -2919,7 +3049,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.12.0';
+const APP_VERSION='1.13.0';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
