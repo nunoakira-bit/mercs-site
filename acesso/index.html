@@ -1118,8 +1118,12 @@
 
   .rcb-edit-bloco{margin-top:22px;padding-top:20px;border-top:1px solid var(--border);}
   .rcb-edit-titulo{font-size:15px;font-weight:650;color:var(--text-primary);margin:0 0 4px;}
-  .rcb-link-suporte{display:inline-block;margin-top:6px;font-size:13.5px;color:var(--accent-dark);
-    text-decoration:underline;}
+  /* campo bloqueado: precisa parecer informacao, nao um campo que falhou */
+  .rcb-field-lock .rcb-input:disabled{background:var(--bg-card-alt) !important;color:var(--text-secondary);
+    cursor:default;-webkit-text-fill-color:var(--text-secondary);opacity:1;}
+  .rcb-field-lock .rcb-input:disabled::placeholder{color:var(--text-tertiary);font-style:italic;}
+  .rcb-btn-link{display:inline-flex;align-items:center;gap:8px;margin-top:14px;text-decoration:none;}
+  .rcb-btn-link svg{width:15px;height:15px;}
 
   .rcb-req{color:var(--red);margin-left:3px;font-weight:700;text-decoration:none;
     border:none;cursor:help;}
@@ -2936,10 +2940,13 @@ async function onAuthReady(session){
   await refreshKbDocsFromDb();
   await syncAtendimentoStatus();
   await loadCompanyPaymentMethods();
-  try{ await RCB.afterLogin(); }catch(e){ console.warn('RCB afterLogin', e); } /* RECEBIMENTO */
-  await refreshOperacao();
   iaDiagUpdateVisibility('dashboard');
   irParaInicio();
+  /* Depois do irParaInicio: o wizard de recebimento precisa dar a ultima
+     palavra sobre qual tela aparece. Na ordem inversa, o switchView do inicio
+     jogava a pessoa de volta ao dashboard e a configuracao sumia. */
+  try{ await RCB.afterLogin(); }catch(e){ console.warn('RCB afterLogin', e); } /* RECEBIMENTO */
+  await refreshOperacao();
   // carrega estado do agente para o badge do menu e o sino
   await loadAgenteEstado();
   if(agenteAtivoEmpresa){ await loadAlertas(); updateAgenteBadge(); }
@@ -3054,7 +3061,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.14.0';
+const APP_VERSION='1.15.0';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -6414,7 +6421,7 @@ const RCB = (function(){
       const [c,r,s]=await Promise.all([
         sb.from('companies').select('asaas_account_status,asaas_wallet_id,payment_methods,name').eq('id',cid).single(),
         sb.from('repasse_config').select('destino_display,tipo_destino').eq('company_id',cid).maybeSingle(),
-        sb.from('subcontas_asaas').select('asaas_onboarding_url').eq('company_id',cid).maybeSingle()
+        sb.from('subcontas_asaas').select('asaas_onboarding_url,asaas_account_id').eq('company_id',cid).maybeSingle()
       ]);
       const comp=c.data, rep=r.data, sub=s.data;
       st.loaded=true;
@@ -6422,6 +6429,8 @@ const RCB = (function(){
       st.walletId=comp?comp.asaas_wallet_id:null;
       st.destinoDisplay=rep?rep.destino_display:null;
       st.onboardingUrl=sub?sub.asaas_onboarding_url:null;
+      st.asaasAccountId=sub?sub.asaas_account_id:null;
+      st.tipoDestino=rep?rep.tipo_destino:null;
       if(comp&&comp.name&&!st.dados.name) st.dados.name=comp.name;
       /* o e-mail da conta ja e conhecido: pedir de novo em campo vazio faz o
          usuario achar que errou algo no cadastro */
@@ -6690,18 +6699,39 @@ const RCB = (function(){
         '<button class="rcb-btn primary" id="rcb-salvar-cobranca" style="margin-top:6px">Salvar formas de pagamento</button>'+
       '</div>'+
       '<div class="rcb-edit-bloco">'+
-        '<h3 class="rcb-edit-titulo">Dados bancários e cadastrais</h3>'+
-        '<p class="page-sub" style="margin:0 0 4px">Sua chave PIX de repasse e os dados da empresa ficam guardados no Asaas, que é quem custodia o dinheiro. Para alterá-los, fale com o nosso suporte — assim conseguimos validar a mudança com segurança.</p>'+
-        '<a class="rcb-link-suporte" id="rcb-suporte-dados" href="#">Falar com o suporte</a>'+
+        '<h3 class="rcb-edit-titulo">Seus dados de recebimento</h3>'+
+        '<p class="page-sub" style="margin:0 0 14px">Estes dados ficam guardados no <b>Asaas</b>, que é quem custodia o seu dinheiro. Por segurança, eles não podem ser alterados por aqui — a mudança é feita direto no painel do Asaas.</p>'+
+        campoBloqueado('Razão social ou nome da empresa', st.dados.name||'')+
+        campoBloqueado('E-mail da conta', st.dados.email||'')+
+        campoBloqueado('Chave PIX para receber', st.destinoDisplay||'')+
+        campoBloqueado('Identificador da sua conta Asaas', st.asaasAccountId||'')+
+        campoBloqueado('Carteira de repasse', st.walletId||'')+
+        '<a class="rcb-btn primary rcb-btn-link" id="rcb-abrir-asaas" target="_blank" rel="noopener noreferrer">'+
+          'Alterar no Asaas'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'+
+        '</a>'+
+        '<p class="hint" style="margin:10px 0 0">Você entra no Asaas com o mesmo e-mail cadastrado acima.</p>'+
       '</div>'+
       asaasNote('Pagamentos processados e custodiados por <b>Asaas</b>, instituição de pagamento autorizada pelo Banco Central.')+'</div>';
 
     bindCobrancaRows();
-    const link=document.getElementById('rcb-suporte-dados');
-    if(link && typeof SUPORTE_URL==='string'){
-      link.setAttribute('href', SUPORTE_URL.replace('Conta%20bloqueada','Alterar%20dados%20de%20recebimento'));
-    }
+    /* O onboardingUrl e o acesso que o Asaas gerou para esta subconta; se ele
+       nao existir mais, o painel geral resolve com o mesmo login. */
+    const linkAsaas=document.getElementById('rcb-abrir-asaas');
+    const base=(st.onboardingUrl && /^https?:\/\//.test(st.onboardingUrl))
+      ? st.onboardingUrl
+      : 'https://www.asaas.com/login';
+    linkAsaas.setAttribute('href', base);
     document.getElementById('rcb-salvar-cobranca').addEventListener('click', salvarCobranca);
+  }
+
+  /* Campo somente leitura: mostra o dado quando ele existe aqui, e diz onde
+     ele esta quando nao existe — em vez de um campo vazio sem explicacao. */
+  function campoBloqueado(label, valor){
+    const temValor=!!(valor && String(valor).trim());
+    return '<label class="rcb-field rcb-field-lock"><span>'+label+'</span>'+
+      '<input class="rcb-input" type="text" disabled value="'+esc(temValor?valor:'')+'"'+
+      (temValor?'':' placeholder="Guardado no Asaas"')+'></label>';
   }
 
   /* Liga os cliques dos meios de cobranca reaproveitando o mesmo markup do
