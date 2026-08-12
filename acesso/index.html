@@ -1183,6 +1183,20 @@
   .rcb-srow .k{color:var(--text-secondary);}
   .rcb-srow .v{font-weight:600;color:var(--text-primary);text-align:right;}
 </style>
+<!-- RECEBIMENTO: modal de configuração inicial -->
+<div class="rcb-modal-overlay" id="rcb-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rcb-modal-titulo">
+  <div class="rcb-modal">
+    <div class="rcb-modal-head">
+      <span class="rcb-modal-marca">Mercs</span>
+      <h2 class="rcb-modal-titulo" id="rcb-modal-titulo">Conta de recebimento</h2>
+    </div>
+    <div class="rcb-modal-corpo" id="rcb-mount-modal"></div>
+    <div class="rcb-modal-pe">
+      <button type="button" class="rcb-modal-sair" id="rcb-modal-sair">Sair da conta</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -3066,7 +3080,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.15.2';
+const APP_VERSION='1.15.3';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -6376,16 +6390,20 @@ const RCB = (function(){
 
   function abrirModal(){
     if(modalAberto) return;
+    const ov=document.getElementById('rcb-modal-overlay');
+    if(!ov){ console.warn('RCB: overlay do modal ausente'); return; }
     modalAberto=true;
-    document.getElementById('rcb-modal-overlay').classList.add('open');
+    ov.classList.add('open');
     document.body.classList.add('rcb-modal-aberto');
   }
   function fecharModal(){
     if(!modalAberto) return;
     modalAberto=false;
-    document.getElementById('rcb-modal-overlay').classList.remove('open');
+    const ov=document.getElementById('rcb-modal-overlay');
+    if(ov) ov.classList.remove('open');
     document.body.classList.remove('rcb-modal-aberto');
-    document.getElementById('rcb-mount-modal').innerHTML='';
+    const mm=document.getElementById('rcb-mount-modal');
+    if(mm) mm.innerHTML='';
   }
 
   /* Fallback visivel na secao Recebimento enquanto o modal esta aberto.
@@ -6403,13 +6421,18 @@ const RCB = (function(){
     const b=document.getElementById('rcb-reabrir');
     if(b) b.addEventListener('click',()=>{ abrirModal(); render(); });
   }
-  document.getElementById('rcb-modal-sair').addEventListener('click',()=>{
+  /* Binding defensivo: se este elemento nao existir no DOM, o addEventListener
+     lancaria e derrubaria o modulo RCB inteiro — foi exatamente o que
+     aconteceu enquanto o HTML do modal era declarado apos o fim do script. */
+  const btnSair=document.getElementById('rcb-modal-sair');
+  if(btnSair) btnSair.addEventListener('click',()=>{
     /* confirmacao porque no celular este link fica na base da tela, onde o
        toque acidental e comum, e sair no meio do cadastro perde o preenchido */
     if(!confirm('Sair da conta? O que você preencheu até aqui será perdido.')) return;
     const btn=document.getElementById('logout-btn');
     if(btn) btn.click(); else sb.auth.signOut().then(()=>location.reload());
   });
+
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function maskCNPJ(v){v=v.replace(/\D/g,'').slice(0,14);return v.replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d)/,'$1-$2');}
   function maskCEP(v){v=v.replace(/\D/g,'').slice(0,8);return v.replace(/^(\d{5})(\d)/,'$1-$2');}
@@ -6887,18 +6910,5 @@ window.RCB=RCB;
 showProductList();
 renderKbDocs();
 </script>
-<!-- RECEBIMENTO: modal de configuração inicial -->
-<div class="rcb-modal-overlay" id="rcb-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rcb-modal-titulo">
-  <div class="rcb-modal">
-    <div class="rcb-modal-head">
-      <span class="rcb-modal-marca">Mercs</span>
-      <h2 class="rcb-modal-titulo" id="rcb-modal-titulo">Conta de recebimento</h2>
-    </div>
-    <div class="rcb-modal-corpo" id="rcb-mount-modal"></div>
-    <div class="rcb-modal-pe">
-      <button type="button" class="rcb-modal-sair" id="rcb-modal-sair">Sair da conta</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
