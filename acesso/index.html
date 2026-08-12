@@ -2936,17 +2936,22 @@ async function onAuthReady(session){
   document.getElementById('sidebar-avatar').textContent=(profile.nome||session.user.email).trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
   document.body.classList.add('authed');
   document.body.classList.toggle('is-admin-user', !!profile.is_admin);
-  await refreshProductsFromDb();
-  await refreshKbDocsFromDb();
-  await syncAtendimentoStatus();
-  await loadCompanyPaymentMethods();
+
+  /* O wizard de recebimento vem primeiro e cada etapa e isolada: antes, uma
+     excecao em qualquer carregamento (produtos, base de conhecimento, status
+     do atendimento, realtime) interrompia o onAuthReady no meio e o
+     RCB.afterLogin nunca chegava a rodar — deixando a secao Recebimento vazia
+     e o modal de configuracao invisivel, sem nenhum erro na tela. */
+  const etapa=async (nome, fn)=>{ try{ await fn(); }catch(e){ console.warn('boot: '+nome, e); } };
+
+  await etapa('recebimento', ()=>RCB.afterLogin());
+  await etapa('produtos', refreshProductsFromDb);
+  await etapa('conhecimento', refreshKbDocsFromDb);
+  await etapa('atendimento', syncAtendimentoStatus);
+  await etapa('meios de pagamento', loadCompanyPaymentMethods);
   iaDiagUpdateVisibility('dashboard');
-  irParaInicio();
-  /* Depois do irParaInicio: o wizard de recebimento precisa dar a ultima
-     palavra sobre qual tela aparece. Na ordem inversa, o switchView do inicio
-     jogava a pessoa de volta ao dashboard e a configuracao sumia. */
-  try{ await RCB.afterLogin(); }catch(e){ console.warn('RCB afterLogin', e); } /* RECEBIMENTO */
-  await refreshOperacao();
+  if(!RCB.wizardAberto()) irParaInicio();
+  await etapa('operacao', refreshOperacao);
   // carrega estado do agente para o badge do menu e o sino
   await loadAgenteEstado();
   if(agenteAtivoEmpresa){ await loadAlertas(); updateAgenteBadge(); }
@@ -3061,7 +3066,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.15.0';
+const APP_VERSION='1.15.2';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -6382,6 +6387,22 @@ const RCB = (function(){
     document.body.classList.remove('rcb-modal-aberto');
     document.getElementById('rcb-mount-modal').innerHTML='';
   }
+
+  /* Fallback visivel na secao Recebimento enquanto o modal esta aberto.
+     NAO desenha o wizard aqui: os ids internos (rcb-body e campos) ficariam
+     duplicados no DOM e o getElementById do modal passaria a escrever na
+     secao. Um cartao estatico com botao evita isso e cumpre o mesmo papel. */
+  function renderNaSecao(){
+    const alvo=document.getElementById('rcb-mount');
+    if(!alvo) return;
+    alvo.innerHTML='<div class="card"><div class="rcb-center">'+
+      '<h2 class="card-title" style="text-align:center">Falta configurar seu recebimento</h2>'+
+      '<p class="page-sub">Para você receber o dinheiro das suas vendas, precisamos criar sua conta de recebimento. São 4 perguntas simples.</p>'+
+      '<button class="rcb-btn primary" id="rcb-reabrir" style="flex:0 0 auto;min-width:200px;margin-top:6px">Configurar agora</button>'+
+      '</div></div>';
+    const b=document.getElementById('rcb-reabrir');
+    if(b) b.addEventListener('click',()=>{ abrirModal(); render(); });
+  }
   document.getElementById('rcb-modal-sair').addEventListener('click',()=>{
     /* confirmacao porque no celular este link fica na base da tela, onde o
        toque acidental e comum, e sair no meio do cadastro perde o preenchido */
@@ -6838,6 +6859,10 @@ const RCB = (function(){
       if(typeof switchView==='function') switchView('recebimento');
       abrirModal();
       render();
+      /* Defesa em profundidade: o wizard tambem e desenhado na secao
+         Recebimento. Se o modal falhar em aparecer por qualquer motivo, a
+         configuracao continua acessivel em vez de sumir da interface. */
+      renderNaSecao();
     }else{
       fecharModal();
       /* Sem este render a secao Recebimento ficava literalmente em branco para
@@ -6853,7 +6878,7 @@ const RCB = (function(){
     asaas:'Texto de exemplo do aviso de responsabilidade do Asaas — o conteúdo oficial vem no Playbook de adequação. Esclarece que os pagamentos são processados e custodiados pelo Asaas, instituição autorizada pelo Banco Central. '.repeat(6)
   };
 
-  return { afterLogin, render, carregarStatus, travarPainel };
+  return { afterLogin, render, carregarStatus, travarPainel, wizardAberto: ()=>modalAberto };
 })();
 window.RCB=RCB;
 
