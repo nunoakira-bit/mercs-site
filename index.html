@@ -7,6 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="apple-touch-icon" href="assets/favicon.svg">
 <meta name="theme-color" content="#062028">
+<meta name="site-version" content="1.1.0">
 <title>Mercs — Seu melhor vendedor atende no WhatsApp 24h por dia</title>
 <meta name="description" content="A Mercs aprende seus produtos, conhece sua estratégia comercial e usa técnicas profissionais de vendas para convencer, negociar e fechar negócios automaticamente pelo WhatsApp.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -490,6 +491,204 @@
     .stage-item{position:static;opacity:1 !important;transform:none !important;margin-bottom:12px}
     .phone{animation:none !important}
   }
+
+  /* ============================================================
+     HERO DEMO INTERATIVO  (.hdemo-*)   — v1.1.0
+     Substitui o hero cinematografico pinado. O hero antigo segue
+     no arquivo dentro de #hero-legacy[hidden], intacto.
+     Excecao de paleta deliberada: as cores da tela do celular sao
+     as do WhatsApp real (--hd-wa-*). O mockup precisa ser
+     reconhecido como WhatsApp; repintar em petroleo quebraria a
+     leitura. Mesmo criterio da excecao do azul institucional Asaas.
+     ============================================================ */
+  :root{
+    --hd-bg:#04080C;            /* preto com residuo de azul */
+    --hd-wa-bg:#0B141A;         /* fundo da conversa */
+    --hd-wa-head:#1F2C33;       /* cabecalho e balao recebido */
+    --hd-wa-out:#005C4B;        /* balao enviado */
+    --hd-wa-txt:#E9EDEF;
+    --hd-wa-dim:#8696A0;
+    --hd-chassi:#0A1216;
+  }
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+  .hdemo{position:relative;z-index:2;background:var(--hd-bg) !important;padding:132px 0 96px;overflow:hidden}
+  .hdemo-atmos{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .hdemo-glow{position:absolute;border-radius:50%;filter:blur(90px)}
+  .hdemo-glow.a{width:620px;height:620px;left:50%;top:48%;transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(28,122,140,.55),rgba(14,92,107,.16) 52%,transparent 72%)}
+  .hdemo-glow.b{width:400px;height:400px;left:50%;top:40%;transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(139,212,80,.30),transparent 66%)}
+  .hdemo-floor{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);
+    width:520px;height:70px;border-radius:50%;filter:blur(34px);
+    background:radial-gradient(ellipse,rgba(139,212,80,.16),transparent 70%)}
+
+  .hdemo-intro{position:relative;z-index:2;max-width:780px;margin:0 auto 60px;padding:0 28px;text-align:center}
+  .hdemo-intro .eyebrow{margin-bottom:20px;justify-content:center}
+  .hdemo-intro h1{font-size:clamp(32px,4.2vw,58px)}
+  .hdemo-intro h1 .hl{color:var(--lime)}
+  .hdemo-lead{font-size:clamp(16px,1.25vw,18.5px);color:var(--mist);max-width:600px;margin:22px auto 30px}
+  .hdemo-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  /* ---- palco: trilho | aparelho | trilho ---- */
+  .hdemo-stage{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:0 28px;
+    display:grid;grid-template-columns:1fr 352px 1fr;gap:34px;align-items:center}
+  .hdemo-rail{display:flex;flex-direction:column;gap:16px}
+  .hdemo-rail-l{align-items:flex-end;padding-bottom:70px}
+  .hdemo-rail-r{align-items:flex-start;padding-top:56px}
+
+  /* ---- tooltips ---- */
+  .hdemo-tip{position:relative;max-width:314px;opacity:.34;background:rgba(11,26,33,.5) !important;
+    border:1px solid rgba(140,190,200,.1);border-radius:16px;padding:17px 19px 17px 48px;
+    backdrop-filter:blur(10px);transition:border-color .4s,background .4s,transform .4s,opacity .4s}
+  .hdemo-tip-n{position:absolute;left:16px;top:17px;width:22px;height:22px;border-radius:50%;
+    display:grid;place-items:center;font-size:11.5px;font-weight:700;
+    background:rgba(139,212,80,.14) !important;color:var(--lime);border:1px solid rgba(139,212,80,.3);
+    transition:background .35s,color .35s,border-color .35s}
+  .hdemo-tip h3{font-size:15.5px;letter-spacing:-.01em;margin-bottom:5px;line-height:1.25}
+  .hdemo-tip p{font-size:13.5px;line-height:1.5;color:var(--mist)}
+  .hdemo-tip b{color:var(--ink-hi);font-weight:600}
+  /* haste apontando para o aparelho */
+  .hdemo-tip::after{content:"";position:absolute;top:28px;width:26px;height:1px;background:rgba(140,190,200,.16);transition:background .4s}
+  .hdemo-rail-l .hdemo-tip::after{right:-27px}
+  .hdemo-rail-r .hdemo-tip::after{left:-27px}
+  /* estado ativo */
+  .hdemo-tip.on{opacity:1;border-color:rgba(139,212,80,.55);background:rgba(19,48,44,.82) !important;transform:translateY(-2px)}
+  .hdemo-tip.on::after{background:var(--lime)}
+  .hdemo-tip.on .hdemo-tip-n{background:var(--lime) !important;color:#06231A;border-color:var(--lime)}
+  .hdemo-tip.done{opacity:.5;border-color:var(--line)}
+  .hdemo-tip.done .hdemo-tip-n{background:rgba(140,190,200,.14) !important;color:var(--mist);border-color:var(--line-2)}
+  .hdemo-asaas{display:flex;align-items:center;gap:7px;margin-top:10px;padding-top:9px;
+    border-top:1px solid var(--line);font-size:11px;line-height:1.35;color:#9FC4CE}
+  .hdemo-asaas b{color:#7FD4E4;font-weight:700;letter-spacing:.02em}
+
+  /* ---- aparelho ---- */
+  .hdemo-device{display:flex;justify-content:center}
+  .hdemo-phone{position:relative;width:352px;max-width:100%;padding:11px;border-radius:54px;
+    /* luz de estudio: chave em cima a esquerda, contra-luz lima embaixo a direita */
+    background:linear-gradient(152deg,#54686F 0%,#1B282E 22%,#0A1216 52%,#111D22 74%,#3E5B54 100%);
+    box-shadow:0 46px 100px -24px rgba(0,0,0,.92), 0 0 0 1px rgba(255,255,255,.06),
+               0 0 70px -12px rgba(139,212,80,.18)}
+  .hdemo-screen{position:relative;border-radius:44px;overflow:hidden;background:var(--hd-wa-bg) !important;
+    display:flex;flex-direction:column;height:596px}
+  .hdemo-island{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:96px;height:25px;
+    border-radius:999px;background:#05090B !important;z-index:5}
+  .hdemo-head{display:flex;align-items:center;gap:11px;padding:44px 15px 11px;
+    background:var(--hd-wa-head) !important;flex-shrink:0}
+  .hdemo-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
+    font-size:13px;font-weight:700;background:#3B4A54 !important;color:#DDE6EA}
+  .hdemo-who b{display:block;font-size:14.5px;font-weight:600;color:var(--hd-wa-txt);line-height:1.25}
+  .hdemo-who em{font-style:normal;font-size:11.5px;color:var(--hd-wa-dim)}
+  .hdemo-who em.typing{color:var(--lime)}
+
+  .hdemo-thread{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px 12px 8px;
+    display:flex;flex-direction:column;gap:7px;scroll-behavior:smooth}
+  .hdemo-thread::-webkit-scrollbar{width:4px}
+  .hdemo-thread::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:2px}
+  .hdemo-sys{align-self:center;max-width:92%;text-align:center;font-size:11px;line-height:1.45;
+    color:var(--hd-wa-dim);background:rgba(31,44,51,.85) !important;border-radius:8px;padding:6px 11px}
+  .hdemo-sys-note{color:#B9CDD4}
+  .hdemo-msg{max-width:84%;padding:7px 11px 8px;border-radius:9px;font-size:13.5px;line-height:1.42;
+    color:var(--hd-wa-txt);white-space:pre-wrap;word-break:break-word;
+    box-shadow:0 1px 1px rgba(0,0,0,.25);animation:hdIn .28s cubic-bezier(.16,1,.3,1) both}
+  .hdemo-msg.me{align-self:flex-end;background:var(--hd-wa-out) !important;border-top-right-radius:2px}
+  .hdemo-msg.ia{align-self:flex-start;background:var(--hd-wa-head) !important;border-top-left-radius:2px}
+  .hdemo-msg time{display:block;text-align:right;font-size:10px;color:rgba(233,237,239,.5);margin-top:2px}
+  .hdemo-msg a{color:#8BD450;text-decoration:underline}
+  @keyframes hdIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .hdemo-typing{align-self:flex-start;display:flex;gap:4px;padding:11px 13px;border-radius:9px;
+    border-top-left-radius:2px;background:var(--hd-wa-head) !important}
+  .hdemo-typing i{width:6px;height:6px;border-radius:50%;background:var(--hd-wa-dim);animation:hdDot 1.3s infinite}
+  .hdemo-typing i:nth-child(2){animation-delay:.18s}
+  .hdemo-typing i:nth-child(3){animation-delay:.36s}
+  @keyframes hdDot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+  /* cartao de conversao (limite atingido ou falha) */
+  .hdemo-wall{align-self:stretch;margin:8px 2px 4px;padding:17px 17px 15px;border-radius:14px;
+    background:rgba(139,212,80,.09) !important;border:1px solid rgba(139,212,80,.34);text-align:center;
+    animation:hdIn .3s cubic-bezier(.16,1,.3,1) both}
+  .hdemo-wall b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;
+    letter-spacing:-.02em;color:var(--ink-hi);margin-bottom:6px}
+  .hdemo-wall p{font-size:12.5px;line-height:1.5;color:#B9CDD4;margin-bottom:13px}
+  .hdemo-wall .btn{width:100%;font-size:14px;padding:11px 18px}
+  .hdemo-wall small{display:block;margin-top:8px;font-size:11px;color:var(--hd-wa-dim)}
+
+  /* chamada inicial: seta apontando para o botao de envio */
+  .hdemo-cue{position:absolute;right:4px;bottom:-66px;z-index:4;display:flex;align-items:flex-start;gap:3px;
+    transition:opacity .4s,transform .4s}
+  .hdemo-cue.off{opacity:0;transform:translateY(6px);pointer-events:none}
+  .hdemo-cue b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;
+    letter-spacing:-.01em;white-space:nowrap;color:#06231A;background:var(--lime) !important;
+    border-radius:999px;padding:9px 16px;box-shadow:0 10px 30px -8px rgba(139,212,80,.55)}
+  .hdemo-cue svg{flex-shrink:0;width:40px;height:42px;margin-top:-34px;color:var(--lime)}
+
+  /* barra de digitacao */
+  .hdemo-compose{display:flex;align-items:flex-end;gap:8px;padding:9px 11px 13px;
+    background:var(--hd-wa-head) !important;flex-shrink:0}
+  .hdemo-field{flex:1;display:flex;align-items:flex-end;gap:8px;background:#2A3942 !important;
+    border-radius:20px;padding:10px 14px;min-height:40px}
+  .hdemo-input{flex:1;display:block;background:transparent !important;border:none;outline:none;resize:none;
+    font-family:inherit;font-size:13.5px;line-height:1.45;color:var(--hd-wa-txt);
+    height:20px;max-height:104px;overflow-y:hidden;padding:0}
+  .hdemo-input.cheio{overflow-y:auto}
+  .hdemo-input.cheio::-webkit-scrollbar{width:3px}
+  .hdemo-input.cheio::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:2px}
+  .hdemo-input::placeholder{color:var(--hd-wa-dim)}
+  .hdemo-send{flex-shrink:0;width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+    display:grid;place-items:center;background:var(--lime) !important;color:#06231A;
+    transition:transform .15s,box-shadow .25s,opacity .2s}
+  .hdemo-send svg{width:19px;height:19px}
+  .hdemo-send:hover{transform:scale(1.06)}
+  .hdemo-send:active{transform:scale(.95)}
+  .hdemo-send:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+  .hdemo-send[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+  .hdemo-send.pulse{animation:hdPulse 1.9s infinite}
+  @keyframes hdPulse{0%,100%{box-shadow:0 0 0 0 rgba(139,212,80,.5)}55%{box-shadow:0 0 0 11px rgba(139,212,80,0)}}
+  .hdemo-input:focus{outline:none}
+  .hdemo-field:focus-within{box-shadow:0 0 0 2px rgba(139,212,80,.45)}
+
+  /* contador */
+  .hdemo-meter{margin:72px auto 0;display:flex;align-items:center;justify-content:center;gap:9px;
+    font-size:12px;color:var(--mist)}
+  .hdemo-meter i{display:block;width:5px;height:5px;border-radius:50%;background:var(--line-2);transition:background .3s}
+  .hdemo-meter i.used{background:var(--lime)}
+
+  /* ---- responsivo ---- */
+  @media (max-width:1180px){
+    .hdemo-stage{grid-template-columns:1fr 330px 1fr;gap:22px;padding:0 20px}
+    .hdemo-tip{max-width:270px;padding-left:44px}
+    .hdemo-tip::after{display:none}
+  }
+  @media (max-width:960px){
+    .hdemo{padding:112px 0 72px}
+    .hdemo-stage{grid-template-columns:1fr;gap:30px;max-width:520px}
+    .hdemo-rail{display:contents}
+    .hdemo-device{order:-1}
+    .hdemo-tip{max-width:none;width:100%}
+    .hdemo-tip[data-tip="1"]{order:1}.hdemo-tip[data-tip="2"]{order:2}
+    .hdemo-tip[data-tip="3"]{order:3}.hdemo-tip[data-tip="4"]{order:4}
+    .hdemo-tip[data-tip="5"]{order:5}
+    .hdemo-glow.a{width:420px;height:420px}
+    .hdemo-glow.b{width:280px;height:280px}
+  }
+  @media (max-width:640px){
+    .hdemo{padding:96px 0 60px}
+    .hdemo-cue b{font-size:13px;padding:8px 13px}
+    .hdemo-cue svg{width:34px;height:36px;margin-top:-28px}
+    .hdemo-cue{bottom:-58px}
+    .hdemo-intro{padding:0 20px;margin-bottom:40px}
+    .hdemo-ctas{flex-direction:column;align-items:stretch}
+    .hdemo-phone{width:100%;max-width:340px;padding:9px;border-radius:46px}
+    .hdemo-screen{border-radius:38px;height:530px}
+    .hdemo-floor{width:300px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hdemo-msg,.hdemo-wall{animation:none !important}
+    .hdemo-cue{transition:none}
+    .hdemo-typing i{animation:none !important}
+    .hdemo-send.pulse{animation:none !important;box-shadow:0 0 0 3px rgba(139,212,80,.35)}
+    .hdemo-thread{scroll-behavior:auto}
+  }
 </style>
 </head>
 <body>
@@ -509,8 +708,103 @@
   </div>
 </header>
 
-<!-- ================= HERO ================= -->
-<div class="hero-scroll" id="top">
+<!-- ================= HERO DEMO INTERATIVO ================= -->
+<section class="hdemo" id="top">
+  <div class="hdemo-atmos" aria-hidden="true">
+    <span class="hdemo-glow a"></span>
+    <span class="hdemo-glow b"></span>
+    <span class="hdemo-floor"></span>
+  </div>
+
+  <div class="hdemo-intro">
+    <span class="eyebrow" data-fade><span class="dot"></span>Demonstração ao vivo</span>
+    <h1>
+      <span class="reveal-mask rd-1"><span>Não acredite no</span></span>
+      <span class="reveal-mask rd-2"><span>anúncio. <span class="hl">Negocie</span></span></span>
+      <span class="reveal-mask rd-3"><span>com ele agora.</span></span>
+    </h1>
+    <p class="hdemo-lead" data-fade>O aparelho abaixo não é um vídeo. É o mesmo vendedor que atende no WhatsApp dos nossos clientes, ligado agora. Pergunte, pechinche, tente fechar negócio.</p>
+    <div class="hdemo-ctas" data-fade>
+      <a class="btn big accent" href="https://www.mercs.com.br/acesso/">Criar minha conta grátis</a>
+      <a class="btn big ghost" href="#por-que">Por que ele vende mais</a>
+    </div>
+  </div>
+
+  <div class="hdemo-stage">
+
+    <div class="hdemo-rail hdemo-rail-l">
+      <article class="hdemo-tip" data-tip="1">
+        <span class="hdemo-tip-n">1</span>
+        <h3>Pergunte o que quiser sobre o produto</h3>
+        <p>Ele varre a base de conhecimento que você cadastrou e responde. O que não estiver lá, <b>ele não inventa</b> — avisa que vai confirmar e chama você.</p>
+      </article>
+    </div>
+
+    <div class="hdemo-device">
+      <div class="hdemo-phone">
+        <span class="hdemo-island" aria-hidden="true"></span>
+        <div class="hdemo-screen">
+          <header class="hdemo-head">
+            <span class="hdemo-av" id="hdemoAv" aria-hidden="true">LE</span>
+            <div class="hdemo-who">
+              <b id="hdemoLoja">Loja exemplo</b>
+              <em id="hdemoStatus">online</em>
+            </div>
+          </header>
+          <div class="hdemo-thread" id="hdemoThread" role="log" aria-live="polite" aria-label="Conversa de demonstração com o vendedor da Mercs">
+            <p class="hdemo-sys">Hoje</p>
+            <p class="hdemo-sys hdemo-sys-note">Nesta demonstração você é o cliente. As respostas vêm do vendedor de verdade, não de um roteiro.</p>
+          </div>
+          <div class="hdemo-compose">
+            <label class="sr-only" for="hdemoInput">Escreva sua mensagem para o vendedor</label>
+            <div class="hdemo-field">
+              <textarea class="hdemo-input" id="hdemoInput" rows="1" placeholder="Escreva uma mensagem" autocomplete="off" spellcheck="false"></textarea>
+            </div>
+            <button class="hdemo-send pulse" id="hdemoSend" type="button" aria-label="Enviar mensagem">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4 21.85 12.5a.55.55 0 0 0 0-1L3.4 3.6a.5.5 0 0 0-.7.55L4.4 11.1c.05.25.26.44.52.47l9.3.43-9.3.43a.6.6 0 0 0-.52.47L2.7 19.85a.5.5 0 0 0 .7.55Z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="hdemo-cue" id="hdemoCue">
+          <b>Clique aqui para testar o Mercs!</b>
+          <svg viewBox="0 0 44 46" fill="none" aria-hidden="true">
+            <path d="M8 44C2.5 27 8 12 26 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M16.5 8.5 26 7l1.6 9.6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="hdemo-rail hdemo-rail-r">
+      <article class="hdemo-tip" data-tip="2">
+        <span class="hdemo-tip-n">2</span>
+        <h3>Peça desconto. Insista.</h3>
+        <p>Ele negocia até o limite que você configurou e <b>não passa disso</b>. Quem calcula o preço é o sistema, não a inteligência artificial — ela só argumenta.</p>
+      </article>
+      <article class="hdemo-tip" data-tip="3">
+        <span class="hdemo-tip-n">3</span>
+        <h3>Chegou num preço bom? Feche na hora</h3>
+        <p>Diga que quer fechar e ele registra o pedido na conversa. Na sua operação, <b>a cobrança sai automática</b> e o valor cai na sua conta.</p>
+        <span class="hdemo-asaas"><b>asaas</b>Cobranças e liquidação são processadas pelo Asaas, instituição de pagamento responsável pela custódia dos valores.</span>
+      </article>
+      <article class="hdemo-tip" data-tip="4">
+        <span class="hdemo-tip-n">4</span>
+        <h3>Travou? Você é chamado</h3>
+        <p>Se ele não souber responder ou o cliente pedir uma pessoa, <b>você recebe o alerta</b> e assume a conversa de onde ela parou.</p>
+      </article>
+    </div>
+
+  </div>
+
+  <p class="hdemo-meter" id="hdemoMeter" aria-live="polite"></p>
+</section>
+
+<!-- ===== HERO ANTIGO (cinematografico, pinado) — desativado na v1.1.0.
+     Mantido no arquivo para retomada: basta remover o atributo hidden
+     de #hero-legacy, devolver id="top" ao .hero-scroll, remover o id
+     do hero novo e reativar a tag de script do three.js no rodape. ===== -->
+<div id="hero-legacy" hidden>
+<div class="hero-scroll">
   <div class="hero-pin">
     <span class="orb a" data-parallax="0.18"></span>
     <span class="orb b" data-parallax="-0.12"></span>
@@ -584,6 +878,7 @@
 
     <div class="scroll-cue" id="scrollCue"><span class="mouse"></span>Role para negociar</div>
   </div>
+</div>
 </div>
 
 <!-- ================= DORES ================= -->
@@ -824,7 +1119,9 @@
   </div>
 </footer>
 
+<!-- three.js so e necessario para o hero antigo (#hero-legacy). Reative junto com ele.
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+-->
 <script>
 (function(){
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -863,6 +1160,8 @@
 
   /* ---- hero scroll-driven (desktop) ---- */
   var heroScroll = document.querySelector('.hero-scroll');
+  /* hero antigo desativado: o hero interativo (.hdemo) assumiu o topo */
+  var heroLegacyOff = !heroScroll || !!heroScroll.closest('[hidden]');
   var chatInner = document.getElementById('chatInner');
   var aiStatus = document.getElementById('aiStatus');
   var stageItems = Array.prototype.slice.call(document.querySelectorAll('.stage-item'));
@@ -879,6 +1178,7 @@
   var convStage = 0;
 
   function heroDrive(){
+    if (heroLegacyOff) return;
     var rect = heroScroll.getBoundingClientRect();
     var total = heroScroll.offsetHeight - window.innerHeight;
     var p;
@@ -952,7 +1252,7 @@
   var phone = document.getElementById('phone');
   var glare = document.getElementById('glare');
   var hasFinePointer = window.matchMedia('(pointer:fine)').matches;
-  if (phone && hasFinePointer && !reduced){
+  if (phone && !heroLegacyOff && hasFinePointer && !reduced){
     var wrap = phone.parentElement;
     var raf=null, tx=0, ty=0;
     wrap.addEventListener('pointermove', function(e){
@@ -977,7 +1277,7 @@
   /* ---- mobile: revelar mensagens/estágios ao entrar na tela ---- */
   var heroPin = document.querySelector('.hero-pin');
   var stageItemsM = Array.prototype.slice.call(document.querySelectorAll('.stage-item'));
-  if (heroPin && !reduced && 'IntersectionObserver' in window){
+  if (heroPin && !heroLegacyOff && !reduced && 'IntersectionObserver' in window){
     var heroIO = new IntersectionObserver(function(en){
       en.forEach(function(e){
         if(e.isIntersecting){
@@ -994,7 +1294,7 @@
   var motionBtn = document.getElementById('motionBtn');
   var phoneEl = document.getElementById('phone');
   var glareEl = document.getElementById('glare');
-  if (motionBtn && phoneEl){
+  if (motionBtn && phoneEl && !heroLegacyOff){
     var mraf=null, mx=0, my=0;
     function applyMotion(){
       phoneEl.style.transform = 'rotateX('+mx.toFixed(2)+'deg) rotateY('+my.toFixed(2)+'deg)';
@@ -1046,7 +1346,7 @@
   var reduced = bridge.isReduced || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var canvas = document.getElementById('phone3d');
   var wrap = canvas && canvas.parentElement;
-  if (!canvas || !window.THREE || reduced) return;   // fallback CSS permanece
+  if (!canvas || canvas.closest('[hidden]') || !window.THREE || reduced) return;   // fallback CSS permanece
 
   try {
     var testGL = document.createElement('canvas').getContext('webgl') || document.createElement('canvas').getContext('experimental-webgl');
@@ -1211,6 +1511,256 @@
     renderer.render(scene,camera); requestAnimationFrame(tick);
   }
   drawScreen(0); tick();
+})();
+</script>
+
+<script>
+/* ================= HERO DEMO INTERATIVO ================= */
+(function(){
+
+  /* ----------------------------------------------------------
+     CONFIGURACAO — preencher antes de publicar.
+     productId: id do produto da empresa de DEMONSTRACAO (nao usar
+     conta de cliente real: cada visitante cria conversa, mensagens
+     e registro de custo de LLM nessa empresa).
+     anonKey: a mesma anon key que ja esta no index.html do painel.
+     ---------------------------------------------------------- */
+  var CFG = {
+    endpoint : 'https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/negotiate',
+    anonKey  : '',
+    productId: '',
+    loja     : 'Loja exemplo',
+    iniciais : 'LE',
+    maxMsgs  : 10,
+    primeira : 'Oi! Queria saber sobre o kit profissional.',
+    cadastro : 'https://www.mercs.com.br/acesso/'
+  };
+
+  var thread = document.getElementById('hdemoThread');
+  var input  = document.getElementById('hdemoInput');
+  var send   = document.getElementById('hdemoSend');
+  var status = document.getElementById('hdemoStatus');
+  var meter  = document.getElementById('hdemoMeter');
+  var cue    = document.getElementById('hdemoCue');
+  if (!thread || !input || !send) return;
+
+  document.getElementById('hdemoLoja').textContent = CFG.loja;
+  document.getElementById('hdemoAv').textContent = CFG.iniciais;
+  input.value = CFG.primeira;
+
+  /* o campo cresce na vertical conforme o texto, ate o teto do CSS */
+  var TETO = 104;
+  function ajustarAltura(){
+    input.style.height = 'auto';
+    var h = input.scrollHeight;
+    input.style.height = Math.min(h, TETO) + 'px';
+    input.classList.toggle('cheio', h > TETO);
+  }
+
+  var CHAVE = 'mercs_demo_usadas';
+  var historico = [];      /* [{role:'user'|'assistant', content}] */
+  var convId = null;       /* reinicia a cada carregamento de pagina */
+  var enviando = false;
+  var encerrado = false;
+
+  function usadas(){
+    try { return parseInt(sessionStorage.getItem(CHAVE), 10) || 0; }
+    catch(e){ return 0; }
+  }
+  function marcarUso(){
+    try { sessionStorage.setItem(CHAVE, String(usadas() + 1)); } catch(e){}
+  }
+
+  /* ---------- render ---------- */
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function linkificar(s){
+    return s.replace(/(https?:\/\/[^\s<]+)/g, function(u){
+      return '<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>';
+    });
+  }
+  function agora(){
+    return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'});
+  }
+  function descer(){ thread.scrollTop = thread.scrollHeight; }
+
+  function bolha(texto, quem){
+    var el = document.createElement('div');
+    el.className = 'hdemo-msg ' + (quem === 'me' ? 'me' : 'ia');
+    el.innerHTML = linkificar(esc(texto)) + '<time>' + agora() + '</time>';
+    thread.appendChild(el);
+    descer();
+    return el;
+  }
+
+  var pontos = null;
+  function digitando(ligar){
+    if (ligar){
+      if (pontos) return;
+      pontos = document.createElement('div');
+      pontos.className = 'hdemo-typing';
+      pontos.innerHTML = '<i></i><i></i><i></i>';
+      thread.appendChild(pontos);
+      status.textContent = 'digitando…';
+      status.classList.add('typing');
+      descer();
+    } else {
+      if (pontos && pontos.parentNode) pontos.parentNode.removeChild(pontos);
+      pontos = null;
+      status.textContent = 'online';
+      status.classList.remove('typing');
+    }
+  }
+
+  /* ---------- contador ---------- */
+  function pintarMedidor(){
+    var n = Math.min(usadas(), CFG.maxMsgs), html = '';
+    for (var i = 0; i < CFG.maxMsgs; i++) html += '<i class="' + (i < n ? 'used' : '') + '"></i>';
+    var restam = CFG.maxMsgs - n;
+    meter.innerHTML = html + '<span>' +
+      (restam > 0 ? restam + (restam === 1 ? ' mensagem nesta demonstração' : ' mensagens nesta demonstração')
+                  : 'demonstração concluída') + '</span>';
+  }
+
+  /* ---------- tooltips ---------- */
+  var tips = {};
+  Array.prototype.forEach.call(document.querySelectorAll('.hdemo-tip'), function(t){
+    tips[t.getAttribute('data-tip')] = t;
+  });
+  function acender(n){
+    for (var k in tips){
+      if (k === String(n)) { tips[k].classList.add('on'); tips[k].classList.remove('done'); }
+      else { tips[k].classList.remove('on'); }
+    }
+  }
+  function concluir(n){ if (tips[n]) { tips[n].classList.remove('on'); tips[n].classList.add('done'); } }
+
+  var RE_PRECO = /(desconto|pre[cç]o|caro|barato|valor|quanto custa|quanto fica|abaixa|pechinch|promo|off|%)/i;
+  var RE_FECHA = /(quero|fechar|fechado|vou levar|pode mandar|manda|comprar|fecho|topo|aceito)/i;
+  var RE_HUMANO = /(humano|pessoa|atendente|falar com algu[eé]m|gerente|respons[aá]vel)/i;
+
+  function proximoEstado(msgUsuario, dados){
+    if (RE_HUMANO.test(msgUsuario) || (dados && dados.duvida_tecnica)) { acender(4); return; }
+    if (dados && dados.fechamento) { acender(3); concluir(2); return; }
+    if (RE_FECHA.test(msgUsuario) && historico.length > 2) { acender(3); return; }
+    if (RE_PRECO.test(msgUsuario) || (dados && dados.ofertas && dados.ofertas.length)) { acender(2); concluir(1); return; }
+    acender(1);
+  }
+
+  /* ---------- cartao de conversao ---------- */
+  function parede(motivo){
+    encerrado = true;
+    input.disabled = true;
+    send.disabled = true;
+    send.classList.remove('pulse');
+    if (cue) cue.classList.add('off');
+    input.placeholder = 'Demonstração encerrada';
+
+    /* uma mensagem so para os tres motivos: limite, fila e falha.
+       Nenhuma delas deve parecer tela de erro para o visitante. */
+    var el = document.createElement('div');
+    el.className = 'hdemo-wall';
+    el.innerHTML = '<b>Para continuar conversando com o Mercs, crie sua conta agora.</b>' +
+      '<p>Aqui ele atende com um produto de vitrine. Na sua conta, ele atende sem limite — com os seus produtos, os seus preços e as suas regras de desconto.</p>' +
+      '<a class="btn accent" href="' + CFG.cadastro + '">Criar minha conta grátis</a>' +
+      '<small>Período de teste grátis. Sem cartão de crédito.</small>';
+    thread.appendChild(el);
+    descer();
+    pintarMedidor();
+  }
+
+  /* ---------- envio ---------- */
+  function enviar(){
+    if (enviando || encerrado) return;
+    var texto = input.value.trim();
+    if (!texto){
+      input.focus();
+      return;
+    }
+    if (usadas() >= CFG.maxMsgs){ parede('limite'); return; }
+
+    enviando = true;
+    send.classList.remove('pulse');
+    send.disabled = true;
+    input.value = '';
+    ajustarAltura();
+    bolha(texto, 'me');
+    if (cue) cue.classList.add('off');
+    marcarUso();
+    pintarMedidor();
+    digitando(true);
+
+    if (!CFG.productId){
+      console.warn('[Mercs] hero demo sem productId configurado.');
+      setTimeout(function(){ digitando(false); enviando = false; parede('erro'); }, 700);
+      return;
+    }
+
+    var cab = { 'Content-Type': 'application/json' };
+    if (CFG.anonKey){
+      cab['apikey'] = CFG.anonKey;
+      cab['Authorization'] = 'Bearer ' + CFG.anonKey;
+    }
+
+    var controle = new AbortController();
+    var expirou = setTimeout(function(){ controle.abort(); }, 30000);
+
+    fetch(CFG.endpoint, {
+      method: 'POST',
+      headers: cab,
+      signal: controle.signal,
+      body: JSON.stringify({
+        product_id: CFG.productId,
+        message: texto,
+        history: historico.slice(-16),
+        conversation_id: convId,
+        cliente_nome: 'Visitante do site'
+      })
+    })
+    .then(function(r){
+      clearTimeout(expirou);
+      return r.json().then(function(d){ return { ok: r.ok, sc: r.status, d: d }; });
+    })
+    .then(function(res){
+      digitando(false);
+      enviando = false;
+      send.disabled = false;
+
+      if (!res.ok || !res.d || !res.d.reply){
+        parede(res.sc === 429 ? 'ocupado' : 'erro');
+        return;
+      }
+      convId = res.d.conversation_id || convId;
+      historico.push({ role: 'user', content: texto });
+      historico.push({ role: 'assistant', content: res.d.reply });
+      bolha(res.d.reply, 'ia');
+      proximoEstado(texto, res.d);
+
+      if (usadas() >= CFG.maxMsgs) parede('limite');
+      else input.focus();
+    })
+    .catch(function(){
+      clearTimeout(expirou);
+      digitando(false);
+      enviando = false;
+      send.disabled = false;
+      parede('erro');
+    });
+  }
+
+  /* ---------- eventos ---------- */
+  send.addEventListener('click', enviar);
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); enviar(); }
+  });
+  input.addEventListener('input', ajustarAltura);
+  window.addEventListener('resize', ajustarAltura);
+
+  ajustarAltura();
+  pintarMedidor();
+  if (usadas() >= CFG.maxMsgs) parede('limite');
 })();
 </script>
 
