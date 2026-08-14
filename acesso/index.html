@@ -1116,6 +1116,34 @@
   .wa-catalogo-nota svg{width:19px;height:19px;flex-shrink:0;margin-top:1px;color:var(--accent);}
   .wa-catalogo-nota b{color:var(--text-primary);font-weight:650;}
 
+  .rcb-bv-alternativa{display:block;margin:16px auto 0;background:none;border:none;padding:6px 10px;
+    font-family:inherit;font-size:13.5px;color:var(--text-secondary);text-decoration:underline;cursor:pointer;
+    border-radius:var(--radius-sm);}
+  .rcb-bv-alternativa:hover{color:var(--accent-dark);}
+  .rcb-bv-alternativa:disabled{opacity:.6;cursor:default;}
+
+  .proximo-passo{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px;
+    padding:20px 22px;border-radius:var(--radius-lg);border:1px solid var(--accent);
+    background:var(--accent-soft) !important;}
+  .pp-icone{width:46px;height:46px;flex-shrink:0;border-radius:50%;background:#fff !important;
+    display:flex;align-items:center;justify-content:center;}
+  .pp-icone svg{width:24px;height:24px;color:var(--accent-dark);}
+  .pp-texto{flex:1 1 260px;min-width:0;}
+  .pp-texto h2{margin:0 0 4px;font-size:17px;font-weight:650;color:var(--text-primary);line-height:1.35;}
+  .pp-texto p{margin:0;font-size:14px;line-height:1.55;color:var(--text-secondary);}
+  .pp-btn{flex:0 0 auto;height:44px;}
+  @media (max-width:640px){ .pp-btn{width:100%;} }
+
+  .rcb-aceitar-tudo{display:flex;align-items:center;gap:10px;margin:0 0 16px;padding:13px 15px;
+    border-radius:var(--radius-md);border:1px solid var(--accent);background:var(--accent-soft) !important;
+    font-size:14.5px;font-weight:600;color:var(--text-primary);cursor:pointer;}
+  .rcb-aceitar-tudo input{width:18px;height:18px;flex-shrink:0;cursor:pointer;}
+
+  .rcb-modal-pular{display:block;width:100%;margin:0 0 8px;background:none;border:none;padding:8px 10px;
+    cursor:pointer;font-family:inherit;font-size:13.5px;color:var(--accent-dark);text-decoration:underline;
+    border-radius:var(--radius-sm);}
+  .rcb-modal-pular:hover{color:var(--text-primary);}
+
   .rcb-edit-bloco{margin-top:22px;padding-top:20px;border-top:1px solid var(--border);}
   .rcb-edit-titulo{font-size:15px;font-weight:650;color:var(--text-primary);margin:0 0 4px;}
   /* campo bloqueado: precisa parecer informacao, nao um campo que falhou */
@@ -1192,6 +1220,7 @@
     </div>
     <div class="rcb-modal-corpo" id="rcb-mount-modal"></div>
     <div class="rcb-modal-pe">
+      <button type="button" class="rcb-modal-pular" id="rcb-modal-pular">Pular por enquanto — envio a cobrança por conta própria</button>
       <button type="button" class="rcb-modal-sair" id="rcb-modal-sair">Sair da conta</button>
     </div>
   </div>
@@ -1448,6 +1477,19 @@
 
       <!-- ===================== DASHBOARD ===================== -->
       <section class="view active" id="view-dashboard">
+        <!-- Depois de configurar o recebimento o lojista ficava sem saber o que
+             fazer. Outro modal empilharia bloqueio sobre bloqueio: este cartao
+             fica no topo do Dashboard e some sozinho quando o WhatsApp conecta. -->
+        <div class="proximo-passo" id="proximo-passo-wa" style="display:none;">
+          <div class="pp-icone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 11.5a8.4 8.4 0 01-9 8.4 8.5 8.5 0 01-4-1L3 21l2.1-4.9A8.4 8.4 0 013.6 11.5a8.4 8.4 0 018.4-8.4h.5a8.4 8.4 0 018 8z"/></svg>
+          </div>
+          <div class="pp-texto">
+            <h2>Agora é só conectar seu WhatsApp e começar a vender!</h2>
+            <p>Clique no botão abaixo, gere o QR code e escaneie com o celular que atende seus clientes. Leva menos de um minuto.</p>
+          </div>
+          <button class="btn-primary pp-btn" id="pp-conectar-wa">Conectar meu WhatsApp</button>
+        </div>
         <div class="page-head">
           <div>
             <h1>Dashboard de atendimentos</h1>
@@ -2180,6 +2222,9 @@
               <button type="button" data-value="auto">Enviar link automaticamente</button>
             </div>
             <p class="hint" style="margin:10px 0 0;" id="cobranca-modo-hint">No modo de aprovação, você recebe um alerta e libera o link com um clique — recomendado no início.</p>
+            <!-- A comissao so incide quando a venda passa pelo link da Mercs:
+                 dizer isso aqui evita o lojista descobrir na primeira fatura. -->
+            <p class="hint comissao-aviso" id="cobranca-comissao-aviso" style="display:none;"></p>
           </div>
 
           <div style="margin-top:16px;">
@@ -3080,7 +3125,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.15.3';
+const APP_VERSION='1.17.1';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -3414,9 +3459,22 @@ function processingTimeFor(method){ return method==='pix'?1300:method==='cartao'
 
 /* ---------- meios de pagamento (por empresa, vem do banco) ---------- */
 let companyPaymentMethods={pix:true,cartao:true,boleto:true};
+/* A comissao vem do banco, nunca de um valor fixo no front: cada cliente pode
+   ter a sua, e um numero desatualizado aqui vira promessa errada ao lojista. */
+let companyComissao=null;
+
 async function loadCompanyPaymentMethods(){
-  const {data, error}=await sb.from('companies').select('payment_methods').eq('id', currentProfile.company_id).single();
-  if(!error && data && data.payment_methods) companyPaymentMethods={pix:true,cartao:true,boleto:true,...data.payment_methods};
+  const {data, error}=await sb.from('companies')
+    .select('payment_methods, asaas_commission_type, asaas_commission_percentage, asaas_commission_fixed_cents')
+    .eq('id', currentProfile.company_id).single();
+  if(error || !data) return;
+  if(data.payment_methods) companyPaymentMethods={pix:true,cartao:true,boleto:true,...data.payment_methods};
+  companyComissao={
+    tipo:data.asaas_commission_type||'percentual',
+    percentual:Number(data.asaas_commission_percentage||0),
+    fixoCents:Number(data.asaas_commission_fixed_cents||0),
+  };
+  updateCobrancaComissao();
 }
 function getEnabledPaymentMethods(){
   const enabled=PAYMENT_METHODS.filter(m=>companyPaymentMethods[m.key]!==false);
@@ -3501,7 +3559,26 @@ function waSetStatusUI(status, numero){
   }else{
     connBtn.disabled=false;
   }
+  atualizarProximoPasso(status);
 }
+
+/* O cartao de proximo passo some sozinho assim que o WhatsApp conecta: ele e
+   orientacao, nao aviso permanente. Admin nao vende, entao nao ve. */
+function atualizarProximoPasso(status){
+  const card=document.getElementById('proximo-passo-wa');
+  if(!card) return;
+  const ehAdmin=document.body.classList.contains('is-admin-user');
+  const mostrar = !ehAdmin && !viewingCompanyId && status!=='conectado' && waInfraConfigured!==false;
+  card.style.display = mostrar ? 'flex' : 'none';
+}
+document.getElementById('pp-conectar-wa').addEventListener('click', ()=>{
+  switchView('configuracoes');
+  const alvo=document.getElementById('wa-connect-btn');
+  if(alvo){
+    alvo.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(()=>alvo.focus(), 300);
+  }
+});
 
 async function waFetchStatus(){
   const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'status'}});
@@ -3572,9 +3649,37 @@ document.getElementById('ia-persona-save').addEventListener('click', async ()=>{
   showToast('Configurações da IA salvas com sucesso');
 });
 
+function updateCobrancaComissao(){
+  const el=document.getElementById('cobranca-comissao-aviso');
+  if(!el || !companyComissao) return;
+  const {tipo, percentual, fixoCents}=companyComissao;
+  let txt='';
+  if(tipo==='percentual' && percentual>0){
+    const pct=String(percentual).replace(/\.00$/,'').replace('.',',');
+    txt=`A taxa de comissão da Mercs é de ${pct}%.`;
+  }else if(tipo==='fixo' && fixoCents>0){
+    txt=`A taxa de comissão da Mercs é de R$ ${(fixoCents/100).toFixed(2).replace('.',',')} por venda.`;
+  }
+  /* As taxas do Asaas sao da instituicao, mudam sem passar por nos: link em vez
+     de numero para nao virar informacao desatualizada dentro do painel. */
+  if(!txt){ el.innerHTML=''; }
+  else{
+    el.textContent = txt + ' Para saber os valores referentes às taxas do Asaas, ';
+    const a=document.createElement('a');
+    a.href='https://www.asaas.com/precos';
+    a.target='_blank';
+    a.rel='noopener noreferrer';
+    a.textContent='acesse aqui';
+    el.appendChild(a);
+    el.appendChild(document.createTextNode('.'));
+  }
+  el.style.display = txt ? 'block' : 'none';
+}
+
 function updateCobrancaHint(){
   const modo=getSegmented('cobranca-modo-segmented');
   const hint=document.getElementById('cobranca-modo-hint');
+  updateCobrancaComissao();
   if(!hint) return;
   hint.textContent = modo==='auto'
     ? 'No modo automático, o link de pagamento é enviado ao cliente assim que a IA fecha a venda, sempre dentro dos limites do produto.'
@@ -6424,6 +6529,11 @@ const RCB = (function(){
   /* Binding defensivo: se este elemento nao existir no DOM, o addEventListener
      lancaria e derrubaria o modulo RCB inteiro — foi exatamente o que
      aconteceu enquanto o HTML do modal era declarado apos o fim do script. */
+  /* Pular tem que estar disponivel em QUALQUER passo, nao so no acolhimento:
+     quem chegou ate o CNPJ e travou precisa de saida sem perder a conta. */
+  const btnPular=document.getElementById('rcb-modal-pular');
+  if(btnPular) btnPular.addEventListener('click', ()=>escolherCobrancaPropria());
+
   const btnSair=document.getElementById('rcb-modal-sair');
   if(btnSair) btnSair.addEventListener('click',()=>{
     /* confirmacao porque no celular este link fica na base da tela, onde o
@@ -6498,6 +6608,7 @@ const RCB = (function(){
     }
     const s=st.status;
     if(s==='ativo') return renderAtivo();
+    if(s==='cobranca_propria') return renderCobrancaPropria();
     if(s==='aguardando_prova_vida') return renderVerificacao();
     if(s==='pendente') return renderPendente();
     if(s==='recusado'||s==='bloqueada') return renderBloqueado();
@@ -6538,8 +6649,32 @@ const RCB = (function(){
           '<span>Tenha em mãos: o <b>CNPJ da sua empresa</b>.</span>'+
         '</div>'+
         nav(false,'Começar')+
+        /* Nem todo lojista quer que a Mercs gere a cobranca: quem ja tem PIX
+           proprio ou maquininha precisa poder usar o agente mesmo assim. */
+        '<button type="button" class="rcb-bv-alternativa" id="rcb-cobranca-propria">Prefiro enviar a cobrança por conta própria</button>'+
       '</div>';
     bindNav(null);
+    document.getElementById('rcb-cobranca-propria').addEventListener('click', escolherCobrancaPropria);
+  }
+
+  async function escolherCobrancaPropria(){
+    if(!confirm('A Mercs não vai gerar cobranças automáticas. Quando o agente fechar uma venda, você recebe um aviso e envia o pagamento do seu jeito.\n\nVocê pode criar a conta de recebimento depois, quando quiser.')) return;
+    const btn=document.getElementById('rcb-cobranca-propria');
+    if(btn){ btn.disabled=true; btn.textContent='Salvando…'; }
+    const {error}=await sb.from('companies')
+      .update({asaas_account_status:'cobranca_propria', cobranca_auto:false})
+      .eq('id', currentProfile.company_id);
+    if(error){
+      if(btn){ btn.disabled=false; btn.textContent='Prefiro enviar a cobrança por conta própria'; }
+      toast('Não foi possível salvar: '+error.message);
+      return;
+    }
+    st.status='cobranca_propria';
+    travarPainel(false);
+    fecharModal();
+    render();
+    if(typeof switchView==='function') switchView('dashboard');
+    toast('Pronto! Você mesmo envia as cobranças. Dá para mudar isso a qualquer momento em Recebimento.');
   }
 
   /* ---------- passo 1 ---------- */
@@ -6644,15 +6779,30 @@ const RCB = (function(){
   function stepTermos(){
     const t=st.termos;
     document.getElementById('rcb-body').innerHTML=
-      '<p class="page-sub" style="margin:0 0 16px">São três documentos. Marque <b>Li e aceito</b> em cada um para continuar.</p>'+
+      '<p class="page-sub" style="margin:0 0 12px">São três documentos. Você pode aceitar todos de uma vez ou ler um por um.</p>'+
+      '<label class="rcb-aceitar-tudo"><input type="checkbox" id="rcb-aceitar-tudo"'+(t.termos_uso&&t.privacidade&&t.aviso_asaas?' checked':'')+'><span>Li e aceito os três documentos</span></label>'+
       docBlock('termos_uso','Termos de Uso da Mercs',LOREM.termos,1,t.termos_uso)+
       docBlock('privacidade','Política de Privacidade (LGPD)',LOREM.priv,2,t.privacidade)+
       docBlock('aviso_asaas','Aviso de responsabilidade — Asaas',LOREM.asaas,3,t.aviso_asaas)+
       '<label class="rcb-chk" style="margin:8px 2px 2px"><input type="checkbox" id="rcb-mkt" '+(t.marketing?'checked':'')+'> Quero receber novidades por e-mail <span style="font-weight:400;color:var(--text-secondary)">(opcional)</span></label>'+
       nav(true,'Criar conta');
-    ['termos_uso','privacidade','aviso_asaas'].forEach(k=>{
+    /* O 'aceitar tudo' e os tres checkboxes sao a mesma decisao vista de duas
+       formas: qualquer um dos lados atualiza o outro para nao existir estado
+       em que a tela mostra uma coisa e o registro grava outra. */
+    const chaves=['termos_uso','privacidade','aviso_asaas'];
+    const todos=document.getElementById('rcb-aceitar-tudo');
+    const sincronizarTudo=()=>{ todos.checked=chaves.every(k=>st.termos[k]); };
+    chaves.forEach(k=>{
       const ck=document.getElementById('rcb-ck-'+k);
-      ck.addEventListener('change',ev=>{st.termos[k]=ev.target.checked;refreshCriar();});
+      ck.addEventListener('change',ev=>{st.termos[k]=ev.target.checked;sincronizarTudo();refreshCriar();});
+    });
+    todos.addEventListener('change',ev=>{
+      chaves.forEach(k=>{
+        st.termos[k]=ev.target.checked;
+        const ck=document.getElementById('rcb-ck-'+k);
+        if(ck) ck.checked=ev.target.checked;
+      });
+      refreshCriar();
     });
     document.getElementById('rcb-mkt').addEventListener('change',ev=>{st.termos.marketing=ev.target.checked;});
     bindNav(()=>{if(!(t.termos_uso&&t.privacidade&&t.aviso_asaas)){toast('É necessário aceitar os três documentos.');return false;}return true;},criar);
@@ -6699,12 +6849,21 @@ const RCB = (function(){
       '<span class="rcb-badge pending">● Verificação de identidade pendente</span>'+
       '<h2 class="card-title" style="text-align:center">Falta um passo rápido</h2>'+
       '<p class="page-sub">A verificação é feita no ambiente do Asaas, a instituição que cuida dos seus recebimentos. Abre em uma nova aba e leva cerca de 5 minutos.</p></div>'+
-      asaasNote('Você será direcionado ao <b>Asaas</b> para enviar uma selfie e concluir a verificação. A Mercs não tem acesso a esses dados.')+
+      asaasNote(st.onboardingUrl
+        ? 'Você será direcionado ao <b>Asaas</b> para enviar uma selfie e concluir a verificação. A Mercs não tem acesso a esses dados.'
+        : 'A verificação é feita no painel do <b>Asaas</b>. Entre com o mesmo e-mail que você cadastrou aqui — o Asaas envia um e-mail de acesso ao criar a conta. A Mercs não tem acesso a esses dados.')+
       '<div class="rcb-mini">'+miniLi('done','Conta de recebimento criada')+miniLi('active','Verificação de identidade (selfie)')+miniLi('','Recebimentos liberados')+'</div>'+
       '<div class="rcb-nav"><button class="rcb-btn primary" id="rcb-pv">Fazer verificação agora</button></div>'+
       '<div class="rcb-nav" style="margin-top:10px"><button class="rcb-btn ghost" id="rcb-check" style="flex:1">Já concluí — verificar status</button></div>'+
       '<p class="page-sub" style="text-align:center;margin:14px 0 0">Pode fechar esta tela. Assim que o Asaas aprovar, seus recebimentos são liberados automaticamente.</p></div>';
-    document.getElementById('rcb-pv').addEventListener('click',()=>{ if(st.onboardingUrl) window.open(st.onboardingUrl,'_blank','noopener'); else toast('Link de verificação indisponível. Tente recarregar.'); });
+    /* Nem toda resposta do Asaas traz um link direto de onboarding. Sem
+       fallback, o usuario ficava preso num toast de erro sem saida — o painel
+       do Asaas resolve a verificacao pelo mesmo e-mail do cadastro. */
+    document.getElementById('rcb-pv').addEventListener('click',()=>{
+      if(st.onboardingUrl){ window.open(st.onboardingUrl,'_blank','noopener'); return; }
+      window.open('https://www.asaas.com/login','_blank','noopener');
+      toast('Entre no Asaas com o e-mail que você cadastrou para concluir a verificação.');
+    });
     document.getElementById('rcb-check').addEventListener('click',async()=>{ await sincronizarStatus(); await carregarStatus(); render(); if(st.status==='ativo'){ travarPainel(false); toast('Conta aprovada! Você já pode cobrar.'); } else toast('Ainda em análise. Assim que aprovar, liberamos automaticamente.'); });
     iniciarPoll();
   }
@@ -6719,6 +6878,27 @@ const RCB = (function(){
   function pararPoll(){ if(pollTimer){clearInterval(pollTimer);pollTimer=null;} }
 
   /* ---------- estados finais ---------- */
+  function renderCobrancaPropria(){
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<div class="rcb-icon-ok" style="background:var(--accent-soft)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-dark)" stroke-width="1.9"><path d="M20 7H4a1 1 0 00-1 1v11a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>'+
+      '<h2 class="card-title" style="text-align:center">Você envia as cobranças</h2>'+
+      '<p class="page-sub">Quando o agente fechar uma venda, você recebe um aviso com o produto, a quantidade e o valor acordado. O pagamento você combina direto com o cliente, do seu jeito.</p>'+
+      '</div>'+
+      '<div class="rcb-edit-bloco">'+
+        '<h3 class="rcb-edit-titulo">Quer que a Mercs cuide disso?</h3>'+
+        '<p class="page-sub" style="margin:0 0 4px">Criando sua conta de recebimento, o agente já envia o link de pagamento para o cliente na hora do fechamento — e o dinheiro cai direto para você. São 4 perguntas simples.</p>'+
+        '<button class="rcb-btn primary" id="rcb-configurar-agora" style="flex:0 0 auto;min-width:220px;margin-top:12px">Criar conta de recebimento</button>'+
+      '</div></div>';
+    document.getElementById('rcb-configurar-agora').addEventListener('click', async ()=>{
+      /* volta ao inicio do wizard sem apagar o que ja foi digitado antes */
+      st.status='nao_configurado';
+      st.phase='form';
+      st.step=0;
+      abrirModal();
+      render();
+    });
+  }
+
   function renderAtivo(){
     const pixLabel=st.destinoDisplay||'PIX cadastrado';
     mount().innerHTML='<div class="card"><div class="rcb-center">'+
