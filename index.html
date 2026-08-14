@@ -512,7 +512,8 @@
   }
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
-  .hdemo{position:relative;z-index:2;background:var(--hd-bg) !important;padding:132px 0 96px;overflow:hidden}
+  .hdemo{position:relative;z-index:2;display:flex;flex-direction:column;
+    background:var(--hd-bg) !important;padding:132px 0 96px;overflow:hidden}
   .hdemo-atmos{position:absolute;inset:0;z-index:0;pointer-events:none}
   .hdemo-glow{position:absolute;border-radius:50%;filter:blur(90px)}
   .hdemo-glow.a{width:620px;height:620px;left:50%;top:48%;transform:translate(-50%,-50%);
@@ -523,12 +524,13 @@
     width:520px;height:70px;border-radius:50%;filter:blur(34px);
     background:radial-gradient(ellipse,rgba(139,212,80,.16),transparent 70%)}
 
-  .hdemo-intro{position:relative;z-index:2;max-width:780px;margin:0 auto 60px;padding:0 28px;text-align:center}
+  .hdemo-intro{position:relative;z-index:2;max-width:780px;margin:0 auto 30px;padding:0 28px;text-align:center}
   .hdemo-intro .eyebrow{margin-bottom:20px;justify-content:center}
   .hdemo-intro h1{font-size:clamp(32px,4.2vw,58px)}
   .hdemo-intro h1 .hl{color:var(--lime)}
-  .hdemo-lead{font-size:clamp(16px,1.25vw,18.5px);color:var(--mist);max-width:600px;margin:22px auto 30px}
-  .hdemo-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .hdemo-lead{font-size:clamp(16px,1.25vw,18.5px);color:var(--mist);max-width:600px;margin:22px auto 0}
+  .hdemo-ctas{position:relative;z-index:2;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+    padding:0 28px;margin:0 auto 58px}
 
   /* ---- palco: trilho | aparelho | trilho ---- */
   .hdemo-stage{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:0 28px;
@@ -661,13 +663,21 @@
   }
   @media (max-width:960px){
     .hdemo{padding:112px 0 72px}
-    .hdemo-stage{grid-template-columns:1fr;gap:30px;max-width:520px}
+    /* ordem no mobile: texto, aparelho, botoes, contador */
+    .hdemo-intro{order:1}
+    .hdemo-stage{order:2;grid-template-columns:1fr;gap:0;max-width:520px}
+    .hdemo-ctas{order:3;margin:78px auto 0;width:100%;max-width:400px}
+    .hdemo-meter{order:4;margin:26px auto 0}
     .hdemo-rail{display:contents}
-    .hdemo-device{order:-1}
-    .hdemo-tip{max-width:none;width:100%}
-    .hdemo-tip[data-tip="1"]{order:1}.hdemo-tip[data-tip="2"]{order:2}
-    .hdemo-tip[data-tip="3"]{order:3}.hdemo-tip[data-tip="4"]{order:4}
-    .hdemo-tip[data-tip="5"]{order:5}
+    /* o aviso da vez flutua sobre a lateral do aparelho e some quando passa a vez */
+    .hdemo-tip{position:absolute;z-index:6;top:118px;left:50%;
+      width:min(400px,calc(100vw - 24px));max-width:none;
+      transform:translateX(-50%) translateY(-8px);
+      opacity:0;pointer-events:none;
+      background:rgba(4,12,16,.94) !important;border-color:rgba(139,212,80,.45);
+      box-shadow:0 22px 50px -14px rgba(0,0,0,.92)}
+    .hdemo-tip.on{opacity:1;pointer-events:auto;transform:translateX(-50%)}
+    .hdemo-tip.done{opacity:0;pointer-events:none}
     .hdemo-glow.a{width:420px;height:420px}
     .hdemo-glow.b{width:280px;height:280px}
   }
@@ -724,10 +734,11 @@
       <span class="reveal-mask rd-3"><span>com ele agora.</span></span>
     </h1>
     <p class="hdemo-lead" data-fade>O aparelho abaixo não é um vídeo. É o mesmo vendedor que atende no WhatsApp dos nossos clientes, ligado agora. Pergunte, pechinche, tente fechar negócio.</p>
-    <div class="hdemo-ctas" data-fade>
-      <a class="btn big accent" href="https://www.mercs.com.br/acesso/">Criar minha conta grátis</a>
-      <a class="btn big ghost" href="#por-que">Por que ele vende mais</a>
-    </div>
+  </div>
+
+  <div class="hdemo-ctas" data-fade>
+    <a class="btn big accent" href="https://www.mercs.com.br/acesso/">Criar minha conta grátis</a>
+    <a class="btn big ghost" href="#por-que">Por que ele vende mais</a>
   </div>
 
   <div class="hdemo-stage">
@@ -1528,11 +1539,14 @@
   var CFG = {
     endpoint : 'https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/negotiate',
     anonKey  : '',
-    productId: '',
-    loja     : 'Loja exemplo',
-    iniciais : 'LE',
+    /* Monta Facil Informatica — loja de eletronicos de exemplo, 20 produtos.
+       Este e apenas o FOCO INICIAL: o agente enxerga o catalogo inteiro da
+       empresa e troca de foco sozinho conforme o visitante muda de assunto. */
+    productId: '27789bd0-d199-4f5e-95a7-166d8fd8f3c4',
+    loja     : 'Monta Fácil Informática',
+    iniciais : 'MF',
     maxMsgs  : 10,
-    primeira : 'Oi! Queria saber sobre o kit profissional.',
+    primeira : 'Oi! O que vocês vendem?',
     cadastro : 'https://www.mercs.com.br/acesso/'
   };
 
@@ -1557,7 +1571,18 @@
     input.classList.toggle('cheio', h > TETO);
   }
 
+  /* ?demodebug=1 zera o contador da sessao e mostra o motivo real de cada
+     interrupcao. Para o visitante comum nada disso aparece. */
+  var DEBUG = /[?&]demodebug=1/.test(location.search);
   var CHAVE = 'mercs_demo_usadas';
+  if (DEBUG){ try { sessionStorage.removeItem(CHAVE); } catch(e){} }
+
+  /* anonKey e opcional: a negotiate roda com verify_jwt=false e trata
+     requisicao sem Authorization como anonima. Preencha se o gateway exigir. */
+  if (!CFG.productId){
+    console.error('[Mercs] HERO DEMO SEM productId. ' +
+      'O visitante recebe o cartao de conversao ja na primeira mensagem.');
+  }
   var historico = [];      /* [{role:'user'|'assistant', content}] */
   var convId = null;       /* reinicia a cada carregamento de pagina */
   var enviando = false;
@@ -1660,6 +1685,14 @@
 
     /* uma mensagem so para os tres motivos: limite, fila e falha.
        Nenhuma delas deve parecer tela de erro para o visitante. */
+    if (motivo !== 'limite') console.warn('[Mercs] hero demo interrompido — motivo:', motivo);
+    if (DEBUG){
+      var dbg = document.createElement('p');
+      dbg.className = 'hdemo-sys';
+      dbg.textContent = '[debug] motivo real: ' + motivo;
+      thread.appendChild(dbg);
+    }
+
     var el = document.createElement('div');
     el.className = 'hdemo-wall';
     el.innerHTML = '<b>Para continuar conversando com o Mercs, crie sua conta agora.</b>' +
@@ -1693,8 +1726,7 @@
     digitando(true);
 
     if (!CFG.productId){
-      console.warn('[Mercs] hero demo sem productId configurado.');
-      setTimeout(function(){ digitando(false); enviando = false; parede('erro'); }, 700);
+      setTimeout(function(){ digitando(false); enviando = false; parede('sem-config'); }, 700);
       return;
     }
 
