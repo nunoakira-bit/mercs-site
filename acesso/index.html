@@ -1043,6 +1043,16 @@
   /* RECEBIMENTO — modal de configuração inicial.
      Bloqueante por decisão de produto: sem conta de recebimento o resto do
      painel produz telas que falham na venda. A única saída é concluir ou sair. */
+  .kb-offer{align-self:flex-end;max-width:86%;margin:2px 0 6px;padding:10px 12px;border-radius:12px;
+    background:var(--accent-soft) !important;border:1px solid var(--accent);
+    font-size:12.5px;line-height:1.5;color:var(--text-secondary);
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .kb-offer b{color:var(--text-primary);}
+  .kb-offer-btn{flex-shrink:0;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;
+    background:var(--accent);color:#fff;font-family:inherit;font-size:12.5px;font-weight:600;}
+  .kb-offer-btn:disabled{opacity:.6;cursor:default;}
+  .kb-offer.salvo{background:var(--green-bg) !important;border-color:var(--green);color:var(--text-primary);}
+
   .notif-det-overlay{position:fixed;inset:0;z-index:950;display:none;align-items:center;justify-content:center;
     padding:24px;background:rgba(16,24,40,.5);}
   .notif-det-overlay.open{display:flex;}
@@ -3170,7 +3180,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.19.0';
+const APP_VERSION='1.20.0';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -4804,8 +4814,57 @@ async function sendHumanMessage(){
   const frame=document.getElementById('atend-phone-frame');
   frame.insertAdjacentHTML('beforeend', `<div class="bubble out">${escapeHtml(text)}</div>`);
   if(data.entrega==='simulado') addSystemNote('Conversa de teste — nada foi enviado por WhatsApp.');
+  /* Sem isto a resposta do lojista morre dentro desta conversa: outro cliente
+     com a mesma dúvida amanhã ouviria de novo "vou confirmar com a equipe". */
+  ofereceSalvarConhecimento(text);
   frame.scrollTop=frame.scrollHeight;
   input.value='';
+}
+
+let currentAtendProductId=null;
+let currentAtendProduto='';
+
+/* Última pergunta do cliente na conversa: guardada junto da resposta porque a
+   busca é semântica sobre a mensagem do cliente — um trecho que contém a
+   pergunta casa muito melhor do que a resposta isolada. */
+function ultimaPerguntaDoCliente(){
+  const frame=document.getElementById('atend-phone-frame');
+  if(!frame) return '';
+  const entradas=[...frame.querySelectorAll('.bubble.in')];
+  const ultima=entradas[entradas.length-1];
+  return ultima ? ultima.textContent.trim().slice(0,500) : '';
+}
+
+function ofereceSalvarConhecimento(resposta){
+  if(!currentAtendProductId) return;
+  const frame=document.getElementById('atend-phone-frame');
+  const pergunta=ultimaPerguntaDoCliente();
+  const id='saveKb-'+Date.now();
+  frame.insertAdjacentHTML('beforeend',
+    `<div class="kb-offer" id="${id}">`+
+      `<span>Salvar esta resposta no material de <b>${escapeHtml(currentAtendProduto||'este produto')}</b>? A IA passa a responder sozinha da próxima vez.</span>`+
+      `<button type="button" class="kb-offer-btn">Salvar</button>`+
+    `</div>`);
+  const box=document.getElementById(id);
+  box.querySelector('.kb-offer-btn').addEventListener('click', async ()=>{
+    const btn=box.querySelector('.kb-offer-btn');
+    btn.disabled=true; btn.textContent='Salvando…';
+    let data=null, error=null;
+    try{
+      ({data, error}=await sb.functions.invoke('salvar-conhecimento',{
+        body:{product_id:currentAtendProductId, pergunta, resposta, conversation_id:currentAtendId}
+      }));
+    }catch(e){ error=e; }
+    if(error || !data || data.ok!==true){
+      btn.disabled=false; btn.textContent='Salvar';
+      showToast((data && data.error) || 'Não foi possível salvar agora. Tente de novo.');
+      return;
+    }
+    box.innerHTML='<span>✓ Guardado no material de <b>'+escapeHtml(data.produto||'')+'</b>. A IA já pode usar isso.</span>';
+    box.classList.add('salvo');
+    await refreshKbDocsFromDb().catch(()=>{});
+    updateBellBadge();
+  });
 }
 document.getElementById('atend-composer-send').addEventListener('click',sendHumanMessage);
 document.getElementById('atend-composer-input').addEventListener('keydown',e=>{
@@ -4816,6 +4875,8 @@ async function openAtendDrawer(id){
   const a=conversasCache.find(x=>x.id===id);
   if(!a) return;
   currentAtendId=id;
+  currentAtendProductId=a.productId||null;
+  currentAtendProduto=a.produto||'';
   currentMode = a.atendidoPor==='humano' ? 'humano' : 'ia';
   document.getElementById('atend-drawer-name').textContent=a.cliente;
   document.getElementById('atend-drawer-meta').textContent=a.produto+' · '+notifTimeLabel(a.minAgo);
