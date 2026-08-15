@@ -746,9 +746,11 @@
     justify-content:center;border:2px solid #fff;font-family:var(--font-sans);}
   .bell-badge.hide{display:none;}
 
+  /* z-index alto: sem ele o card de Atalhos Rápidos do dashboard ficava por
+     cima do painel e cobria as notificações. */
   .notif-panel{position:absolute;top:52px;right:0;width:380px;background:#fff;border:1px solid var(--border);
     border-radius:var(--radius-lg);box-shadow:var(--shadow-pop);opacity:0;pointer-events:none;
-    transform:translateY(-8px);transition:.16s ease;overflow:hidden;}
+    transform:translateY(-8px);transition:.16s ease;overflow:hidden;z-index:700;}
   .notif-panel.open{opacity:1;pointer-events:auto;transform:translateY(0);}
   .notif-panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;
     border-bottom:1px solid var(--border);}
@@ -986,7 +988,7 @@
   .ia-diag-fab{right:16px;bottom:16px;padding:14px;border-radius:50%;}
   .ia-diag-panel{right:10px;left:10px;width:auto;bottom:80px;max-height:min(75vh,600px);}
 
-  .notif-panel{position:fixed;top:64px;right:10px;left:10px;width:auto;}
+  .notif-panel{position:fixed;top:64px;right:10px;left:10px;width:auto;z-index:700;}
 
   #toast{left:14px;right:14px;bottom:16px;width:auto;justify-content:center;}
 
@@ -1041,6 +1043,25 @@
   /* RECEBIMENTO — modal de configuração inicial.
      Bloqueante por decisão de produto: sem conta de recebimento o resto do
      painel produz telas que falham na venda. A única saída é concluir ou sair. */
+  .notif-det-overlay{position:fixed;inset:0;z-index:950;display:none;align-items:center;justify-content:center;
+    padding:24px;background:rgba(16,24,40,.5);}
+  .notif-det-overlay.open{display:flex;}
+  .notif-det{width:100%;max-width:520px;max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+    background:#fff !important;border-radius:var(--radius-lg);box-shadow:var(--shadow-pop);overflow:hidden;}
+  .notif-det-head{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+  .notif-det-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--accent-dark);background:var(--accent-soft) !important;padding:3px 9px;border-radius:999px;}
+  .notif-det-titulo{margin:10px 0 4px;font-size:17.5px;font-weight:650;line-height:1.35;color:var(--text-primary);}
+  .notif-det-tempo{font-size:12.5px;color:var(--text-tertiary);}
+  .notif-det-corpo{padding:18px 24px;overflow-y:auto;flex:1;min-height:0;}
+  .notif-det-corpo p{margin:0;font-size:14.5px;line-height:1.6;color:var(--text-secondary);white-space:pre-wrap;}
+  .notif-det-pe{display:flex;gap:10px;justify-content:flex-end;padding:14px 24px 20px;flex-shrink:0;flex-wrap:wrap;}
+  @media (max-width:560px){
+    .notif-det-overlay{padding:0;}
+    .notif-det{max-width:none;height:100vh;max-height:100vh;border-radius:0;}
+    .notif-det-pe button{flex:1 1 100%;}
+  }
+
   .rcb-modal-overlay{position:fixed;inset:0;z-index:900;display:none;
     align-items:center;justify-content:center;padding:24px;
     background:rgba(16,24,40,.55);backdrop-filter:blur(2px);}
@@ -1211,6 +1232,22 @@
   .rcb-srow .k{color:var(--text-secondary);}
   .rcb-srow .v{font-weight:600;color:var(--text-primary);text-align:right;}
 </style>
+<!-- Detalhe de notificação: texto completo + caminho para resolver -->
+<div class="notif-det-overlay" id="notif-det-overlay" role="dialog" aria-modal="true" aria-labelledby="notif-det-titulo">
+  <div class="notif-det">
+    <div class="notif-det-head">
+      <span class="notif-det-tag" id="notif-det-tag">Notificação</span>
+      <h2 class="notif-det-titulo" id="notif-det-titulo">—</h2>
+      <span class="notif-det-tempo" id="notif-det-tempo"></span>
+    </div>
+    <div class="notif-det-corpo"><p id="notif-det-texto">—</p></div>
+    <div class="notif-det-pe">
+      <button type="button" class="btn-secondary" id="notif-det-fechar">Fechar</button>
+      <button type="button" class="btn-primary" id="notif-det-abrir" style="display:none;">Responder ao cliente</button>
+    </div>
+  </div>
+</div>
+
 <!-- RECEBIMENTO: modal de configuração inicial -->
 <div class="rcb-modal-overlay" id="rcb-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rcb-modal-titulo">
   <div class="rcb-modal">
@@ -3133,7 +3170,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.18.0';
+const APP_VERSION='1.19.0';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -3272,6 +3309,8 @@ const notifTipos={
     icon:'<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>'},
   guardrail_preco:{label:'Limite comercial',color:'var(--red)',bg:'var(--red-bg)',
     icon:'<path d="M12 2l9 4.5v5c0 5-3.5 8.5-9 10.5-5.5-2-9-5.5-9-10.5v-5z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>'},
+  ia_indisponivel:{label:'IA fora do ar',color:'var(--red)',bg:'var(--red-bg)',
+    icon:'<circle cx="12" cy="12" r="9"/><line x1="12" y1="7.5" x2="12" y2="12.5"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>'},
   duvida_tecnica:{label:'Dúvida técnica',color:'var(--accent-dark)',bg:'var(--accent-soft)',
     icon:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2 1.8-2 3.3"/><circle cx="12" cy="16.3" r="0.5" fill="currentColor"/>'},
   sistema:{label:'Sistema',color:'var(--text-secondary)',bg:'#F0F1F4',
@@ -3353,17 +3392,61 @@ function renderBellPanel(){
   });
 }
 
+/* Antes o clique apenas expandia e removia o item em 900ms: não dava tempo de
+   ler e não oferecia nenhuma ação. Agora abre um detalhe com o texto inteiro e
+   o caminho para resolver — abrir a conversa, quando o alerta vier de uma. */
 async function expandAndReadPanelItem(id, el){
-  if(el.classList.contains('expanded')) return;
-  el.classList.add('expanded');
+  abrirDetalheNotificacao(id);
   await marcarAlerta(id, {lido:true});
   updateBellBadge();
   renderNotifPage();
-  setTimeout(()=>{
+  if(el){
     el.classList.add('removing');
     setTimeout(()=>renderBellPanel(),260);
-  }, 900);
+  }
 }
+
+/* Detalhe da notificação. O alerta que nasce de uma conversa oferece o caminho
+   direto para respondê-la — sem isso o lojista lia o aviso e não sabia o que
+   fazer com ele. */
+let notifDetAtual=null;
+
+function abrirDetalheNotificacao(id){
+  const n=notifData().find(x=>String(x.id)===String(id));
+  if(!n) return;
+  notifDetAtual=n;
+  document.getElementById('notif-det-tag').textContent=(notifTipos[n.tipo]||notifTipos.outro).label;
+  document.getElementById('notif-det-titulo').textContent=n.titulo||'Notificação';
+  document.getElementById('notif-det-tempo').textContent=notifTimeLabel(n.minAgo);
+  document.getElementById('notif-det-texto').textContent=n.descricao||'';
+  const btn=document.getElementById('notif-det-abrir');
+  btn.style.display = n.atendId ? 'inline-flex' : 'none';
+  document.getElementById('notif-det-overlay').classList.add('open');
+  const painel=document.getElementById('notif-panel');
+  if(painel) painel.classList.remove('open');
+}
+
+function fecharDetalheNotificacao(){
+  document.getElementById('notif-det-overlay').classList.remove('open');
+  notifDetAtual=null;
+}
+
+document.getElementById('notif-det-fechar').addEventListener('click', fecharDetalheNotificacao);
+document.getElementById('notif-det-overlay').addEventListener('click',(e)=>{
+  if(e.target.id==='notif-det-overlay') fecharDetalheNotificacao();
+});
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape' && document.getElementById('notif-det-overlay').classList.contains('open')){
+    fecharDetalheNotificacao();
+  }
+});
+document.getElementById('notif-det-abrir').addEventListener('click',()=>{
+  const alvo=notifDetAtual && notifDetAtual.atendId;
+  fecharDetalheNotificacao();
+  if(!alvo) return;
+  switchView('atendimentos');
+  openAtendDrawer(alvo);
+});
 
 document.getElementById('mark-all-read-panel').addEventListener('click', async ()=>{
   await marcarTodosAlertasLidos();
@@ -4691,21 +4774,36 @@ function addSystemNote(text){
   frame.scrollTop=frame.scrollHeight;
 }
 
+/* A mensagem do lojista precisa CHEGAR ao cliente. Antes isto só gravava em
+   `mensagens`: o painel mostrava a bolha como enviada e o WhatsApp do cliente
+   nunca recebia nada. Agora quem grava é a Edge Function, e só depois de o
+   envio ter dado certo — o painel nunca mostra o que não saiu. */
 async function sendHumanMessage(){
   const input=document.getElementById('atend-composer-input');
+  const btn=document.getElementById('atend-composer-send');
   const text=input.value.trim();
   if(!text || currentMode!=='humano' || !currentAtendId) return;
-  const {error}=await sb.from('mensagens').insert({
-    conversa_id:currentAtendId, company_id:empresaAlvo(), role:'humano', content:text
-  });
-  if(error){ showToast('Erro ao enviar: '+error.message); return; }
-  await sb.from('conversas').update({
-    ultima_msg:text.slice(0,200), ultima_msg_role:'humano', ultima_msg_at:new Date().toISOString()
-  }).eq('id', currentAtendId);
+
+  input.disabled=true; if(btn) btn.disabled=true;
+  let data=null, error=null;
+  try{
+    ({data, error}=await sb.functions.invoke('enviar-mensagem-humana',{
+      body:{conversation_id: currentAtendId, text}
+    }));
+  }catch(e){ error=e; }
+  input.disabled=false; if(btn) btn.disabled=false; input.focus();
+
+  if(error || !data || data.ok===false){
+    const msg=(data && data.error) || 'Não foi possível enviar a mensagem ao cliente. Tente de novo.';
+    showToast(msg);
+    return; // sem bolha: nada foi entregue
+  }
+
   const c=conversasCache.find(x=>x.id===currentAtendId);
   if(c){ c.ultimaMsg=text; c.minAgo=0; }
   const frame=document.getElementById('atend-phone-frame');
   frame.insertAdjacentHTML('beforeend', `<div class="bubble out">${escapeHtml(text)}</div>`);
+  if(data.entrega==='simulado') addSystemNote('Conversa de teste — nada foi enviado por WhatsApp.');
   frame.scrollTop=frame.scrollHeight;
   input.value='';
 }
