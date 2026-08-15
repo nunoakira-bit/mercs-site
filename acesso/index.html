@@ -1659,6 +1659,14 @@
             <div class="field">
               <label class="field-label" for="f-descricao">Descrição</label>
               <textarea id="f-descricao" placeholder="O que é, para quem serve, principais características..." style="min-height:80px;"></textarea>
+
+              <!-- Esta linha vai para o resumo do catálogo que a IA recebe em toda
+                   mensagem. Escrita pelo lojista de propósito: um recorte automático
+                   da descrição pode capturar justamente o que dois produtos têm em
+                   comum, que é a causa da confusão entre variantes. -->
+              <label class="field-label" for="f-diferencial">O que diferencia este produto</label>
+              <input type="text" id="f-diferencial" maxlength="200" placeholder="Ex: Não acompanha cooler — versão sem caixa">
+              <p class="hint" style="margin:-8px 0 14px;">Uma linha dizendo o que distingue este item dos parecidos do seu catálogo. É o que a IA usa para responder “qual a diferença entre eles”. Se ficar em branco, usamos o começo da descrição.</p>
             </div>
 
             <div class="field">
@@ -3125,7 +3133,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.17.1';
+const APP_VERSION='1.18.0';
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -4996,7 +5004,7 @@ let productsCache=[];
 
 function dbProductToForm(p){
   return {
-    id:p.id, nome:p.nome, tipo:p.tipo, descricao:p.descricao||'',
+    id:p.id, nome:p.nome, tipo:p.tipo, descricao:p.descricao||'', diferencial:p.diferencial||'',
     precoPadrao:Number(p.preco_padrao).toFixed(2).replace('.',','),
     unidade:p.unidade, descontoMax:Number(p.desconto_max),
     estrategia:p.estrategia, regras:p.regras||[],
@@ -5241,6 +5249,7 @@ function resetForm(){
   document.getElementById('btn-salvar-label').textContent='Salvar produto';
   document.getElementById('f-nome').value='';
   document.getElementById('f-descricao').value='';
+  document.getElementById('f-diferencial').value='';
   setTipo('produto');
   document.getElementById('f-preco-padrao').value='';
   document.getElementById('f-unidade').value='Unidade';
@@ -5412,6 +5421,7 @@ function openProductForm(product){
     document.getElementById('btn-salvar-label').textContent='Salvar alterações';
     document.getElementById('f-nome').value=product.nome;
     document.getElementById('f-descricao').value=product.descricao||'';
+    document.getElementById('f-diferencial').value=product.diferencial||'';
     setTipo(product.tipo);
     document.getElementById('f-preco-padrao').value=product.precoPadrao;
     document.getElementById('f-unidade').value=product.unidade;
@@ -5452,6 +5462,7 @@ document.getElementById('btn-salvar-produto').addEventListener('click', async ()
   const payload={
     nome,
     descricao:document.getElementById('f-descricao').value.trim(),
+    diferencial:document.getElementById('f-diferencial').value.trim(),
     tipo:getTipo(),
     preco_padrao:parseValor(document.getElementById('f-preco-padrao').value),
     unidade:document.getElementById('f-unidade').value,
