@@ -628,6 +628,19 @@
      O admin da Mercs ve so os itens de administracao. Ao entrar no ambiente
      de um cliente (macro-view) ele passa a ver o menu da empresa. Nao ha
      toggle de contexto: a visibilidade e consequencia de onde voce esta. */
+  /* PAGAMENTO EM BREVE (v1): item Recebimento vira "Pagamentos · em breve". */
+  .nav-item.em-breve{cursor:default;position:relative;}
+  .nav-item.em-breve:hover{background:transparent;}
+  .nav-item.em-breve .nav-label{color:var(--text-tertiary);}
+  .nav-em-breve-badge{margin-left:auto;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--accent-dark);background:var(--accent-soft) !important;border:1px solid var(--accent-soft-border);
+    padding:2px 7px;border-radius:999px;white-space:nowrap;}
+  .sidebar.collapsed .nav-em-breve-badge{display:none;}
+  .nav-tip{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);z-index:80;width:220px;
+    background:#15171C !important;color:#fff !important;font-size:11.5px;line-height:1.45;padding:9px 11px;
+    border-radius:9px;box-shadow:var(--shadow-pop);opacity:0;visibility:hidden;transition:opacity .15s;pointer-events:none;}
+  .nav-tip.show{opacity:1;visibility:visible;}
+  @media (prefers-reduced-motion: reduce){ .nav-tip{transition:none;} }
   .nav-admin-item{display:none;}
   body.is-admin-user:not(.macro-view) .nav-admin-item{display:flex;}
   body.is-admin-user:not(.macro-view) .nav-company-item{display:none;}
@@ -1474,8 +1487,8 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 016 0"/></svg>
         <span class="nav-label">Vendas</span>
       </div>
-      <!-- RECEBIMENTO: item de menu -->
-      <div class="nav-item nav-company-item" data-view="recebimento" title="Recebimento">
+      <!-- RECEBIMENTO: item de menu (v1: vira "Pagamentos · em breve" via PAGAMENTO_ATIVO) -->
+      <div class="nav-item nav-company-item" id="nav-recebimento" data-view="recebimento" title="Recebimento">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>
         <span class="nav-label">Recebimento</span>
       </div>
@@ -3058,7 +3071,12 @@ async function onAuthReady(session){
      e o modal de configuracao invisivel, sem nenhum erro na tela. */
   const etapa=async (nome, fn)=>{ try{ await fn(); }catch(e){ console.warn('boot: '+nome, e); } };
 
-  await etapa('recebimento', ()=>RCB.afterLogin());
+  if(PAGAMENTO_ATIVO){
+    await etapa('recebimento', ()=>RCB.afterLogin());
+  }else{
+    /* v1: pagamentos "em breve" — sem onboarding de recebimento, sem trava do painel. */
+    aplicarPagamentoEmBreve();
+  }
   await etapa('produtos', refreshProductsFromDb);
   await etapa('conhecimento', refreshKbDocsFromDb);
   await etapa('atendimento', syncAtendimentoStatus);
@@ -3180,7 +3198,11 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.20.0';
+const APP_VERSION='1.21.0';
+/* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
+   com false, o onboarding de recebimento é pulado e o item de menu vira
+   "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
+const PAGAMENTO_ATIVO=false;
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
@@ -3212,10 +3234,35 @@ sidebarOverlay.addEventListener('click', closeMobileSidebar);
 /* ===================== navegação ===================== */
 document.querySelectorAll('.nav-item[data-view]').forEach(item=>{
   item.addEventListener('click',()=>{
+    if(item.classList.contains('em-breve')) return; /* v1: item "Pagamentos · em breve" não navega */
     switchView(item.dataset.view);
     closeMobileSidebar();
   });
 });
+
+/* v1: transforma o item Recebimento em "Pagamentos · em breve" (desabilitado)
+   e mostra um tooltip curto no clique. Totalmente reversível: com
+   PAGAMENTO_ATIVO=true esta função não roda e o Recebimento volta ao normal. */
+function aplicarPagamentoEmBreve(){
+  const nav=document.getElementById('nav-recebimento');
+  if(!nav || nav.classList.contains('em-breve')) return;
+  nav.classList.add('em-breve');
+  nav.setAttribute('title','Pagamentos integrados chegam em breve');
+  const lbl=nav.querySelector('.nav-label'); if(lbl) lbl.textContent='Pagamentos';
+  const badge=document.createElement('span');
+  badge.className='nav-em-breve-badge'; badge.textContent='Em breve';
+  nav.appendChild(badge);
+  const tip=document.createElement('div');
+  tip.className='nav-tip';
+  tip.textContent='Pagamentos integrados chegam em breve. Por enquanto, quando o agente fecha uma venda você recebe um aviso para dar o encaminhamento.';
+  nav.appendChild(tip);
+  nav.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    tip.classList.add('show');
+    clearTimeout(nav._tipTimer);
+    nav._tipTimer=setTimeout(()=>tip.classList.remove('show'), 4000);
+  });
+}
 
 /* ===================== visão inicial =====================
    Não existe mais modo de contexto nem classe admin-mode. O menu que aparece
@@ -3317,6 +3364,8 @@ const notifTipos={
     icon:'<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>'},
   cobranca_aprovacao:{label:'Cobrança para aprovar',color:'var(--green)',bg:'var(--green-bg)',
     icon:'<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>'},
+  venda_fechada:{label:'Venda fechada',color:'var(--green)',bg:'var(--green-bg)',
+    icon:'<path d="M20 7L9 18l-5-5"/>'},
   guardrail_preco:{label:'Limite comercial',color:'var(--red)',bg:'var(--red-bg)',
     icon:'<path d="M12 2l9 4.5v5c0 5-3.5 8.5-9 10.5-5.5-2-9-5.5-9-10.5v-5z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>'},
   ia_indisponivel:{label:'IA fora do ar',color:'var(--red)',bg:'var(--red-bg)',
