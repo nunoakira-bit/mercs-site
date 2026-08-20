@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Mercs — Atendimento</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2093%2099%22%3E%3Cpath%20d%3D%22M63.4229%200C74.8325%200.000195848%2084.0818%209.24951%2084.082%2020.6592V63.4229C84.0818%2074.8326%2074.8326%2084.0818%2063.4229%2084.082H35.6309C32.4793%2089.6868%2022.5646%2095.2524%2017.5967%2097.4355C17.7623%2092.7386%2018.0255%2088.2165%2017.4131%2083.8271C7.54567%2082.2696%200.000176901%2073.728%200%2063.4229V20.6592C0.000255633%209.24954%209.24954%200.000255648%2020.6592%200H63.4229Z%22%20fill%3D%22%230A3D48%22%2F%3E%20%3Cg%3E%20%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M67.1782%2055.7683H84.5153C89.1223%2055.7683%2092.8913%2059.5373%2092.8913%2064.1443V81.4814C92.8913%2086.0884%2089.1223%2089.8574%2084.5153%2089.8574H67.1782C62.5712%2089.8574%2058.8022%2086.0878%2058.8022%2081.4814V64.1443C58.8022%2059.5373%2062.5718%2055.7683%2067.1782%2055.7683Z%22%20fill%3D%22%237FC93F%22%2F%3E%20%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M88.1795%2084.3893C83.6394%2084.4858%2081.0261%2087.2166%2078.3107%2089.5957C79.412%2091.9541%2083.6658%2094.3514%2085.757%2095.2706C85.6204%2091.3979%2085.3161%2087.8171%2088.1795%2084.3887V84.3893Z%22%20fill%3D%22%237FC93F%22%2F%3E%20%3C%2Fg%3E%3C%2Fsvg%3E">
+  <title>Mercs — Atendimento</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light only">
 <meta name="theme-color" content="#F6F7F9">
@@ -46,10 +47,9 @@
   .app-row{flex:1;display:flex;gap:16px;min-height:0;}
 
   /* ---------- header (full width) ---------- */
-  .topbar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  .topbar{flex-shrink:0;display:flex;align-items:center;gap:14px;
     padding:24px;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-card);
     transition:background .25s ease, border-color .25s ease;}
-  body.admin-mode .topbar{background:#F4F6FC;border-color:#DCE3F5;}
   body.macro-view .topbar{background:#F3F6FB;border-color:#D9E4F2;}
 
   /* ---------- sidebar ---------- */
@@ -60,10 +60,12 @@
 
   .sidebar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:8px;}
   .sidebar.collapsed .sidebar-top{flex-direction:column;gap:14px;}
-  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;color:var(--text-primary);min-width:0;}
-  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--green);flex-shrink:0;}
-  .logo-text{white-space:nowrap;overflow:hidden;}
-  .sidebar.collapsed .logo-text{display:none;}
+  .logo{display:flex;align-items:center;min-width:0;}
+  .logo .logo-mark{display:none;width:26px;height:auto;flex-shrink:0;}
+  .logo .logo-full{display:block;height:30px;width:auto;flex-shrink:0;}
+  .sidebar.collapsed .logo{justify-content:center;}
+  .sidebar.collapsed .logo .logo-full{display:none;}
+  .sidebar.collapsed .logo .logo-mark{display:block;}
 
   .sidebar-toggle{width:26px;height:26px;border-radius:7px;border:1px solid var(--border-strong);background:#fff;
     display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);cursor:pointer;
@@ -296,8 +298,32 @@
   #auth-screen{min-height:100vh;align-items:center;justify-content:center;background:var(--bg-page);padding:24px;}
   .auth-card{width:100%;max-width:380px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);
     padding:30px 28px;box-shadow:var(--shadow-card);}
+  .blocked-badge{width:52px;height:52px;margin:0 auto 18px;border-radius:14px;display:flex;align-items:center;
+    justify-content:center;background:#FEF2F2;color:#DC2626;}
+  .blocked-badge svg{width:25px;height:25px;}
+  .blocked-title{margin:0 0 10px;font-size:19px;font-weight:700;color:var(--text-primary);}
+  .blocked-text{margin:0 0 22px;font-size:13.5px;line-height:1.55;color:var(--text-secondary);}
+  .blocked-cta{display:block;text-decoration:none;height:42px;line-height:42px;border-radius:10px;
+    background:var(--accent);color:#fff;font-size:14px;font-weight:600;transition:.15s;}
+  .blocked-cta:hover{filter:brightness(1.08);}
+  .blocked-back{margin-top:12px;background:none;border:none;color:var(--text-tertiary);font-size:12.5px;
+    cursor:pointer;font-family:var(--font-sans);text-decoration:underline;}
+  .pw-meter{margin:-6px 0 14px;}
+  .pw-bar{height:4px;border-radius:3px;background:var(--border);overflow:hidden;margin-bottom:9px;}
+  .pw-bar span{display:block;height:100%;width:0;border-radius:3px;transition:width .25s,background .25s;background:#DC2626;}
+  .pw-bar.n2 span{background:#F59E0B;} .pw-bar.n3 span{background:#84CC16;} .pw-bar.n4 span{background:#16A34A;}
+  .pw-reqs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .pw-reqs li{font-size:11.5px;line-height:1.5;color:var(--text-tertiary);padding-left:17px;position:relative;}
+  .pw-reqs li::before{content:'○';position:absolute;left:0;top:0;font-size:10px;}
+  .pw-reqs li.ok{color:#067647;}
+  .pw-reqs li.ok::before{content:'✓';font-weight:700;}
   .auth-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;margin-bottom:22px;}
   .auth-logo .dot{width:9px;height:9px;border-radius:50%;background:var(--green);display:inline-block;}
+  .auth-link-btn{display:block;margin:12px auto 0;background:none;border:none;padding:4px 6px;
+    font-family:inherit;font-size:13px;color:var(--text-secondary);text-decoration:underline;cursor:pointer;}
+  .auth-link-btn:hover{color:var(--accent-dark);}
+  .auth-form-intro{font-size:13.5px;line-height:1.55;color:var(--text-secondary);margin:0 0 16px;}
+
   .auth-tabs{display:flex;background:#F2F3F5;border-radius:10px;padding:3px;margin-bottom:20px;}
   .auth-tab{flex:1;height:34px;border:none;background:transparent;border-radius:8px;font-size:13px;font-weight:600;
     color:var(--text-secondary);cursor:pointer;font-family:var(--font-sans);transition:.15s;}
@@ -488,7 +514,7 @@
   #toast svg{width:15px;height:15px;color:var(--green);}
 
   /* ---------- notificações ---------- */
-  .topbar-right{display:flex;align-items:center;gap:12px;}
+  .topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
   .bell-wrap{position:relative;}
 
   /* ---------- status do atendimento por IA (topbar) ---------- */
@@ -517,41 +543,19 @@
   #shortcut-chamados-urgentes, #shortcut-add-pdf{display:none !important;}
 
   /* ---------- seletor de contexto no topbar (dropdown, só admins) ---------- */
-  .ctx-switcher{position:relative;display:none;}
-  body.is-admin-user .ctx-switcher{display:block;}
-  body.is-admin-user #client-logo-placeholder{display:none;}
-  .ctx-switcher-btn{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 8px;background:transparent;
-    border:1px solid transparent;border-radius:11px;cursor:pointer;font-family:var(--font-sans);transition:.15s;}
-  .ctx-switcher-btn:hover{background:var(--bg-hover);border-color:var(--border);}
-  .ctx-ico{width:34px;height:34px;border-radius:9px;background:var(--accent-soft);color:var(--accent-dark);
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .ctx-ico svg{width:18px;height:18px;}
-  .ctx-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.25;}
-  .ctx-eyebrow{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-tertiary);}
-  .ctx-name{font-size:13.5px;font-weight:600;color:var(--text-primary);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .ctx-chevron{width:15px;height:15px;color:var(--text-tertiary);flex-shrink:0;transition:transform .15s;}
-  .ctx-switcher.open .ctx-chevron{transform:rotate(180deg);}
-  .ctx-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:260px;background:var(--bg-card);
-    border:1px solid var(--border);border-radius:13px;box-shadow:0 14px 36px rgba(16,24,40,.16);padding:6px;display:none;}
-  .ctx-menu.open{display:block;}
-  .ctx-menu-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:none;
-    padding:10px 12px;border-radius:9px;cursor:pointer;font-family:var(--font-sans);}
-  .ctx-menu-item:hover{background:var(--bg-hover);}
-  .ctx-menu-item svg{width:18px;height:18px;color:var(--text-secondary);flex-shrink:0;}
-  .ctx-menu-item span{display:flex;flex-direction:column;line-height:1.3;}
-  .ctx-mi-t{font-size:13.5px;font-weight:600;color:var(--text-primary);}
-  .ctx-mi-d{font-size:11.5px;color:var(--text-tertiary);}
-  .ctx-menu-item.active{background:var(--accent-soft);}
-  .ctx-menu-item.active .ctx-mi-t{color:var(--accent-dark);}
+    .ctx-menu-item.active .ctx-mi-t{color:var(--accent-dark);}
 
-  /* ---------- visão macro: drawer de conversa em somente leitura ---------- */
+  /* ---------- visão macro: nota de contexto no drawer de conversa ----------
+     A classe .read-only nao e mais aplicada pelo JS: no ambiente do cliente o
+     admin age e a auditoria registra. As regras ficam como fallback visual. */
   #atend-drawer.read-only #atend-close-venda-btn,
   #atend-drawer.read-only .mode-row,
   #atend-drawer.read-only .composer{display:none !important;}
   #atend-drawer.read-only .phone-frame{margin-bottom:16px;}
   .read-only-note{display:none;margin:0 0 14px;padding:9px 12px;border-radius:9px;background:var(--accent-soft);
     color:var(--accent-dark);font-size:12px;font-weight:500;align-items:center;gap:7px;}
-  #atend-drawer.read-only .read-only-note{display:flex;}
+  #atend-drawer.read-only .read-only-note,
+  #atend-drawer.ambiente-cliente .read-only-note{display:flex;}
   .read-only-note svg{width:15px;height:15px;flex-shrink:0;}
   #atend-drawer.read-only .cobranca-banner{display:none !important;}
   .cobranca-banner{margin:0 0 14px;padding:12px 14px;border-radius:11px;background:var(--green-bg);
@@ -620,11 +624,62 @@
   .comm-type-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-dark);font-weight:600;}
 
   /* ---------- modo administração: esconde o que é específico da própria empresa ---------- */
-  .nav-item[data-view="admin"]{display:none;}
-  body.is-admin-user.admin-mode .nav-item[data-view="admin"]{display:flex;}
-  body.admin-mode .nav-company-item{display:none !important;}
-  body.admin-mode #ia-status-toggle{display:none;}
-  body.admin-mode #bell-wrap{display:none;}
+  /* ---------- menu: admin e empresa nao coexistem ----------
+     O admin da Mercs ve so os itens de administracao. Ao entrar no ambiente
+     de um cliente (macro-view) ele passa a ver o menu da empresa. Nao ha
+     toggle de contexto: a visibilidade e consequencia de onde voce esta. */
+  /* PAGAMENTO EM BREVE (v1): item Recebimento vira "Pagamentos · em breve". */
+  .nav-item.em-breve{cursor:default;position:relative;}
+  .nav-item.em-breve:hover{background:transparent;}
+  .nav-item.em-breve .nav-label{color:var(--text-tertiary);}
+  .nav-em-breve-badge{margin-left:auto;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--accent-dark);background:var(--accent-soft) !important;border:1px solid var(--accent-soft-border);
+    padding:2px 7px;border-radius:999px;white-space:nowrap;}
+  .sidebar.collapsed .nav-em-breve-badge{display:none;}
+  .nav-tip{position:fixed;transform:translateY(-50%);z-index:200;width:230px;
+    background:#15171C !important;color:#fff !important;font-size:11.5px;line-height:1.45;padding:9px 11px;
+    border-radius:9px;box-shadow:var(--shadow-pop);opacity:0;visibility:hidden;transition:opacity .14s;pointer-events:none;}
+  .nav-tip.show{opacity:1;visibility:visible;}
+  @media (prefers-reduced-motion: reduce){ .nav-tip{transition:none;} }
+  /* SAC */
+  .sac-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;}
+  .sac-status{font-size:13px;color:var(--text-tertiary);}
+  .sac-status.ok{color:var(--green);}
+  .sac-status.err{color:#DC2626;}
+  .nav-admin-item{display:none;}
+  body.is-admin-user:not(.macro-view) .nav-admin-item{display:flex;}
+  body.is-admin-user:not(.macro-view) .nav-company-item{display:none;}
+  body.is-admin-user:not(.macro-view) #ia-status-toggle{display:none;}
+  body.is-admin-user:not(.macro-view) #bell-wrap{display:none;}
+  body.is-admin-user:not(.macro-view) #client-logo-placeholder{display:none;}
+
+  /* ---------- menu de acoes da linha (Usuarios) ---------- */
+  .hist-campo{display:block;font-size:12.5px;line-height:1.6;}
+  .hist-campo b{font-weight:600;color:var(--text-primary);}
+  .hist-de{color:#B42318;text-decoration:line-through;}
+  .hist-para{color:#067647;}
+  .hist-badge{display:inline-block;padding:1px 7px;border-radius:6px;font-size:10.5px;font-weight:700;
+    letter-spacing:.03em;text-transform:uppercase;background:var(--accent-soft);color:var(--accent-dark);}
+  .row-menu{position:relative;display:inline-block;}
+  .row-menu-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);
+    color:var(--text-secondary);cursor:pointer;font-size:16px;line-height:1;font-family:var(--font-sans);
+    display:flex;align-items:center;justify-content:center;transition:.15s;}
+  .row-menu-btn:hover{border-color:var(--accent);color:var(--accent-dark);}
+  /* position:fixed porque .data-table usa overflow:hidden para arredondar os
+     cantos — um menu absoluto seria cortado pela borda da tabela. A posição
+     é calculada no clique, em abrirMenuLinha(). */
+  .row-menu-list{position:fixed;z-index:800;min-width:190px;display:none;
+    background:var(--bg-card);border:1px solid var(--border);border-radius:11px;padding:5px;
+    box-shadow:0 12px 30px rgba(16,24,40,.15);}
+  .row-menu.open .row-menu-list{display:block;}
+  .row-menu-list button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;
+    border:none;padding:9px 11px;border-radius:8px;cursor:pointer;font-family:var(--font-sans);font-size:13px;
+    color:var(--text-primary);}
+  .row-menu-list button:hover{background:var(--bg-hover);}
+  .row-menu-list button svg{width:16px;height:16px;flex-shrink:0;color:var(--text-secondary);}
+  .row-menu-list button.danger{color:#B42318;}
+  .row-menu-list button.danger svg{color:#B42318;}
+  tr.row-inativa td{opacity:.55;}
 
   /* ---------- assistente de diagnóstico com IA ---------- */
   .ia-diag-fab{position:fixed;right:26px;bottom:26px;z-index:900;display:none;align-items:center;gap:10px;
@@ -633,7 +688,11 @@
     box-shadow:0 8px 24px rgba(79,70,229,.35);transition:transform .15s, box-shadow .15s;}
   .ia-diag-fab:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(79,70,229,.45);}
   .ia-diag-fab svg{width:21px;height:21px;flex-shrink:0;}
-  body.authed:not(.admin-mode):not(.macro-view) .ia-diag-fab.available{display:flex;}
+  body.authed:not(.macro-view):not(.is-admin-user) .ia-diag-fab.available{display:flex;}
+  /* o FAB vive em z-index alto e cobria a caixa de texto dos drawers: some
+     enquanto houver drawer ou modal aberto */
+  body:has(.drawer.open) .ia-diag-fab,
+  body:has(.rcb-modal-overlay.open) .ia-diag-fab{display:none !important;}
   body.macro-view #btn-testar-ia{display:none;}
   .ia-diag-panel{position:fixed;right:26px;bottom:88px;z-index:901;width:420px;max-height:min(72vh,640px);
     background:var(--bg-card);border:1px solid var(--border);border-radius:16px;box-shadow:0 20px 50px rgba(16,24,40,.22);
@@ -705,9 +764,11 @@
     justify-content:center;border:2px solid #fff;font-family:var(--font-sans);}
   .bell-badge.hide{display:none;}
 
+  /* z-index alto: sem ele o card de Atalhos Rápidos do dashboard ficava por
+     cima do painel e cobria as notificações. */
   .notif-panel{position:absolute;top:52px;right:0;width:380px;background:#fff;border:1px solid var(--border);
     border-radius:var(--radius-lg);box-shadow:var(--shadow-pop);opacity:0;pointer-events:none;
-    transform:translateY(-8px);transition:.16s ease;overflow:hidden;}
+    transform:translateY(-8px);transition:.16s ease;overflow:hidden;z-index:700;}
   .notif-panel.open{opacity:1;pointer-events:auto;transform:translateY(0);}
   .notif-panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;
     border-bottom:1px solid var(--border);}
@@ -945,7 +1006,7 @@
   .ia-diag-fab{right:16px;bottom:16px;padding:14px;border-radius:50%;}
   .ia-diag-panel{right:10px;left:10px;width:auto;bottom:80px;max-height:min(75vh,600px);}
 
-  .notif-panel{position:fixed;top:64px;right:10px;left:10px;width:auto;}
+  .notif-panel{position:fixed;top:64px;right:10px;left:10px;width:auto;z-index:700;}
 
   #toast{left:14px;right:14px;bottom:16px;width:auto;justify-content:center;}
 
@@ -991,14 +1052,261 @@
 .wa-qr-box.visible{display:block;}
 .wa-qr-box img{width:220px;height:220px;image-rendering:pixelated;border-radius:8px;}
 .wa-privacy{margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--accent-soft);font-size:13px;line-height:1.55;color:var(--text-primary);}
+
+  /* ===================== RECEBIMENTO (BaaS/Asaas) ===================== */
+  #view-recebimento .rcb-steps{display:flex;gap:8px;margin:2px 0 6px;}
+  #view-recebimento .rcb-seg{height:5px;flex:1;border-radius:999px;background:var(--border);}
+  #view-recebimento .rcb-seg.done{background:var(--accent);}
+  #view-recebimento .rcb-seg.now{background:var(--accent);opacity:.45;}
+  /* RECEBIMENTO — modal de configuração inicial.
+     Bloqueante por decisão de produto: sem conta de recebimento o resto do
+     painel produz telas que falham na venda. A única saída é concluir ou sair. */
+  .kb-offer{align-self:flex-end;max-width:86%;margin:2px 0 6px;padding:10px 12px;border-radius:12px;
+    background:var(--accent-soft) !important;border:1px solid var(--accent);
+    font-size:12.5px;line-height:1.5;color:var(--text-secondary);
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .kb-offer b{color:var(--text-primary);}
+  .kb-offer-btn{flex-shrink:0;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;
+    background:var(--accent);color:#fff;font-family:inherit;font-size:12.5px;font-weight:600;}
+  .kb-offer-btn:disabled{opacity:.6;cursor:default;}
+  .kb-offer.salvo{background:var(--green-bg) !important;border-color:var(--green);color:var(--text-primary);}
+
+  .notif-det-overlay{position:fixed;inset:0;z-index:950;display:none;align-items:center;justify-content:center;
+    padding:24px;background:rgba(16,24,40,.5);}
+  .notif-det-overlay.open{display:flex;}
+  .notif-det{width:100%;max-width:520px;max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+    background:#fff !important;border-radius:var(--radius-lg);box-shadow:var(--shadow-pop);overflow:hidden;}
+  .notif-det-head{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+  .notif-det-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--accent-dark);background:var(--accent-soft) !important;padding:3px 9px;border-radius:999px;}
+  .notif-det-titulo{margin:10px 0 4px;font-size:17.5px;font-weight:650;line-height:1.35;color:var(--text-primary);}
+  .notif-det-tempo{font-size:12.5px;color:var(--text-tertiary);}
+  .notif-det-corpo{padding:18px 24px;overflow-y:auto;flex:1;min-height:0;}
+  .notif-det-corpo p{margin:0;font-size:14.5px;line-height:1.6;color:var(--text-secondary);white-space:pre-wrap;}
+  .notif-det-pe{display:flex;gap:10px;justify-content:flex-end;padding:14px 24px 20px;flex-shrink:0;flex-wrap:wrap;}
+  @media (max-width:560px){
+    .notif-det-overlay{padding:0;}
+    .notif-det{max-width:none;height:100vh;max-height:100vh;border-radius:0;}
+    .notif-det-pe button{flex:1 1 100%;}
+  }
+
+  .rcb-modal-overlay{position:fixed;inset:0;z-index:900;display:none;
+    align-items:center;justify-content:center;padding:24px;
+    background:rgba(16,24,40,.55);backdrop-filter:blur(2px);}
+  .rcb-modal-overlay.open{display:flex;}
+  body.rcb-modal-aberto{overflow:hidden;}
+  .rcb-modal{width:100%;max-width:620px;max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+    background:#fff !important;border-radius:var(--radius-lg);box-shadow:var(--shadow-pop);overflow:hidden;}
+  .rcb-modal-head{padding:22px 26px 0;flex-shrink:0;}
+  .rcb-modal-marca{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+  .rcb-modal-titulo{font-size:15px;font-weight:600;color:var(--text-secondary);margin:0;}
+  .rcb-modal-corpo{padding:18px 26px 4px;overflow-y:auto;flex:1;min-height:0;}
+  /* dentro do modal o wizard nao repete a moldura de card */
+  .rcb-modal-corpo .card{background:transparent !important;border:none;box-shadow:none;padding:0;margin:0;}
+  .rcb-modal-pe{padding:12px 26px 20px;flex-shrink:0;text-align:center;}
+  .rcb-modal-sair{background:none;border:none;padding:6px 10px;cursor:pointer;font-family:inherit;
+    font-size:13px;color:var(--text-tertiary);text-decoration:underline;border-radius:var(--radius-sm);}
+  .rcb-modal-sair:hover{color:var(--text-secondary);}
+  .rcb-modal-sair:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  @media (max-width:620px){
+    .rcb-modal-overlay{padding:0;}
+    .rcb-modal{max-width:none;max-height:100vh;height:100vh;border-radius:0;}
+    .rcb-modal-head{padding:18px 18px 0;}
+    .rcb-modal-corpo{padding:16px 18px 4px;}
+    .rcb-modal-pe{padding:10px 18px 16px;}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .rcb-modal-overlay.open .rcb-modal{animation:rcbModalIn .18s ease-out;}
+    @keyframes rcbModalIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  }
+
+  /* RECEBIMENTO — acolhimento (passo 0). Alvos grandes e uma acao so:
+     a tela precisa funcionar para quem tem pouca familiaridade digital. */
+  .rcb-bv{max-width:520px;margin:0 auto;padding:14px 4px 6px;text-align:center;}
+  .rcb-bv-icone{width:64px;height:64px;margin:0 auto 20px;border-radius:50%;
+    background:var(--accent-soft) !important;display:flex;align-items:center;justify-content:center;}
+  .rcb-bv-icone svg{width:30px;height:30px;color:var(--accent-dark);}
+  .rcb-bv-titulo{font-size:23px;line-height:1.3;font-weight:650;color:var(--text-primary);margin:0 0 14px;}
+  .rcb-bv-texto{font-size:16px;line-height:1.6;color:var(--text-secondary);margin:0 0 12px;}
+  .rcb-bv-texto b{color:var(--text-primary);font-weight:650;}
+  .rcb-bv-tenha{display:flex;align-items:center;gap:11px;text-align:left;margin:22px 0 26px;
+    padding:14px 16px;border-radius:var(--radius-md);background:var(--bg-card-alt) !important;
+    border:1px solid var(--border);font-size:15px;line-height:1.5;color:var(--text-primary);}
+  .rcb-bv-tenha svg{width:22px;height:22px;flex-shrink:0;color:var(--text-secondary);}
+  .rcb-bv-tenha b{font-weight:650;}
+  .rcb-bv .rcb-nav{justify-content:center;}
+  .rcb-bv .rcb-btn.primary{flex:0 0 auto;min-width:220px;height:50px;font-size:16px;}
+  @media (max-width:560px){
+    .rcb-bv-titulo{font-size:21px;}
+    .rcb-bv .rcb-btn.primary{width:100%;min-width:0;}
+  }
+  /* Testar com a IA — contexto do produto em foco */
+  .ia-test-contexto{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:0 28px 14px;}
+  .ia-test-foco{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .ia-test-foco .rot{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--text-tertiary);}
+  .ia-test-foco strong{font-size:14px;font-weight:600;color:var(--text-primary);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ia-test-foco strong.indefinido{color:var(--text-secondary);font-style:italic;font-weight:500;}
+  .ia-test-reset{flex-shrink:0;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);
+    padding:7px 12px;font-family:inherit;font-size:13px;color:var(--text-secondary);cursor:pointer;}
+  .ia-test-reset:hover{background:var(--bg-card-alt) !important;color:var(--text-primary);}
+  .ia-test-vazio{margin:auto;padding:24px 18px;text-align:center;font-size:13.5px;line-height:1.5;
+    color:var(--text-tertiary);max-width:280px;}
+  .sim-nota{align-self:center;margin:10px 4px 2px;padding:6px 12px;border-radius:999px;
+    background:var(--bg-card-alt) !important;border:1px solid var(--border);
+    font-size:11.5px;color:var(--text-tertiary);text-align:center;}
+
+  .wa-catalogo-nota{display:flex;align-items:flex-start;gap:11px;margin-top:16px;padding:13px 15px;
+    border-radius:var(--radius-md);background:var(--bg-card-alt) !important;border:1px solid var(--border);
+    font-size:13.5px;line-height:1.55;color:var(--text-secondary);}
+  .wa-catalogo-nota svg{width:19px;height:19px;flex-shrink:0;margin-top:1px;color:var(--accent);}
+  .wa-catalogo-nota b{color:var(--text-primary);font-weight:650;}
+
+  .rcb-bv-alternativa{display:block;margin:16px auto 0;background:none;border:none;padding:6px 10px;
+    font-family:inherit;font-size:13.5px;color:var(--text-secondary);text-decoration:underline;cursor:pointer;
+    border-radius:var(--radius-sm);}
+  .rcb-bv-alternativa:hover{color:var(--accent-dark);}
+  .rcb-bv-alternativa:disabled{opacity:.6;cursor:default;}
+
+  .proximo-passo{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px;
+    padding:20px 22px;border-radius:var(--radius-lg);border:1px solid var(--accent);
+    background:var(--accent-soft) !important;}
+  .pp-icone{width:46px;height:46px;flex-shrink:0;border-radius:50%;background:#fff !important;
+    display:flex;align-items:center;justify-content:center;}
+  .pp-icone svg{width:24px;height:24px;color:var(--accent-dark);}
+  .pp-texto{flex:1 1 260px;min-width:0;}
+  .pp-texto h2{margin:0 0 4px;font-size:17px;font-weight:650;color:var(--text-primary);line-height:1.35;}
+  .pp-texto p{margin:0;font-size:14px;line-height:1.55;color:var(--text-secondary);}
+  .pp-btn{flex:0 0 auto;height:44px;}
+  @media (max-width:640px){ .pp-btn{width:100%;} }
+
+  .rcb-aceitar-tudo{display:flex;align-items:center;gap:10px;margin:0 0 16px;padding:13px 15px;
+    border-radius:var(--radius-md);border:1px solid var(--accent);background:var(--accent-soft) !important;
+    font-size:14.5px;font-weight:600;color:var(--text-primary);cursor:pointer;}
+  .rcb-aceitar-tudo input{width:18px;height:18px;flex-shrink:0;cursor:pointer;}
+
+  .rcb-modal-pular{display:block;width:100%;margin:0 0 8px;background:none;border:none;padding:8px 10px;
+    cursor:pointer;font-family:inherit;font-size:13.5px;color:var(--accent-dark);text-decoration:underline;
+    border-radius:var(--radius-sm);}
+  .rcb-modal-pular:hover{color:var(--text-primary);}
+
+  .rcb-edit-bloco{margin-top:22px;padding-top:20px;border-top:1px solid var(--border);}
+  .rcb-edit-titulo{font-size:15px;font-weight:650;color:var(--text-primary);margin:0 0 4px;}
+  /* campo bloqueado: precisa parecer informacao, nao um campo que falhou */
+  .rcb-field-lock .rcb-input:disabled{background:var(--bg-card-alt) !important;color:var(--text-secondary);
+    cursor:default;-webkit-text-fill-color:var(--text-secondary);opacity:1;}
+  .rcb-field-lock .rcb-input:disabled::placeholder{color:var(--text-tertiary);font-style:italic;}
+  .rcb-btn-link{display:inline-flex;align-items:center;gap:8px;margin-top:14px;text-decoration:none;}
+  .rcb-btn-link svg{width:15px;height:15px;}
+
+  .rcb-req{color:var(--red);margin-left:3px;font-weight:700;text-decoration:none;
+    border:none;cursor:help;}
+  .rcb-legenda{font-size:12.5px;color:var(--text-tertiary);margin:0 0 16px;}
+  .rcb-field{display:block;margin:0 0 14px;}
+  .rcb-field>span{display:block;font-size:13px;font-weight:600;color:var(--text-primary);margin:0 0 6px;}
+  .rcb-field small{display:block;color:var(--text-secondary);font-weight:400;font-size:12.5px;margin-top:5px;}
+  .rcb-input,.rcb-select{width:100%;padding:11px 12px;font-size:14.5px;font-family:inherit;color:var(--text-primary) !important;background:#fff !important;border:1px solid var(--border-strong);border-radius:var(--radius-sm);outline:none;}
+  .rcb-input:focus,.rcb-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+  .rcb-hint{margin:-6px 0 13px;font-size:12.5px;line-height:1.45;color:var(--text-tertiary);}
+  .rcb-row{display:flex;gap:12px;}
+  .rcb-row>*{flex:1;min-width:0;}
+  .rcb-err{color:var(--red);font-size:12.5px;margin:-8px 0 12px;}
+  .rcb-opt{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;cursor:pointer;border:1px solid var(--border-strong);border-radius:var(--radius-sm);margin-bottom:10px;background:#fff !important;}
+  .rcb-opt:hover{border-color:var(--accent);}
+  .rcb-opt.on{border-color:var(--accent);background:var(--accent-soft) !important;}
+  .rcb-cbox{width:20px;height:20px;border-radius:6px;border:2px solid var(--border-strong);display:grid;place-items:center;flex:0 0 auto;margin-top:1px;background:#fff !important;}
+  .rcb-opt.on .rcb-cbox{background:var(--accent) !important;border-color:var(--accent);}
+  .rcb-cbox svg{width:12px;height:12px;display:none;}
+  .rcb-opt.on .rcb-cbox svg{display:block;}
+  .rcb-opt .t{font-weight:600;font-size:14px;color:var(--text-primary);}
+  .rcb-opt .d{color:var(--text-secondary);font-size:12.5px;margin-top:2px;}
+  .rcb-asaas{display:flex;gap:10px;align-items:flex-start;background:#F0F6FA !important;border:1px solid #D8E6EE;border-radius:var(--radius-sm);padding:11px 12px;font-size:12.5px;color:#37505C !important;margin:6px 0;}
+  .rcb-asaas .b{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.03em;color:#0A6CB0 !important;border:1px solid #B9D6E8;border-radius:6px;padding:2px 6px;background:#fff !important;}
+  .rcb-doc{border:1px solid var(--border-strong);border-radius:var(--radius-sm);margin-bottom:12px;overflow:hidden;}
+  .rcb-doc .hd{padding:12px 14px 10px;border-bottom:1px solid var(--border);background:#fff !important;}
+  .rcb-doc .hd .num{display:block;font-size:11.5px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
+  .rcb-doc .hd h3{margin:0;font-size:15.5px;font-weight:650;color:var(--text-primary);line-height:1.3;}
+  .rcb-doc .bd{max-height:140px;overflow:auto;padding:13px 14px;font-size:12.5px;color:var(--text-secondary);background:var(--bg-card-alt) !important;}
+  .rcb-doc .ft{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--border);}
+  .rcb-doc .ft .rcb-chk{min-height:32px;}
+  .rcb-chk{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--text-primary);}
+  .rcb-chk input{width:17px;height:17px;accent-color:var(--accent);}
+  .rcb-nav{display:flex;gap:10px;margin-top:18px;}
+  .rcb-btn{padding:12px 16px;font-size:14.5px;font-weight:600;border-radius:var(--radius-sm);border:1px solid transparent;cursor:pointer;font-family:inherit;}
+  .rcb-btn.primary{flex:1;background:var(--accent) !important;color:#fff !important;}
+  .rcb-btn.primary:disabled{background:#B9B4EE !important;cursor:not-allowed;}
+  .rcb-btn.ghost{background:#fff !important;color:var(--text-primary) !important;border-color:var(--border-strong);padding:12px 20px;}
+  .rcb-center{text-align:center;padding:14px 6px;}
+  .rcb-spin{width:36px;height:36px;border-radius:999px;border:3px solid var(--border);border-top-color:var(--accent);margin:6px auto 14px;animation:rcbspin 1s linear infinite;}
+  @keyframes rcbspin{to{transform:rotate(360deg);}}
+  .rcb-icon-ok{width:54px;height:54px;border-radius:999px;display:grid;place-items:center;margin:6px auto 12px;background:var(--green-bg) !important;}
+  .rcb-badge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;margin:4px 0 10px;}
+  .rcb-badge.pending{background:var(--amber-bg) !important;color:var(--amber) !important;}
+  .rcb-badge.ok{background:var(--green-bg) !important;color:var(--green) !important;}
+  .rcb-mini{max-width:360px;margin:14px auto 0;text-align:left;}
+  .rcb-mini .li{display:flex;gap:10px;align-items:center;padding:7px 0;font-size:13.5px;color:var(--text-secondary);}
+  .rcb-mini .dot{width:17px;height:17px;border-radius:999px;border:2px solid var(--border-strong);flex:0 0 auto;}
+  .rcb-mini .li.done{color:var(--text-primary);}
+  .rcb-mini .li.done .dot{background:var(--green) !important;border-color:var(--green);}
+  .rcb-mini .li.active .dot{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-bg);}
+  .rcb-preview{font-size:12.5px;color:var(--text-secondary);background:var(--bg-card-alt) !important;border:1px dashed var(--border-strong);border-radius:var(--radius-sm);padding:10px 12px;margin-top:2px;}
+  .rcb-preview b{color:var(--text-primary);}
+  .rcb-srow{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .rcb-srow:last-child{border-bottom:none;}
+  .rcb-srow .k{color:var(--text-secondary);}
+  .rcb-srow .v{font-weight:600;color:var(--text-primary);text-align:right;}
 </style>
+<!-- Detalhe de notificação: texto completo + caminho para resolver -->
+<div class="notif-det-overlay" id="notif-det-overlay" role="dialog" aria-modal="true" aria-labelledby="notif-det-titulo">
+  <div class="notif-det">
+    <div class="notif-det-head">
+      <span class="notif-det-tag" id="notif-det-tag">Notificação</span>
+      <h2 class="notif-det-titulo" id="notif-det-titulo">—</h2>
+      <span class="notif-det-tempo" id="notif-det-tempo"></span>
+    </div>
+    <div class="notif-det-corpo"><p id="notif-det-texto">—</p></div>
+    <div class="notif-det-pe">
+      <button type="button" class="btn-secondary" id="notif-det-fechar">Fechar</button>
+      <button type="button" class="btn-primary" id="notif-det-abrir" style="display:none;">Responder ao cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECEBIMENTO: modal de configuração inicial -->
+<div class="rcb-modal-overlay" id="rcb-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rcb-modal-titulo">
+  <div class="rcb-modal">
+    <div class="rcb-modal-head">
+      <span class="rcb-modal-marca">Mercs</span>
+      <h2 class="rcb-modal-titulo" id="rcb-modal-titulo">Conta de recebimento</h2>
+    </div>
+    <div class="rcb-modal-corpo" id="rcb-mount-modal"></div>
+    <div class="rcb-modal-pe">
+      <button type="button" class="rcb-modal-pular" id="rcb-modal-pular">Pular por enquanto — envio a cobrança por conta própria</button>
+      <button type="button" class="rcb-modal-sair" id="rcb-modal-sair">Sair da conta</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
 <!-- ===================== AUTENTICAÇÃO ===================== -->
 <div id="auth-screen">
-  <div class="auth-card">
+  <div class="auth-card" id="blocked-card" style="display:none;text-align:center;">
+    <div class="blocked-badge" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+    </div>
+    <h2 class="blocked-title">Conta bloqueada</h2>
+    <p class="blocked-text">O acesso desta conta está suspenso e o atendimento por IA foi desligado. Fale com o suporte para regularizar e reativar.</p>
+    <a class="blocked-cta" id="blocked-support" href="#">Falar com o suporte</a>
+    <button class="blocked-back" id="blocked-back" type="button">Entrar com outra conta</button>
+  </div>
+  <div class="auth-card" id="login-card">
     <div class="auth-logo" style="margin-bottom:26px;">
       <svg width="146" height="60" viewBox="0 0 240 99" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mercs">
         <path d="M63.4229 0C74.8325 0.000195848 84.0818 9.24951 84.082 20.6592V63.4229C84.0818 74.8326 74.8326 84.0818 63.4229 84.082H35.6309C32.4793 89.6868 22.5646 95.2524 17.5967 97.4355C17.7623 92.7386 18.0255 88.2165 17.4131 83.8271C7.54567 82.2696 0.000176901 73.728 0 63.4229V20.6592C0.000255633 9.24954 9.24954 0.000255648 20.6592 0H63.4229Z" fill="#0A3D48"/>
@@ -1025,20 +1333,62 @@
       <input type="password" id="login-senha" class="auth-input" placeholder="••••••••" required autocomplete="current-password">
       <p class="auth-error" id="login-error"></p>
       <button type="submit" class="btn-primary auth-submit" id="login-submit" style="justify-content:center;">Entrar</button>
+      <button type="button" class="auth-link-btn" id="link-esqueci-senha">Esqueci minha senha</button>
+    </form>
+
+    <!-- Recuperar senha: passo 1, pedir o e-mail -->
+    <form id="form-recuperar" class="auth-form" style="display:none;">
+      <p class="auth-form-intro">Digite o e-mail da sua conta. Enviamos um link para você criar uma senha nova.</p>
+      <label class="field-label" for="recuperar-email">E-mail</label>
+      <input type="email" id="recuperar-email" class="auth-input" placeholder="voce@empresa.com" required autocomplete="username">
+      <p class="auth-error" id="recuperar-error"></p>
+      <button type="submit" class="btn-primary auth-submit" id="recuperar-submit" style="justify-content:center;">Enviar link</button>
+      <button type="button" class="auth-link-btn" id="link-voltar-login">Voltar para o login</button>
+    </form>
+
+    <!-- Recuperar senha: passo 2, definir a nova senha (chega aqui pelo link do e-mail) -->
+    <form id="form-nova-senha" class="auth-form" style="display:none;">
+      <p class="auth-form-intro">Crie sua nova senha.</p>
+      <label class="field-label" for="nova-senha-1">Nova senha</label>
+      <input type="password" id="nova-senha-1" class="auth-input" placeholder="Crie uma senha forte" required minlength="8" autocomplete="new-password">
+      <div class="pw-meter" id="pw-meter-recuperar" aria-live="polite">
+        <div class="pw-bar"><span id="pw-bar-fill-recuperar"></span></div>
+        <ul class="pw-reqs">
+          <li data-req="len">Pelo menos 8 caracteres</li>
+          <li data-req="case">Maiúscula e minúscula</li>
+          <li data-req="num">Ao menos um número</li>
+          <li data-req="sym">Ao menos um símbolo</li>
+          <li data-req="obv">Não conter seu e-mail nem sequências óbvias</li>
+        </ul>
+      </div>
+      <label class="field-label" for="nova-senha-2">Confirme a nova senha</label>
+      <input type="password" id="nova-senha-2" class="auth-input" placeholder="Repita a senha" required autocomplete="new-password">
+      <p class="auth-error" id="nova-senha-error"></p>
+      <button type="submit" class="btn-primary auth-submit" id="nova-senha-submit" style="justify-content:center;">Salvar nova senha</button>
     </form>
 
     <!-- Cadastro -->
     <form id="form-signup" class="auth-form" style="display:none;">
       <label class="field-label" for="signup-empresa">Nome da empresa</label>
-      <input type="text" id="signup-empresa" class="auth-input" placeholder="Ex: Negotia Store" required>
+      <input type="text" id="signup-empresa" class="auth-input" placeholder="Ex: Mercs Store" required>
       <label class="field-label" for="signup-nome">Seu nome</label>
       <input type="text" id="signup-nome" class="auth-input" placeholder="Seu nome completo" required>
       <label class="field-label" for="signup-email">E-mail</label>
       <input type="email" id="signup-email" class="auth-input" placeholder="voce@empresa.com" required autocomplete="username">
       <label class="field-label" for="signup-senha">Senha</label>
-      <input type="password" id="signup-senha" class="auth-input" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+      <input type="password" id="signup-senha" class="auth-input" placeholder="Crie uma senha forte" required minlength="8" autocomplete="new-password">
+      <div class="pw-meter" id="pw-meter" aria-live="polite">
+        <div class="pw-bar"><span id="pw-bar-fill"></span></div>
+        <ul class="pw-reqs">
+          <li data-req="len">Pelo menos 8 caracteres</li>
+          <li data-req="case">Maiúscula e minúscula</li>
+          <li data-req="num">Ao menos um número</li>
+          <li data-req="sym">Ao menos um símbolo</li>
+          <li data-req="obv">Não conter seu e-mail nem sequências óbvias</li>
+        </ul>
+      </div>
       <label class="field-label" for="signup-senha-confirm">Confirmar senha</label>
-      <input type="password" id="signup-senha-confirm" class="auth-input" placeholder="Repita a senha" required minlength="6" autocomplete="new-password">
+      <input type="password" id="signup-senha-confirm" class="auth-input" placeholder="Repita a senha" required minlength="8" autocomplete="new-password">
       <p class="auth-error" id="signup-error"></p>
       <button type="submit" class="btn-primary auth-submit" id="signup-submit" style="justify-content:center;">Criar conta gratuita</button>
     </form>
@@ -1059,29 +1409,6 @@
         <span class="client-logo-plus">+</span>
       </div>
       <span>LOGO DO CLIENTE</span>
-    </div>
-
-    <div class="ctx-switcher" id="ctx-switcher">
-      <button class="ctx-switcher-btn" id="ctx-switcher-btn" type="button">
-        <span class="ctx-ico" id="ctx-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>
-        </span>
-        <span class="ctx-text">
-          <span class="ctx-eyebrow" id="ctx-eyebrow">Contexto</span>
-          <span class="ctx-name" id="ctx-name">Minha empresa</span>
-        </span>
-        <svg class="ctx-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="ctx-menu" id="ctx-menu">
-        <button class="ctx-menu-item" data-mode="empresa" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>
-          <span><span class="ctx-mi-t">Minha empresa</span><span class="ctx-mi-d">Seu próprio ambiente</span></span>
-        </button>
-        <button class="ctx-menu-item" data-mode="admin" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-          <span><span class="ctx-mi-t">Administração</span><span class="ctx-mi-d">Gerenciar todos os clientes</span></span>
-        </button>
-      </div>
     </div>
 
     <div class="topbar-right">
@@ -1120,7 +1447,18 @@
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-top">
-      <div class="logo"><span class="dot"></span><span class="logo-text">Negotia AI</span></div>
+      <div class="logo"><svg class="logo-mark" viewBox="0 0 93 99" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mercs"><path d="M63.4229 0C74.8325 0.000195848 84.0818 9.24951 84.082 20.6592V63.4229C84.0818 74.8326 74.8326 84.0818 63.4229 84.082H35.6309C32.4793 89.6868 22.5646 95.2524 17.5967 97.4355C17.7623 92.7386 18.0255 88.2165 17.4131 83.8271C7.54567 82.2696 0.000176901 73.728 0 63.4229V20.6592C0.000255633 9.24954 9.24954 0.000255648 20.6592 0H63.4229Z" fill="#0A3D48"/>
+        <g>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M67.1782 55.7683H84.5153C89.1223 55.7683 92.8913 59.5373 92.8913 64.1443V81.4814C92.8913 86.0884 89.1223 89.8574 84.5153 89.8574H67.1782C62.5712 89.8574 58.8022 86.0878 58.8022 81.4814V64.1443C58.8022 59.5373 62.5718 55.7683 67.1782 55.7683Z" fill="#7FC93F"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M88.1795 84.3893C83.6394 84.4858 81.0261 87.2166 78.3107 89.5957C79.412 91.9541 83.6658 94.3514 85.757 95.2706C85.6204 91.3979 85.3161 87.8171 88.1795 84.3887V84.3893Z" fill="#7FC93F"/>
+        </g></svg><svg class="logo-full" viewBox="0 0 240 99" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mercs">
+        <path d="M63.4229 0C74.8325 0.000195848 84.0818 9.24951 84.082 20.6592V63.4229C84.0818 74.8326 74.8326 84.0818 63.4229 84.082H35.6309C32.4793 89.6868 22.5646 95.2524 17.5967 97.4355C17.7623 92.7386 18.0255 88.2165 17.4131 83.8271C7.54567 82.2696 0.000176901 73.728 0 63.4229V20.6592C0.000255633 9.24954 9.24954 0.000255648 20.6592 0H63.4229Z" fill="#0A3D48"/>
+        <g>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M67.1782 55.7683H84.5153C89.1223 55.7683 92.8913 59.5373 92.8913 64.1443V81.4814C92.8913 86.0884 89.1223 89.8574 84.5153 89.8574H67.1782C62.5712 89.8574 58.8022 86.0878 58.8022 81.4814V64.1443C58.8022 59.5373 62.5718 55.7683 67.1782 55.7683Z" fill="#7FC93F"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M88.1795 84.3893C83.6394 84.4858 81.0261 87.2166 78.3107 89.5957C79.412 91.9541 83.6658 94.3514 85.757 95.2706C85.6204 91.3979 85.3161 87.8171 88.1795 84.3887V84.3893Z" fill="#7FC93F"/>
+        </g>
+        <path d="M166.449 41.7822C172.922 41.7822 176.991 46.4063 176.991 53.5723V55.7451H160.901C161.456 58.3807 163.444 60.0918 166.126 60.0918C168.25 60.0917 169.723 59.0755 170.851 57.6533L171.073 57.3643L175.927 60.9238C173.708 63.7438 170.055 65.3623 166.449 65.3623C159.513 65.3622 153.966 60.7384 153.966 53.5723C153.966 46.406 159.514 41.7823 166.449 41.7822ZM210.972 41.7822C213.608 41.7822 216.798 42.5688 218.971 44.7881L214.394 49.5957C213.701 48.6251 212.406 47.8858 210.973 47.8857C207.506 47.8857 205.425 50.1976 205.425 53.5723C205.425 56.9472 207.506 59.2598 210.973 59.2598C212.499 59.2597 213.608 58.4738 214.394 57.5488L218.971 62.3574C216.798 64.5767 213.608 65.3623 210.972 65.3623C204.037 65.3622 198.489 60.7383 198.489 53.5723C198.489 46.406 204.037 41.7824 210.972 41.7822ZM230.114 41.7822C232.981 41.7823 236.151 42.477 238.238 44.5381L238.436 44.7422L234.182 48.9492C233.165 47.7007 231.824 47.0537 230.16 47.0537C229.004 47.0537 227.617 47.5621 227.617 48.9023C227.617 52.2311 239.314 49.4116 239.314 57.9648C239.314 63.6979 233.766 65.3623 228.958 65.3623C225.814 65.3623 222.346 64.576 220.127 62.3105L224.335 57.6416C225.629 59.2132 227.155 60.0917 229.235 60.0918C230.807 60.0918 232.379 59.6753 232.38 58.4736C232.38 54.8672 220.682 57.9184 220.682 49.3652C220.682 44.0945 225.398 41.7822 230.114 41.7822ZM130.339 53.4336H130.431L138.014 32.0732H148.88V64.8076H141.667V39.7021H141.574L132.974 64.8076H127.472L119.197 39.7021H119.104V64.8076H111.891V32.0732H122.803L130.339 53.4336ZM194.698 41.7822C195.484 41.7822 196.364 41.8288 197.01 42.0137V48.3477C196.039 48.0705 195.068 47.8858 194.052 47.8857C188.781 47.8857 188.133 50.9371 188.133 55.4219V64.8076H181.198V42.3379H188.134V45.9434H188.225C189.704 43.2159 191.647 41.7823 194.698 41.7822ZM165.802 46.7764C162.75 46.7765 161.086 48.8573 160.901 51.0303H170.055C170.102 48.7186 168.298 46.7764 165.802 46.7764Z" fill="#213D45"/>
+      </svg></div>
       <button class="sidebar-toggle" id="sidebar-toggle" title="Recolher menu" aria-label="Recolher menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
@@ -1150,9 +1488,18 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="9" width="14" height="10" rx="2.5"/><circle cx="9.5" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="14" r="1" fill="currentColor" stroke="none"/><path d="M12 9V5.5"/><circle cx="12" cy="4" r="1.1" fill="currentColor" stroke="none"/></svg>
         <span class="nav-label">Agente</span>
       </div>
+      <div class="nav-item nav-company-item" data-view="sac" title="SAC">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8A8.5 8.5 0 0112.5 20a8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 014 11.5 8.5 8.5 0 018.7 4a8.4 8.4 0 013.8-.9h.5A8.48 8.48 0 0121 11z"/><path d="M8.5 11h7M8.5 14h4"/></svg>
+        <span class="nav-label">SAC</span>
+      </div>
       <div class="nav-item nav-company-item" data-view="vendas" title="Vendas">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 016 0"/></svg>
         <span class="nav-label">Vendas</span>
+      </div>
+      <!-- RECEBIMENTO: item de menu (v1: vira "Pagamentos · em breve" via PAGAMENTO_ATIVO) -->
+      <div class="nav-item nav-company-item" id="nav-recebimento" data-view="recebimento" title="Recebimento">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>
+        <span class="nav-label">Recebimento</span>
       </div>
       <div class="nav-item nav-company-item" data-view="saude" title="Saúde da Operação">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg>
@@ -1163,9 +1510,17 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.6 7.6 0 000-2l1.9-1.5-2-3.4-2.2.6a7.6 7.6 0 00-1.7-1l-.3-2.3H9.9l-.3 2.3a7.6 7.6 0 00-1.7 1l-2.2-.6-2 3.4L5.6 11a7.6 7.6 0 000 2l-1.9 1.5 2 3.4 2.2-.6a7.6 7.6 0 001.7 1l.3 2.3h4.2l.3-2.3a7.6 7.6 0 001.7-1l2.2.6 2-3.4z"/></svg>
         <span class="nav-label">Configurações</span>
       </div>
-      <div class="nav-item" data-view="admin" title="Administração">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-        <span class="nav-label">Administração</span>
+      <div class="nav-item nav-admin-item" data-view="usuarios" title="Usuários">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/></svg>
+        <span class="nav-label">Usuários</span>
+      </div>
+      <div class="nav-item nav-admin-item" data-view="custos" title="Custos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        <span class="nav-label">Custos</span>
+      </div>
+      <div class="nav-item nav-admin-item" data-view="historico" title="Histórico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+        <span class="nav-label">Histórico</span>
       </div>
     </div>
     <div class="sidebar-footer">
@@ -1175,7 +1530,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
     </div>
-    <div class="sidebar-version" id="sidebar-version" title="Versão do Negotia AI">Negotia AI · v1.0.0</div>
+    <div class="sidebar-version" id="sidebar-version" title="Versão do Mercs">Mercs · v1.0.0</div>
   </aside>
 
   <main class="main">
@@ -1185,12 +1540,25 @@
 
       <div class="macro-banner" id="macro-banner">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
-        <span class="mb-text">Você está vendo o ambiente de <strong id="macro-company-name">—</strong> em modo somente leitura.</span>
+        <span class="mb-text">Você está no ambiente de <strong id="macro-company-name">—</strong>. Tudo que você alterar aqui fica registrado no histórico da conta.</span>
         <button class="mb-back" id="macro-back-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px;height:14px;"><polyline points="15 18 9 12 15 6"/></svg>Voltar para Administração</button>
       </div>
 
       <!-- ===================== DASHBOARD ===================== -->
       <section class="view active" id="view-dashboard">
+        <!-- Depois de configurar o recebimento o lojista ficava sem saber o que
+             fazer. Outro modal empilharia bloqueio sobre bloqueio: este cartao
+             fica no topo do Dashboard e some sozinho quando o WhatsApp conecta. -->
+        <div class="proximo-passo" id="proximo-passo-wa" style="display:none;">
+          <div class="pp-icone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 11.5a8.4 8.4 0 01-9 8.4 8.5 8.5 0 01-4-1L3 21l2.1-4.9A8.4 8.4 0 013.6 11.5a8.4 8.4 0 018.4-8.4h.5a8.4 8.4 0 018 8z"/></svg>
+          </div>
+          <div class="pp-texto">
+            <h2>Agora é só conectar seu WhatsApp e começar a vender!</h2>
+            <p>Clique no botão abaixo, gere o QR code e escaneie com o celular que atende seus clientes. Leva menos de um minuto.</p>
+          </div>
+          <button class="btn-primary pp-btn" id="pp-conectar-wa">Conectar meu WhatsApp</button>
+        </div>
         <div class="page-head">
           <div>
             <h1>Dashboard de atendimentos</h1>
@@ -1360,6 +1728,14 @@
             <div class="field">
               <label class="field-label" for="f-descricao">Descrição</label>
               <textarea id="f-descricao" placeholder="O que é, para quem serve, principais características..." style="min-height:80px;"></textarea>
+
+              <!-- Esta linha vai para o resumo do catálogo que a IA recebe em toda
+                   mensagem. Escrita pelo lojista de propósito: um recorte automático
+                   da descrição pode capturar justamente o que dois produtos têm em
+                   comum, que é a causa da confusão entre variantes. -->
+              <label class="field-label" for="f-diferencial">O que diferencia este produto</label>
+              <input type="text" id="f-diferencial" maxlength="200" placeholder="Ex: Não acompanha cooler — versão sem caixa">
+              <p class="hint" style="display:block;margin:6px 0 16px;line-height:1.5;">Uma linha dizendo o que distingue este item dos parecidos do seu catálogo. É o que a IA usa para responder “qual a diferença entre eles”. Se ficar em branco, usamos o começo da descrição.</p>
             </div>
 
             <div class="field">
@@ -1830,7 +2206,7 @@
               </div>
             </div>
             <button class="btn-primary agente-cta" id="agente-cta-btn" type="button" style="justify-content:center;">Experimente grátis por 1 semana</button>
-            <p class="agente-hero-note">Quer ativar? Fale com a equipe Negotia para liberar o período de teste.</p>
+            <p class="agente-hero-note">Quer ativar? Fale com a equipe Mercs para liberar o período de teste.</p>
           </div>
         </div>
       </section>
@@ -1849,6 +2225,36 @@
           <div id="skills-list" style="margin-top:10px;"></div>
           <div id="skills-loading" class="empty-state" style="display:none;"><p>Carregando técnicas…</p></div>
         </div>
+      </section>
+
+      <!-- SAC: informações gerais da empresa que a IA usa em qualquer conversa -->
+      <section class="view" id="view-sac">
+        <div class="page-head">
+          <div>
+            <h1>SAC</h1>
+            <p class="page-sub">Informações gerais que a IA usa para atender em qualquer conversa — como baixar o app, como se cadastrar, horários, políticas de troca.</p>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-title">Informações gerais</p>
+          <p class="card-sub">Escreva num texto só tudo que a IA deve saber para tirar as dúvidas comuns dos seus clientes, independente do produto. A IA consulta isso automaticamente durante as conversas.</p>
+          <textarea id="sac-texto" maxlength="20000" style="min-height:300px;margin-top:10px;" placeholder="Ex.:&#10;Como baixar o app: procure “Minha Loja” na App Store ou Google Play.&#10;Como se cadastrar: toque em Criar conta e informe seu CPF e e-mail.&#10;Horário de atendimento: seg a sex, 9h às 18h.&#10;Trocas e devoluções: até 7 dias após o recebimento."></textarea>
+          <div class="sac-footer">
+            <span class="sac-status" id="sac-status">—</span>
+            <button type="button" class="btn-primary" id="sac-salvar">Salvar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECEBIMENTO: tela -->
+      <section class="view" id="view-recebimento">
+        <div class="page-head">
+          <div>
+            <h1>Recebimento</h1>
+            <p class="page-sub">Configure como você recebe pelas vendas fechadas pelo agente.</p>
+          </div>
+        </div>
+        <div id="rcb-mount"></div>
       </section>
 
       <!-- ===================== CONFIGURAÇÕES ===================== -->
@@ -1912,6 +2318,9 @@
               <button type="button" data-value="auto">Enviar link automaticamente</button>
             </div>
             <p class="hint" style="margin:10px 0 0;" id="cobranca-modo-hint">No modo de aprovação, você recebe um alerta e libera o link com um clique — recomendado no início.</p>
+            <!-- A comissao so incide quando a venda passa pelo link da Mercs:
+                 dizer isso aqui evita o lojista descobrir na primeira fatura. -->
+            <p class="hint comissao-aviso" id="cobranca-comissao-aviso" style="display:none;"></p>
           </div>
 
           <div style="margin-top:16px;">
@@ -1934,18 +2343,16 @@
             <p class="hint" style="margin:12px 0 0;">Abra o WhatsApp no celular da empresa → Dispositivos conectados → Conectar dispositivo, e escaneie o código acima.</p>
           </div>
 
-          <div class="field" style="margin-top:16px;margin-bottom:0;">
-            <label class="field-label" for="wa-produto-select">Produto atendido no WhatsApp</label>
-            <select id="wa-produto-select" class="auth-input" style="margin-bottom:0;">
-              <option value="">Selecione um produto…</option>
-            </select>
-            <p class="hint" style="margin:8px 0 0;">Por enquanto, a IA negocia um produto por canal. Novas mensagens no WhatsApp abrem conversas sobre este produto.</p>
+          <!-- A IA conhece o catalogo inteiro e troca de produto conforme o
+               cliente pede: escolher um produto por canal deixou de existir. -->
+          <div class="wa-catalogo-nota">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7H4a1 1 0 00-1 1v11a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+            <span>A IA atende sobre <b>todos os produtos do seu catálogo</b>. Ela identifica o que o cliente procura durante a conversa — você não precisa escolher nada aqui.</span>
           </div>
 
           <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
             <button class="btn-primary" id="wa-connect-btn">Conectar WhatsApp</button>
             <button class="btn-secondary" id="wa-disconnect-btn" style="display:none;">Desconectar</button>
-            <button class="btn-secondary" id="wa-produto-save">Salvar produto</button>
           </div>
 
           <div class="wa-privacy">
@@ -1955,11 +2362,11 @@
       </section>
 
       <!-- ===================== ADMINISTRAÇÃO (somente admin) ===================== -->
-      <section class="view" id="view-admin">
+      <section class="view" id="view-custos">
         <div class="page-head">
           <div>
-            <h1>Administração</h1>
-            <p class="subtitle">Gerencie todos os clientes da plataforma Negotia AI.</p>
+            <h1>Custos</h1>
+            <p class="subtitle">Quanto cada cliente consome de IA.</p>
           </div>
         </div>
 
@@ -1979,6 +2386,15 @@
           </table>
           <p class="drawer-note" id="custos-nota" style="margin-top:10px;"></p>
         </section>
+      </section>
+
+      <section class="view" id="view-usuarios">
+        <div class="page-head">
+          <div>
+            <h1>Usuários</h1>
+            <p class="subtitle">Todos os clientes da plataforma. Clique numa linha para abrir o ambiente.</p>
+          </div>
+        </div>
 
         <div style="margin-bottom:16px;max-width:340px;">
           <input type="text" id="admin-search" class="auth-input" placeholder="Buscar empresa..." style="margin-bottom:0;">
@@ -1986,13 +2402,51 @@
 
         <table class="data-table" id="admin-clients-table">
           <thead>
-            <tr><th>Empresa</th><th>Responsável</th><th>Cadastro</th><th>Atendimento</th><th>IA</th><th>Produtos</th><th></th></tr>
+            <tr><th>Empresa</th><th>Responsável</th><th>Cadastro</th><th>Situação</th><th>Atendimento</th><th>IA</th><th>Produtos</th><th></th></tr>
           </thead>
           <tbody id="admin-clients-body"></tbody>
         </table>
         <div id="admin-clients-empty" class="empty-state" style="display:none;">
           <h3>Nenhum cliente encontrado</h3>
           <p>Ainda não há empresas cadastradas na plataforma.</p>
+        </div>
+      </section>
+
+      <section class="view" id="view-historico">
+        <div class="page-head">
+          <div>
+            <h1 id="hist-titulo">Histórico</h1>
+            <p class="subtitle" id="hist-sub">Escolha um cliente para ver o que foi alterado na conta dele.</p>
+          </div>
+          <button class="ghost-action" id="hist-voltar" type="button" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Todos os clientes
+          </button>
+        </div>
+
+        <div id="hist-lista">
+          <div style="margin-bottom:16px;max-width:340px;">
+            <input type="text" id="hist-search" class="auth-input" placeholder="Buscar cliente..." style="margin-bottom:0;">
+          </div>
+          <table class="data-table" id="hist-clientes-table">
+            <thead><tr><th>Empresa</th><th>Responsável</th><th>Situação</th><th>Alterações</th><th>Última</th></tr></thead>
+            <tbody id="hist-clientes-body"></tbody>
+          </table>
+          <div id="hist-clientes-empty" class="empty-state" style="display:none;">
+            <h3>Nenhum cliente</h3>
+            <p>Ainda não há empresas cadastradas.</p>
+          </div>
+        </div>
+
+        <div id="hist-detalhe" style="display:none;">
+          <table class="data-table" id="hist-eventos-table">
+            <thead><tr><th>Quando</th><th>Quem</th><th>Onde</th><th>O que mudou</th></tr></thead>
+            <tbody id="hist-eventos-body"></tbody>
+          </table>
+          <div id="hist-eventos-empty" class="empty-state" style="display:none;">
+            <h3>Nada registrado ainda</h3>
+            <p>Nenhuma alteração foi feita nesta conta desde que a auditoria entrou no ar.</p>
+          </div>
         </div>
       </section>
 
@@ -2041,7 +2495,7 @@
 
   <div class="read-only-note">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
-    Visualização do ambiente do cliente — somente leitura.
+    Você está agindo no ambiente do cliente. Esta ação fica registrada no histórico.
   </div>
 
   <div class="cobranca-banner" id="atend-cobranca-banner" style="display:none;">
@@ -2082,12 +2536,16 @@
     </div>
   </div>
 
-  <div style="padding:0 28px 14px;">
-    <label class="field-label" for="ia-test-product-select">Produto</label>
-    <div class="select-wrap">
-      <select class="std" id="ia-test-product-select"></select>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  <!-- A IA conhece o catálogo inteiro e troca de produto sozinha conforme o
+       cliente pede: escolher o produto antes de começar não refletiria o que
+       acontece no WhatsApp. Aqui o produto vira um indicador do que a IA está
+       tratando agora. -->
+  <div class="ia-test-contexto">
+    <div class="ia-test-foco">
+      <span class="rot">Produto em foco</span>
+      <strong id="ia-test-foco-nome">—</strong>
     </div>
+    <button type="button" class="ia-test-reset" id="ia-test-reset">Nova conversa</button>
   </div>
 
   <div class="phone-frame" id="ia-test-phone-frame"></div>
@@ -2200,33 +2658,7 @@
 
         <!-- estado SEM subconta: formulário de criação -->
         <div id="admin-asaas-create">
-          <label class="field-label" for="admin-asaas-email">E-mail do cliente</label>
-          <input type="email" id="admin-asaas-email" class="auth-input" placeholder="cliente@empresa.com" style="margin-bottom:10px;">
-          <label class="field-label" for="admin-asaas-cpfcnpj">CPF/CNPJ do cliente</label>
-          <input type="text" id="admin-asaas-cpfcnpj" class="auth-input" placeholder="Somente números" style="margin-bottom:10px;">
-          <div style="display:flex;gap:10px;">
-            <div style="flex:1;"><label class="field-label" for="admin-asaas-tipo">Tipo</label>
-              <select class="std" id="admin-asaas-tipo" style="height:44px;width:100%;"><option value="MEI">MEI</option><option value="LIMITED">LTDA</option><option value="INDIVIDUAL">Pessoa física</option><option value="ASSOCIATION">Associação</option></select></div>
-            <div style="flex:1;"><label class="field-label" for="admin-asaas-nascimento">Data de nascimento</label>
-              <input type="date" id="admin-asaas-nascimento" class="auth-input"></div>
-          </div>
-          <p class="drawer-note" id="admin-asaas-nascimento-hint" style="margin:4px 0 10px;">Obrigatório para MEI e Pessoa física (titular é uma pessoa).</p>
-          <label class="field-label" for="admin-asaas-telefone">Telefone</label>
-          <input type="text" id="admin-asaas-telefone" class="auth-input" placeholder="(11) 99999-9999" style="margin-bottom:10px;">
-          <div style="display:flex;gap:10px;">
-            <div style="flex:2;"><label class="field-label" for="admin-asaas-endereco">Endereço</label>
-              <input type="text" id="admin-asaas-endereco" class="auth-input" placeholder="Rua, avenida..."></div>
-            <div style="flex:1;"><label class="field-label" for="admin-asaas-numero">Número</label>
-              <input type="text" id="admin-asaas-numero" class="auth-input" placeholder="123"></div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:10px;">
-            <div style="flex:1;"><label class="field-label" for="admin-asaas-bairro">Bairro</label>
-              <input type="text" id="admin-asaas-bairro" class="auth-input" placeholder="Bairro"></div>
-            <div style="flex:1;"><label class="field-label" for="admin-asaas-cep">CEP</label>
-              <input type="text" id="admin-asaas-cep" class="auth-input" placeholder="00000000"></div>
-          </div>
-          <div style="margin-top:14px;"></div>
-          <button class="ghost-action" id="admin-asaas-create-btn" type="button" style="width:100%;justify-content:center;">Criar subconta Asaas</button>
+          <p class="drawer-note" style="margin:0;">A conta de recebimento é criada pelo próprio cliente, no primeiro acesso, com o aceite dos termos registrado. O administrador não cria subconta: aqui você apenas define a comissão depois que ela existir.</p>
         </div>
 
         <!-- estado COM subconta: mostra wallet + comissão -->
@@ -2372,12 +2804,27 @@
 
 <script>
 /* ===================== supabase: cliente e autenticação ===================== */
+/* TODO Nuno: trocar pelo canal real de suporte antes de publicar. */
+const SUPORTE_URL='mailto:suporte@mercs.com.br?subject=Conta%20bloqueada';
 const SUPABASE_URL='https://qskvqnpmxblbgsgjqyex.supabase.co';
 const SUPABASE_KEY='sb_publishable_dg-7n3Bgc7E3rqvNuyR-Yg_t_vC3sN-';
 const sb=supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentSession=null;
 let currentProfile=null; // {id, company_id, nome, companies:{name}}
+
+function mostrarContaBloqueada(){
+  document.body.classList.remove('authed');
+  document.getElementById('login-card').style.display='none';
+  const card=document.getElementById('blocked-card');
+  card.style.display='block';
+  document.getElementById('blocked-support').setAttribute('href', SUPORTE_URL);
+}
+
+function esconderContaBloqueada(){
+  document.getElementById('blocked-card').style.display='none';
+  document.getElementById('login-card').style.display='block';
+}
 
 function showAuthError(elId, msg){
   const el=document.getElementById(elId);
@@ -2401,6 +2848,8 @@ document.getElementById('tab-login').addEventListener('click',()=>{
   document.getElementById('tab-signup').classList.remove('active');
   document.getElementById('form-login').style.display='flex';
   document.getElementById('form-signup').style.display='none';
+  document.getElementById('form-recuperar').style.display='none';
+  document.getElementById('form-nova-senha').style.display='none';
   clearAuthSuccess();
 });
 document.getElementById('tab-signup').addEventListener('click',()=>{
@@ -2408,6 +2857,8 @@ document.getElementById('tab-signup').addEventListener('click',()=>{
   document.getElementById('tab-login').classList.remove('active');
   document.getElementById('form-signup').style.display='flex';
   document.getElementById('form-login').style.display='none';
+  document.getElementById('form-recuperar').style.display='none';
+  document.getElementById('form-nova-senha').style.display='none';
   clearAuthSuccess();
 });
 
@@ -2428,6 +2879,135 @@ document.getElementById('form-login').addEventListener('submit', async (e)=>{
   await onAuthReady(data.session);
 });
 
+document.getElementById('blocked-back').addEventListener('click', ()=>{
+  esconderContaBloqueada();
+  document.getElementById('form-login').reset();
+});
+
+/* ===================== recuperação de senha =====================
+   Passo 1: pede o e-mail e chama resetPasswordForEmail. Passo 2: o link do
+   e-mail volta para esta mesma página com uma sessão de recuperação; o
+   evento PASSWORD_RECOVERY do onAuthStateChange abre o formulário de nova
+   senha automaticamente — o usuário não precisa saber que isso existe. */
+function mostrarTelaAuth(id){
+  ['form-login','form-recuperar','form-nova-senha'].forEach(f=>{
+    document.getElementById(f).style.display = (f===id ? 'flex' : 'none');
+  });
+  document.getElementById('form-signup').style.display='none';
+  document.querySelector('.auth-tabs').style.display = (id==='form-login') ? 'flex' : 'none';
+  clearAuthSuccess();
+}
+
+document.getElementById('link-esqueci-senha').addEventListener('click', ()=>{
+  document.getElementById('recuperar-email').value=document.getElementById('login-email').value;
+  mostrarTelaAuth('form-recuperar');
+});
+document.getElementById('link-voltar-login').addEventListener('click', ()=>mostrarTelaAuth('form-login'));
+
+document.getElementById('form-recuperar').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  clearAuthError('recuperar-error');
+  const email=document.getElementById('recuperar-email').value.trim();
+  const btn=document.getElementById('recuperar-submit');
+  btn.disabled=true; btn.textContent='Enviando...';
+  const {error}=await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href.split('#')[0].split('?')[0],
+  });
+  btn.disabled=false; btn.textContent='Enviar link';
+  /* Mesma resposta exista ou não a conta — não revela quais e-mails têm
+     cadastro. O comportamento é idêntico ao do cadastro, por consistência. */
+  if(error){ showAuthError('recuperar-error', error.message); return; }
+  document.getElementById('form-recuperar').reset();
+  mostrarTelaAuth('form-login');
+  showAuthSuccess('Se este e-mail tiver uma conta, enviamos um link para redefinir a senha. Confira também a caixa de spam.');
+});
+
+function renderForcaSenhaRecuperar(){
+  const senha=document.getElementById('nova-senha-1').value;
+  const email=(currentSession && currentSession.user && currentSession.user.email) || '';
+  const {req, pontos}=avaliarSenha(senha, email);
+  document.querySelectorAll('#pw-meter-recuperar .pw-reqs li').forEach(li=>{
+    li.classList.toggle('ok', !!req[li.dataset.req]);
+  });
+  const bar=document.querySelector('#pw-meter-recuperar .pw-bar');
+  const fill=document.getElementById('pw-bar-fill-recuperar');
+  bar.className='pw-bar'+(pontos>=4?' n4':pontos===3?' n3':pontos===2?' n2':'');
+  fill.style.width=(senha?Math.max(pontos,1)*20:0)+'%';
+}
+document.getElementById('nova-senha-1').addEventListener('input', renderForcaSenhaRecuperar);
+
+document.getElementById('form-nova-senha').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  clearAuthError('nova-senha-error');
+  const senha=document.getElementById('nova-senha-1').value;
+  const senha2=document.getElementById('nova-senha-2').value;
+  if(senha!==senha2){ showAuthError('nova-senha-error','As senhas não coincidem.'); return; }
+  const email=(currentSession && currentSession.user && currentSession.user.email) || '';
+  const forca=avaliarSenha(senha, email);
+  if(!forca.ok){
+    showAuthError('nova-senha-error','A senha ainda não atende aos requisitos listados abaixo do campo.');
+    document.getElementById('nova-senha-1').focus();
+    return;
+  }
+  const btn=document.getElementById('nova-senha-submit');
+  btn.disabled=true; btn.textContent='Salvando...';
+  const {error}=await sb.auth.updateUser({password:senha});
+  btn.disabled=false; btn.textContent='Salvar nova senha';
+  if(error){ showAuthError('nova-senha-error', error.message); return; }
+  document.getElementById('form-nova-senha').reset();
+  const {data}=await sb.auth.getSession();
+  mostrarTelaAuth('form-login');
+  showAuthSuccess('Senha atualizada! Você já está conectado.');
+  if(data.session) await onAuthReady(data.session);
+});
+
+sb.auth.onAuthStateChange((event, session)=>{
+  if(event==='PASSWORD_RECOVERY'){
+    document.body.classList.remove('authed');
+    document.getElementById('login-card').style.display='block';
+    mostrarTelaAuth('form-nova-senha');
+  }
+});
+
+/* ===================== força da senha =====================
+   Critérios do NIST: comprimento acima de tudo, e recusa de senhas óbvias.
+   A validação real acontece no submit; isto aqui é só o retorno visual. */
+const PW_OBVIAS=['senha','password','123456','12345678','qwerty','abc123','mercs','admin','iloveyou','000000'];
+
+function avaliarSenha(senha, email){
+  const usuario=(email||'').split('@')[0].toLowerCase();
+  const min=senha.toLowerCase();
+  const req={
+    len: senha.length>=8,
+    case: /[a-z]/.test(senha) && /[A-Z]/.test(senha),
+    num: /\d/.test(senha),
+    sym: /[^A-Za-z0-9]/.test(senha),
+    obv: senha.length>0
+         && !PW_OBVIAS.some(p=>min.includes(p))
+         && !(usuario.length>=3 && min.includes(usuario))
+         && !/(.)\1{2,}/.test(senha)
+         && !/(012|123|234|345|456|567|678|789|abc|qwe|asd)/.test(min)
+  };
+  const pontos=Object.values(req).filter(Boolean).length;
+  return {req, pontos, ok: Object.values(req).every(Boolean)};
+}
+
+function renderForcaSenha(){
+  const senha=document.getElementById('signup-senha').value;
+  const email=document.getElementById('signup-email').value;
+  const {req, pontos}=avaliarSenha(senha, email);
+  document.querySelectorAll('#pw-meter .pw-reqs li').forEach(li=>{
+    li.classList.toggle('ok', !!req[li.dataset.req]);
+  });
+  const bar=document.querySelector('#pw-meter .pw-bar');
+  const fill=document.getElementById('pw-bar-fill');
+  bar.className='pw-bar'+(pontos>=4?' n4':pontos===3?' n3':pontos===2?' n2':'');
+  fill.style.width=(senha?Math.max(pontos,1)*20:0)+'%';
+}
+
+document.getElementById('signup-senha').addEventListener('input', renderForcaSenha);
+document.getElementById('signup-email').addEventListener('input', renderForcaSenha);
+
 document.getElementById('form-signup').addEventListener('submit', async (e)=>{
   e.preventDefault();
   clearAuthError('signup-error');
@@ -2439,6 +3019,12 @@ document.getElementById('form-signup').addEventListener('submit', async (e)=>{
 
   if(senha !== senhaConfirm){
     showAuthError('signup-error', 'As senhas não coincidem.');
+    return;
+  }
+  const forca=avaliarSenha(senha, email);
+  if(!forca.ok){
+    showAuthError('signup-error', 'A senha ainda não atende aos requisitos listados abaixo do campo.');
+    document.getElementById('signup-senha').focus();
     return;
   }
 
@@ -2454,11 +3040,20 @@ document.getElementById('form-signup').addEventListener('submit', async (e)=>{
     showAuthError('signup-error', error.message);
     return;
   }
+  /* O Supabase responde 200 mesmo quando o e-mail ja existe, para nao revelar
+     quais estao cadastrados. O sinal e identities vazio: nesse caso nada foi
+     criado e nenhum e-mail saiu. Sem este tratamento a tela dizia "verifique
+     seu e-mail" para uma conta que nunca existiu. */
+  if(data.user && Array.isArray(data.user.identities) && data.user.identities.length===0){
+    showAuthError('signup-error', 'Já existe uma conta com este e-mail. Use "Entrar" ou recupere sua senha.');
+    return;
+  }
   if(!data.session){
     document.getElementById('form-signup').reset();
+    renderForcaSenha();
     document.getElementById('login-email').value=email;
     document.getElementById('tab-login').click();
-    showAuthSuccess('Conta criada com sucesso! Verifique seu e-mail para confirmar e depois faça login.');
+    showAuthSuccess('Conta criada! Enviamos um link de confirmação para ' + email + '. Confirme e faça login para configurar sua conta de recebimento.');
     return;
   }
   await onAuthReady(data.session);
@@ -2474,11 +3069,20 @@ async function onAuthReady(session){
   currentSession=session;
   const {data:profile, error}=await sb
     .from('profiles')
-    .select('id, nome, company_id, is_admin, companies(name)')
+    .select('id, nome, company_id, is_admin, companies(name, ativo)')
     .eq('id', session.user.id)
     .single();
   if(error || !profile){
     showAuthError('login-error', 'Não foi possível carregar seu perfil. Tente novamente.');
+    return;
+  }
+  /* Conta suspensa nao entra. Encerramos a sessao para nao deixar JWT valido
+     circulando: o bloqueio precisa valer tambem fora desta aba. Admin da Mercs
+     nao e afetado, senao uma suspensao acidental trancaria o proprio painel. */
+  if(profile.companies && profile.companies.ativo===false && !profile.is_admin){
+    await sb.auth.signOut();
+    currentSession=null; currentProfile=null;
+    mostrarContaBloqueada();
     return;
   }
   currentProfile=profile;
@@ -2487,13 +3091,27 @@ async function onAuthReady(session){
   document.getElementById('sidebar-avatar').textContent=(profile.nome||session.user.email).trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
   document.body.classList.add('authed');
   document.body.classList.toggle('is-admin-user', !!profile.is_admin);
-  await refreshProductsFromDb();
-  await refreshKbDocsFromDb();
-  await syncAtendimentoStatus();
-  await loadCompanyPaymentMethods();
-  await refreshOperacao();
+
+  /* O wizard de recebimento vem primeiro e cada etapa e isolada: antes, uma
+     excecao em qualquer carregamento (produtos, base de conhecimento, status
+     do atendimento, realtime) interrompia o onAuthReady no meio e o
+     RCB.afterLogin nunca chegava a rodar — deixando a secao Recebimento vazia
+     e o modal de configuracao invisivel, sem nenhum erro na tela. */
+  const etapa=async (nome, fn)=>{ try{ await fn(); }catch(e){ console.warn('boot: '+nome, e); } };
+
+  if(PAGAMENTO_ATIVO){
+    await etapa('recebimento', ()=>RCB.afterLogin());
+  }else{
+    /* v1: pagamentos "em breve" — sem onboarding de recebimento, sem trava do painel. */
+    aplicarPagamentoEmBreve();
+  }
+  await etapa('produtos', refreshProductsFromDb);
+  await etapa('conhecimento', refreshKbDocsFromDb);
+  await etapa('atendimento', syncAtendimentoStatus);
+  await etapa('meios de pagamento', loadCompanyPaymentMethods);
   iaDiagUpdateVisibility('dashboard');
-  setMode('empresa');
+  if(!RCB.wizardAberto()) irParaInicio();
+  await etapa('operacao', refreshOperacao);
   // carrega estado do agente para o badge do menu e o sino
   await loadAgenteEstado();
   if(agenteAtivoEmpresa){ await loadAlertas(); updateAgenteBadge(); }
@@ -2503,8 +3121,12 @@ async function onAuthReady(session){
 }
 
 (async function initSession(){
+  /* Um link de recuperação também chega com uma sessão válida. Sem esta
+     checagem, o boot normal entraria direto no painel e a pessoa nunca veria
+     a tela de nova senha — o evento PASSWORD_RECOVERY cuida disso sozinho. */
+  const isRecovery = /type=recovery/.test(window.location.hash) || /type=recovery/.test(window.location.search);
   const {data}=await sb.auth.getSession();
-  if(data.session){ await onAuthReady(data.session); }
+  if(data.session && !isRecovery){ await onAuthReady(data.session); }
 })();
 
 /* ===================== status do atendimento por IA (topbar) ===================== */
@@ -2604,12 +3226,16 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.4.3';
+const APP_VERSION='1.22.0';
+/* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
+   com false, o onboarding de recebimento é pulado e o item de menu vira
+   "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
+const PAGAMENTO_ATIVO=false;
 const sidebarEl=document.getElementById('sidebar');
 const sidebarToggleBtn=document.getElementById('sidebar-toggle');
 function updateVersionLabel(){
   const el=document.getElementById('sidebar-version');
-  if(el) el.textContent = sidebarEl.classList.contains('collapsed') ? `v${APP_VERSION}` : `Negotia AI · v${APP_VERSION}`;
+  if(el) el.textContent = sidebarEl.classList.contains('collapsed') ? `v${APP_VERSION}` : `Mercs · v${APP_VERSION}`;
 }
 updateVersionLabel();
 sidebarToggleBtn.addEventListener('click',()=>{
@@ -2636,51 +3262,90 @@ sidebarOverlay.addEventListener('click', closeMobileSidebar);
 /* ===================== navegação ===================== */
 document.querySelectorAll('.nav-item[data-view]').forEach(item=>{
   item.addEventListener('click',()=>{
+    if(item.classList.contains('em-breve')) return; /* v1: item "Pagamentos · em breve" não navega */
     switchView(item.dataset.view);
     closeMobileSidebar();
   });
 });
 
-/* ===================== seletor de contexto: Minha empresa / Administração (admins) ===================== */
-let appMode='empresa';
-function setMode(mode){
-  appMode=mode;
-  document.body.classList.toggle('admin-mode', mode==='admin');
-  // atualiza rótulo do seletor no topbar
-  const ico=document.getElementById('ctx-ico');
-  const eyebrow=document.getElementById('ctx-eyebrow');
-  const name=document.getElementById('ctx-name');
-  if(mode==='admin'){
-    eyebrow.textContent='Você está em';
-    name.textContent='Administração';
-    ico.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>';
-  }else{
-    eyebrow.textContent='Você está em';
-    name.textContent='Minha empresa';
-    ico.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>';
-  }
-  document.querySelectorAll('.ctx-menu-item').forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
-  switchView(mode==='admin' ? 'admin' : 'dashboard');
+/* v1: transforma o item Recebimento em "Pagamentos · em breve" (desabilitado)
+   e mostra um tooltip curto no clique. Totalmente reversível: com
+   PAGAMENTO_ATIVO=true esta função não roda e o Recebimento volta ao normal. */
+function aplicarPagamentoEmBreve(){
+  const nav=document.getElementById('nav-recebimento');
+  if(!nav || nav.classList.contains('em-breve')) return;
+  nav.classList.add('em-breve');
+  nav.removeAttribute('title'); /* sem title nativo pra não duplicar com o tooltip */
+  const lbl=nav.querySelector('.nav-label'); if(lbl) lbl.textContent='Pagamentos';
+  const badge=document.createElement('span');
+  badge.className='nav-em-breve-badge'; badge.textContent='Em breve';
+  nav.appendChild(badge);
+  const tip=document.createElement('div');
+  tip.className='nav-tip';
+  tip.textContent='Pagamentos integrados chegam em breve. Por enquanto, quando o agente fecha uma venda você recebe um aviso para dar o encaminhamento.';
+  document.body.appendChild(tip); /* fixed no body: não é cortado pelo overflow da sidebar */
+  const posiciona=()=>{
+    const r=nav.getBoundingClientRect();
+    tip.style.top=(r.top + r.height/2)+'px';
+    tip.style.left=(r.right + 12)+'px';
+  };
+  nav.addEventListener('mouseenter',()=>{ posiciona(); tip.classList.add('show'); });
+  nav.addEventListener('mouseleave',()=>{ tip.classList.remove('show'); });
 }
 
-const ctxSwitcher=document.getElementById('ctx-switcher');
-const ctxMenu=document.getElementById('ctx-menu');
+/* SAC: informações gerais da empresa. Textarea única; salvar manda pro
+   salvar-sac, que fatia e indexa como conhecimento de empresa (RAG). */
+let sacBound=false, sacCarregado=false;
+async function salvarSac(){
+  const ta=document.getElementById('sac-texto');
+  const btn=document.getElementById('sac-salvar');
+  const status=document.getElementById('sac-status');
+  const texto=ta.value.trim();
+  btn.disabled=true; btn.textContent='Salvando…';
+  status.className='sac-status'; status.textContent='';
+  let data=null,error=null;
+  try{ ({data,error}=await sb.functions.invoke('salvar-sac',{body:{texto}})); }catch(e){ error=e; }
+  btn.disabled=false; btn.textContent='Salvar';
+  if(error || !data || data.ok!==true){
+    status.className='sac-status err'; status.textContent='Não salvou.';
+    showToast((data && data.error) || 'Não foi possível salvar agora. Tente de novo.');
+    return;
+  }
+  status.className='sac-status ok';
+  status.textContent = texto
+    ? `✓ Salvo — a IA já pode usar (${data.chunks} trecho${data.chunks===1?'':'s'}).`
+    : '✓ SAC limpo.';
+}
+async function carregarSac(){
+  const ta=document.getElementById('sac-texto');
+  const status=document.getElementById('sac-status');
+  if(!sacBound){ document.getElementById('sac-salvar').addEventListener('click', salvarSac); sacBound=true; }
+  if(sacCarregado || !currentProfile || !currentProfile.company_id) return;
+  status.className='sac-status'; status.textContent='Carregando…';
+  const {data,error}=await sb.from('companies').select('sac_texto').eq('id',currentProfile.company_id).single();
+  if(!error && data){ ta.value=data.sac_texto||''; }
+  sacCarregado=true;
+  status.textContent = ta.value.trim() ? 'Tudo salvo.' : 'Nada cadastrado ainda.';
+}
+
+/* ===================== visão inicial =====================
+   Não existe mais modo de contexto nem classe admin-mode. O menu que aparece
+   é consequência de quem você é (admin ou cliente) e de onde está (dentro ou
+   fora do ambiente de um cliente). Ver as regras .nav-admin-item no CSS. */
+function irParaInicio(){
+  const ehAdmin=document.body.classList.contains('is-admin-user');
+  switchView(ehAdmin && !viewingCompanyId ? 'usuarios' : 'dashboard');
+}
 
 /* ===================== visão macro: entrar/sair do ambiente de um cliente ===================== */
 async function enterCompanyView(companyId, companyName){
   viewingCompanyId=companyId;
   viewingCompanyName=companyName;
   document.body.classList.add('macro-view');
-  document.body.classList.remove('admin-mode');
-  appMode='empresa';
-  // dropdown de contexto mostra o cliente observado
-  document.getElementById('ctx-eyebrow').textContent='Vendo o ambiente de';
-  document.getElementById('ctx-name').textContent=companyName;
-  document.getElementById('ctx-ico').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
   document.getElementById('macro-company-name').textContent=companyName;
   await refreshOperacao();
   switchView('dashboard');
-  showToast('Vendo o ambiente de '+companyName+' (somente leitura)');
+  showToast('Você está no ambiente de '+companyName+' — suas alterações ficam registradas');
 }
 
 async function exitCompanyView(goToAdmin){
@@ -2689,32 +3354,10 @@ async function exitCompanyView(goToAdmin){
   viewingProductsMap={};
   document.body.classList.remove('macro-view');
   await refreshOperacao();
-  if(goToAdmin){ setMode('admin'); }
-  else{ setMode('empresa'); }
+  irParaInicio();
 }
 
 document.getElementById('macro-back-btn').addEventListener('click', ()=>exitCompanyView(true));
-
-document.getElementById('ctx-switcher-btn').addEventListener('click',(e)=>{
-  e.stopPropagation();
-  ctxSwitcher.classList.toggle('open');
-  ctxMenu.classList.toggle('open');
-});
-document.querySelectorAll('.ctx-menu-item').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    ctxSwitcher.classList.remove('open');
-    ctxMenu.classList.remove('open');
-    // sair da visão macro se estiver nela
-    if(viewingCompanyId){ exitCompanyView(btn.dataset.mode==='admin'); return; }
-    setMode(btn.dataset.mode);
-  });
-});
-document.addEventListener('click',(e)=>{
-  if(!e.target.closest('.ctx-switcher')){
-    ctxSwitcher.classList.remove('open');
-    ctxMenu.classList.remove('open');
-  }
-});
 
 function switchView(name){
   if(name==='chamados' || name==='conhecimento') name='dashboard';
@@ -2725,9 +3368,12 @@ function switchView(name){
   if(name==='chamados'){ refreshChamados(); }
   if(name==='vendas'){ refreshVendas(); }
   if(name==='configuracoes'){ syncIaPersonaUI(); loadWhatsappCard(); }
-  if(name==='admin'){ refreshAdminClientList(); refreshAdminCustos(); }
+  if(name==='usuarios'){ refreshAdminClientList(); }
+  if(name==='custos'){ refreshAdminCustos(); }
+  if(name==='historico'){ refreshHistoricoClientes(); }
   if(name==='saude'){ refreshAgente(); }
   if(name==='agente'){ refreshSkills(); }
+  if(name==='sac'){ carregarSac(); }
   iaDiagUpdateVisibility(name);
 }
 document.getElementById('ver-todos-atend').addEventListener('click',()=>switchView('atendimentos'));
@@ -2747,12 +3393,20 @@ document.getElementById('shortcut-add-pdf').addEventListener('click',()=>switchV
 document.getElementById('shortcut-ver-vendas').addEventListener('click',()=>switchView('vendas'));
 
 /* ===================== toast ===================== */
+/* Duracao proporcional ao texto: 2,6s fixos nao davam tempo de ler os avisos
+   longos do Asaas. Toque fecha antes, para quem ja leu. */
 function showToast(msg){
   const t=document.getElementById('toast');
   document.getElementById('toast-msg').textContent=msg;
   t.classList.add('show');
   clearTimeout(window._toastTimer);
-  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+  const ms=Math.min(12000, Math.max(3200, String(msg).length*70));
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),ms);
+  if(!t.dataset.dismissBound){
+    t.dataset.dismissBound='1';
+    t.addEventListener('click',()=>{clearTimeout(window._toastTimer);t.classList.remove('show');});
+    t.style.cursor='pointer';
+  }
 }
 
 /* ===================== notificações ===================== */
@@ -2775,8 +3429,14 @@ const notifTipos={
     icon:'<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>'},
   cobranca_aprovacao:{label:'Cobrança para aprovar',color:'var(--green)',bg:'var(--green-bg)',
     icon:'<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>'},
+  venda_fechada:{label:'Venda fechada',color:'var(--green)',bg:'var(--green-bg)',
+    icon:'<path d="M20 7L9 18l-5-5"/>'},
   guardrail_preco:{label:'Limite comercial',color:'var(--red)',bg:'var(--red-bg)',
     icon:'<path d="M12 2l9 4.5v5c0 5-3.5 8.5-9 10.5-5.5-2-9-5.5-9-10.5v-5z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>'},
+  ia_indisponivel:{label:'IA fora do ar',color:'var(--red)',bg:'var(--red-bg)',
+    icon:'<circle cx="12" cy="12" r="9"/><line x1="12" y1="7.5" x2="12" y2="12.5"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>'},
+  duvida_tecnica:{label:'Dúvida técnica',color:'var(--accent-dark)',bg:'var(--accent-soft)',
+    icon:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2 1.8-2 3.3"/><circle cx="12" cy="16.3" r="0.5" fill="currentColor"/>'},
   sistema:{label:'Sistema',color:'var(--text-secondary)',bg:'#F0F1F4',
     icon:'<path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/>'}
 };
@@ -2785,15 +3445,21 @@ const notifTipos={
 // (Independente da visão macro, o sino é sempre do usuário logado.)
 let sinoAlertasCache=[];
 
+/* Só estes tipos dependem do "Agente de Monitoramento" (feature opcional que o
+   admin liga por cliente). Os demais são gerados ao vivo pela negotiate/webhook
+   em resposta a algo que já aconteceu — um limite bloqueado, uma venda
+   esperando aprovação, um cliente esperando resposta técnica — e precisam
+   chegar ao dono da loja independente dessa configuração. */
+const ALERTAS_DE_MONITORAMENTO=new Set(['conversa_parada','queda_leads','lead_esfriando','sla_humano']);
+
 async function loadSinoAlertas(){
   if(!currentProfile || !currentProfile.company_id){ sinoAlertasCache=[]; return; }
-  // só carrega se o agente da própria empresa estiver ativo
   const {data:comp}=await sb.from('companies').select('agente_ativo').eq('id', currentProfile.company_id).single();
-  if(!comp || !comp.agente_ativo){ sinoAlertasCache=[]; return; }
+  const monitoramentoAtivo=!!(comp && comp.agente_ativo);
   const {data}=await sb.from('agente_alertas').select('*')
     .eq('company_id', currentProfile.company_id)
     .order('created_at',{ascending:false}).limit(100);
-  sinoAlertasCache=data||[];
+  sinoAlertasCache=(data||[]).filter(a=>monitoramentoAtivo || !ALERTAS_DE_MONITORAMENTO.has(a.tipo));
 }
 
 function notifData(){
@@ -2850,17 +3516,61 @@ function renderBellPanel(){
   });
 }
 
+/* Antes o clique apenas expandia e removia o item em 900ms: não dava tempo de
+   ler e não oferecia nenhuma ação. Agora abre um detalhe com o texto inteiro e
+   o caminho para resolver — abrir a conversa, quando o alerta vier de uma. */
 async function expandAndReadPanelItem(id, el){
-  if(el.classList.contains('expanded')) return;
-  el.classList.add('expanded');
+  abrirDetalheNotificacao(id);
   await marcarAlerta(id, {lido:true});
   updateBellBadge();
   renderNotifPage();
-  setTimeout(()=>{
+  if(el){
     el.classList.add('removing');
     setTimeout(()=>renderBellPanel(),260);
-  }, 900);
+  }
 }
+
+/* Detalhe da notificação. O alerta que nasce de uma conversa oferece o caminho
+   direto para respondê-la — sem isso o lojista lia o aviso e não sabia o que
+   fazer com ele. */
+let notifDetAtual=null;
+
+function abrirDetalheNotificacao(id){
+  const n=notifData().find(x=>String(x.id)===String(id));
+  if(!n) return;
+  notifDetAtual=n;
+  document.getElementById('notif-det-tag').textContent=(notifTipos[n.tipo]||notifTipos.outro).label;
+  document.getElementById('notif-det-titulo').textContent=n.titulo||'Notificação';
+  document.getElementById('notif-det-tempo').textContent=notifTimeLabel(n.minAgo);
+  document.getElementById('notif-det-texto').textContent=n.descricao||'';
+  const btn=document.getElementById('notif-det-abrir');
+  btn.style.display = n.atendId ? 'inline-flex' : 'none';
+  document.getElementById('notif-det-overlay').classList.add('open');
+  const painel=document.getElementById('notif-panel');
+  if(painel) painel.classList.remove('open');
+}
+
+function fecharDetalheNotificacao(){
+  document.getElementById('notif-det-overlay').classList.remove('open');
+  notifDetAtual=null;
+}
+
+document.getElementById('notif-det-fechar').addEventListener('click', fecharDetalheNotificacao);
+document.getElementById('notif-det-overlay').addEventListener('click',(e)=>{
+  if(e.target.id==='notif-det-overlay') fecharDetalheNotificacao();
+});
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape' && document.getElementById('notif-det-overlay').classList.contains('open')){
+    fecharDetalheNotificacao();
+  }
+});
+document.getElementById('notif-det-abrir').addEventListener('click',()=>{
+  const alvo=notifDetAtual && notifDetAtual.atendId;
+  fecharDetalheNotificacao();
+  if(!alvo) return;
+  switchView('atendimentos');
+  openAtendDrawer(alvo);
+});
 
 document.getElementById('mark-all-read-panel').addEventListener('click', async ()=>{
   await marcarTodosAlertasLidos();
@@ -2940,7 +3650,6 @@ function renderNotifPage(){
   container.querySelectorAll('.notif-link[data-atend]').forEach(link=>{
     link.addEventListener('click',e=>{
       e.stopPropagation();
-      if(viewingCompanyId){ showToast('Abra o ambiente do cliente para ver a conversa.'); return; }
       openAtendDrawer(link.dataset.atend);
     });
   });
@@ -2965,9 +3674,22 @@ function processingTimeFor(method){ return method==='pix'?1300:method==='cartao'
 
 /* ---------- meios de pagamento (por empresa, vem do banco) ---------- */
 let companyPaymentMethods={pix:true,cartao:true,boleto:true};
+/* A comissao vem do banco, nunca de um valor fixo no front: cada cliente pode
+   ter a sua, e um numero desatualizado aqui vira promessa errada ao lojista. */
+let companyComissao=null;
+
 async function loadCompanyPaymentMethods(){
-  const {data, error}=await sb.from('companies').select('payment_methods').eq('id', currentProfile.company_id).single();
-  if(!error && data && data.payment_methods) companyPaymentMethods={pix:true,cartao:true,boleto:true,...data.payment_methods};
+  const {data, error}=await sb.from('companies')
+    .select('payment_methods, asaas_commission_type, asaas_commission_percentage, asaas_commission_fixed_cents')
+    .eq('id', currentProfile.company_id).single();
+  if(error || !data) return;
+  if(data.payment_methods) companyPaymentMethods={pix:true,cartao:true,boleto:true,...data.payment_methods};
+  companyComissao={
+    tipo:data.asaas_commission_type||'percentual',
+    percentual:Number(data.asaas_commission_percentage||0),
+    fixoCents:Number(data.asaas_commission_fixed_cents||0),
+  };
+  updateCobrancaComissao();
 }
 function getEnabledPaymentMethods(){
   const enabled=PAYMENT_METHODS.filter(m=>companyPaymentMethods[m.key]!==false);
@@ -3052,7 +3774,26 @@ function waSetStatusUI(status, numero){
   }else{
     connBtn.disabled=false;
   }
+  atualizarProximoPasso(status);
 }
+
+/* O cartao de proximo passo some sozinho assim que o WhatsApp conecta: ele e
+   orientacao, nao aviso permanente. Admin nao vende, entao nao ve. */
+function atualizarProximoPasso(status){
+  const card=document.getElementById('proximo-passo-wa');
+  if(!card) return;
+  const ehAdmin=document.body.classList.contains('is-admin-user');
+  const mostrar = !ehAdmin && !viewingCompanyId && status!=='conectado' && waInfraConfigured!==false;
+  card.style.display = mostrar ? 'flex' : 'none';
+}
+document.getElementById('pp-conectar-wa').addEventListener('click', ()=>{
+  switchView('configuracoes');
+  const alvo=document.getElementById('wa-connect-btn');
+  if(alvo){
+    alvo.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(()=>alvo.focus(), 300);
+  }
+});
 
 async function waFetchStatus(){
   const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'status'}});
@@ -3076,20 +3817,9 @@ function waStartPolling(){
   }, 4000);
 }
 
-async function waLoadProdutos(){
-  const sel=document.getElementById('wa-produto-select');
-  const [{data:prods}, {data:comp}]=await Promise.all([
-    sb.from('products').select('id, nome').eq('company_id', currentProfile.company_id).eq('ativo', true).order('nome'),
-    sb.from('companies').select('whatsapp_product_id').eq('id', currentProfile.company_id).single(),
-  ]);
-  sel.innerHTML='<option value="">Selecione um produto…</option>' +
-    (prods||[]).map(p=>`<option value="${p.id}">${p.nome}</option>`).join('');
-  if(comp?.whatsapp_product_id) sel.value=comp.whatsapp_product_id;
-}
-
 async function loadWhatsappCard(){
   waSetStatusUI(null, null);
-  await Promise.all([waFetchStatus(), waLoadProdutos()]);
+  await waFetchStatus();
 }
 
 document.getElementById('wa-connect-btn').addEventListener('click', async ()=>{
@@ -3119,13 +3849,6 @@ document.getElementById('wa-disconnect-btn').addEventListener('click', async ()=
   showToast('WhatsApp desconectado.');
 });
 
-document.getElementById('wa-produto-save').addEventListener('click', async ()=>{
-  const val=document.getElementById('wa-produto-select').value || null;
-  const {error}=await sb.from('companies').update({whatsapp_product_id: val}).eq('id', currentProfile.company_id);
-  if(error){ showToast('Erro ao salvar: '+error.message); return; }
-  showToast(val ? 'Produto do WhatsApp salvo.' : 'Produto do WhatsApp removido.');
-});
-
 document.getElementById('ia-persona-save').addEventListener('click', async ()=>{
   const btn=document.getElementById('ia-persona-save');
   btn.disabled=true;
@@ -3141,9 +3864,37 @@ document.getElementById('ia-persona-save').addEventListener('click', async ()=>{
   showToast('Configurações da IA salvas com sucesso');
 });
 
+function updateCobrancaComissao(){
+  const el=document.getElementById('cobranca-comissao-aviso');
+  if(!el || !companyComissao) return;
+  const {tipo, percentual, fixoCents}=companyComissao;
+  let txt='';
+  if(tipo==='percentual' && percentual>0){
+    const pct=String(percentual).replace(/\.00$/,'').replace('.',',');
+    txt=`A taxa de comissão da Mercs é de ${pct}%.`;
+  }else if(tipo==='fixo' && fixoCents>0){
+    txt=`A taxa de comissão da Mercs é de R$ ${(fixoCents/100).toFixed(2).replace('.',',')} por venda.`;
+  }
+  /* As taxas do Asaas sao da instituicao, mudam sem passar por nos: link em vez
+     de numero para nao virar informacao desatualizada dentro do painel. */
+  if(!txt){ el.innerHTML=''; }
+  else{
+    el.textContent = txt + ' Para saber os valores referentes às taxas do Asaas, ';
+    const a=document.createElement('a');
+    a.href='https://www.asaas.com/precos';
+    a.target='_blank';
+    a.rel='noopener noreferrer';
+    a.textContent='acesse aqui';
+    el.appendChild(a);
+    el.appendChild(document.createTextNode('.'));
+  }
+  el.style.display = txt ? 'block' : 'none';
+}
+
 function updateCobrancaHint(){
   const modo=getSegmented('cobranca-modo-segmented');
   const hint=document.getElementById('cobranca-modo-hint');
+  updateCobrancaComissao();
   if(!hint) return;
   hint.textContent = modo==='auto'
     ? 'No modo automático, o link de pagamento é enviado ao cliente assim que a IA fecha a venda, sempre dentro dos limites do produto.'
@@ -3234,7 +3985,7 @@ async function refreshAdminCustos(){
 
 async function refreshAdminClientList(){
   const {data, error}=await sb.from('companies')
-    .select('id, name, created_at, atendimento_ativo, llm_api_key, profiles(id,nome,email,is_admin), products!products_company_id_fkey(count)')
+    .select('id, name, created_at, ativo, atendimento_ativo, llm_api_key, profiles(id,nome,email,is_admin), products!products_company_id_fkey(count)')
     .order('created_at',{ascending:false});
   if(error){ showToast('Erro ao carregar clientes: '+error.message); return; }
   adminClientsCache=data||[];
@@ -3265,33 +4016,238 @@ function renderAdminClientList(filterText){
     const iaStatus=c.llm_api_key
       ? '<span class="status-pill INDEXADO">Configurada</span>'
       : '<span class="status-pill ERRO">Pendente</span>';
-    return `<tr data-id="${c.id}" data-name="${escapeHtml(c.name)}" style="cursor:pointer;">
+    const ativa=c.ativo!==false;
+    const sitStatus=ativa
+      ? '<span class="status-pill INDEXADO">Ativa</span>'
+      : '<span class="status-pill ERRO">Inativa</span>';
+    return `<tr data-id="${c.id}" data-name="${escapeHtml(c.name)}" data-ativo="${ativa?'1':'0'}" class="${ativa?'':'row-inativa'}" style="cursor:pointer;">
       <td data-label="Empresa"><strong>${c.name}</strong></td>
       <td class="cell-muted" data-label="Responsável">${resp.nome||'—'}</td>
       <td class="cell-muted" data-label="Cadastro">${dataCad}</td>
+      <td data-label="Situação">${sitStatus}</td>
       <td data-label="Atendimento">${atendStatus}</td>
       <td data-label="IA">${iaStatus}</td>
       <td class="cell-mono" data-label="Produtos">${nProdutos}</td>
       <td data-label="" onclick="event.stopPropagation()" class="admin-row-actions">
-        <button class="ghost-action admin-enter-btn" style="height:32px;padding:0 11px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Abrir ambiente</button>
-        <button class="ghost-action admin-open-btn" style="height:32px;padding:0 11px;">Ver detalhes</button>
+        <div class="row-menu">
+          <button class="row-menu-btn" type="button" aria-label="Ações" aria-haspopup="true">&#8943;</button>
+          <div class="row-menu-list" role="menu">
+            <button type="button" data-acao="editar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg>
+              Editar
+            </button>
+            <button type="button" data-acao="toggle" class="${ativa?'danger':''}">
+              ${ativa
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>Inativar conta'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 017.5-2"/></svg>Reativar conta'}
+            </button>
+          </div>
+        </div>
       </td>
     </tr>`;
   }).join('');
 
+  /* Clicar na linha entra no ambiente do cliente: e a visao que ele tem.
+     Editar continua no menu de acoes. */
   body.querySelectorAll('tr').forEach(row=>{
-    row.addEventListener('click',()=>openAdminDrawer(row.dataset.id));
+    row.addEventListener('click',()=>enterCompanyView(row.dataset.id, row.dataset.name));
   });
-  body.querySelectorAll('.admin-open-btn').forEach(btn=>{
-    btn.addEventListener('click',e=>{ openAdminDrawer(e.target.closest('tr').dataset.id); });
+  body.querySelectorAll('.row-menu-btn').forEach(btn=>{
+    btn.addEventListener('click',e=>{ e.stopPropagation(); abrirMenuLinha(btn); });
   });
-  body.querySelectorAll('.admin-enter-btn').forEach(btn=>{
-    btn.addEventListener('click',e=>{
-      const tr=e.target.closest('tr');
-      enterCompanyView(tr.dataset.id, tr.dataset.name);
+  body.querySelectorAll('.row-menu-list button').forEach(btn=>{
+    btn.addEventListener('click',async e=>{
+      e.stopPropagation();
+      const tr=btn.closest('tr');
+      fecharMenusLinha();
+      if(btn.dataset.acao==='editar'){ openAdminDrawer(tr.dataset.id); return; }
+      if(btn.dataset.acao==='toggle'){ await alternarSituacaoEmpresa(tr.dataset.id, tr.dataset.name, tr.dataset.ativo==='1'); }
     });
   });
 }
+
+/* Inativar suspende a conta: o login passa a mostrar a tela de conta bloqueada
+   e a trigger trg_inativo_desliga_ia derruba o atendimento por IA e o agente.
+   Quem fez e quando fica na tabela auditoria, gravada por trigger. */
+/* Posiciona o menu na viewport. Abre para cima se nao couber embaixo, e
+   encosta na borda direita sem vazar da tela. */
+function abrirMenuLinha(btn){
+  const menu=btn.closest('.row-menu');
+  const lista=menu.querySelector('.row-menu-list');
+  const jaAberto=menu.classList.contains('open');
+  fecharMenusLinha();
+  if(jaAberto) return;
+
+  menu.classList.add('open');
+  const r=btn.getBoundingClientRect();
+  const alt=lista.offsetHeight, larg=lista.offsetWidth;
+  const espacoAbaixo=window.innerHeight-r.bottom;
+
+  let top=(espacoAbaixo < alt+12) ? r.top-alt-6 : r.bottom+6;
+  top=Math.max(8, Math.min(top, window.innerHeight-alt-8));
+  let left=r.right-larg;
+  left=Math.max(8, Math.min(left, window.innerWidth-larg-8));
+
+  lista.style.top=top+'px';
+  lista.style.left=left+'px';
+}
+
+function fecharMenusLinha(){
+  document.querySelectorAll('.row-menu.open').forEach(m=>m.classList.remove('open'));
+}
+
+async function alternarSituacaoEmpresa(companyId, nome, estaAtiva){
+  const acao = estaAtiva ? 'inativar' : 'reativar';
+  const aviso = estaAtiva
+    ? `Inativar "${nome}"?\n\nO acesso será bloqueado no login e o atendimento por IA será desligado imediatamente.`
+    : `Reativar "${nome}"?\n\nO acesso volta. O atendimento por IA continua desligado até ser religado.`;
+  if(!confirm(aviso)) return;
+  const {error}=await sb.from('companies').update({ativo: !estaAtiva}).eq('id', companyId);
+  if(error){ showToast('Não foi possível ' + acao + ' a conta: ' + error.message); return; }
+  showToast(estaAtiva ? `"${nome}" foi inativada.` : `"${nome}" foi reativada.`);
+  await refreshAdminClientList();
+}
+
+document.addEventListener('click', fecharMenusLinha);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') fecharMenusLinha(); });
+/* menu fixo nao acompanha rolagem: fecha em vez de flutuar solto */
+window.addEventListener('scroll', fecharMenusLinha, true);
+window.addEventListener('resize', fecharMenusLinha);
+
+/* ===================== Histórico (auditoria) =====================
+   A tabela auditoria é gravada por trigger e só admin consegue ler (RLS).
+   Nomes técnicos de tabela e coluna são traduzidos aqui: o log serve para
+   você entender o que aconteceu, não para expor o schema. */
+const HIST_ENTIDADE={
+  companies:'Conta', profiles:'Usuário', products:'Produto',
+  subcontas_asaas:'Conta de recebimento', repasse_config:'Repasse',
+  whatsapp_instancias:'WhatsApp', sessao:'Sessão'
+};
+const HIST_CAMPO={
+  ativo:'Situação da conta', atendimento_ativo:'Atendimento por IA', agente_ativo:'Agente',
+  asaas_commission_percentage:'Comissão (%)', asaas_commission_fixed_cents:'Comissão (fixa)',
+  asaas_commission_type:'Tipo de comissão', asaas_account_status:'Status da subconta',
+  asaas_wallet_id:'Carteira Asaas', payment_methods:'Meios de pagamento',
+  llm_api_key:'Chave de IA', is_admin:'Permissão de admin', company_id:'Empresa vinculada',
+  ia_nome:'Nome da IA', ia_tom:'Tom de conversa', ia_sexo:'Tratamento da IA',
+  preco_padrao:'Preço padrão', desconto_max:'Desconto máximo', nome:'Nome', name:'Nome',
+  cobranca_auto:'Cobrança automática', inativo_em:'Inativada em',
+  destino_display:'Destino do repasse', tipo_destino:'Tipo de destino'
+};
+const HIST_ACAO={insert:'criou', update:'alterou', delete:'removeu'};
+
+let histCache=[];
+let histEmpresaAtual=null;
+
+function histValor(v){
+  if(v===null||v===undefined) return '<span class="cell-muted">vazio</span>';
+  if(v===true) return 'sim';
+  if(v===false) return 'não';
+  if(typeof v==='object') return escapeHtml(JSON.stringify(v));
+  return escapeHtml(String(v));
+}
+
+async function refreshHistoricoClientes(){
+  histEmpresaAtual=null;
+  document.getElementById('hist-lista').style.display='block';
+  document.getElementById('hist-detalhe').style.display='none';
+  document.getElementById('hist-voltar').style.display='none';
+  document.getElementById('hist-titulo').textContent='Histórico';
+  document.getElementById('hist-sub').textContent='Escolha um cliente para ver o que foi alterado na conta dele.';
+
+  const [{data:empresas, error:e1}, {data:eventos, error:e2}] = await Promise.all([
+    sb.from('companies').select('id, name, ativo, profiles(nome)').order('name'),
+    sb.from('auditoria').select('company_id, created_at')
+  ]);
+  if(e1){ showToast('Erro ao carregar clientes: '+e1.message); return; }
+  if(e2){ showToast('Erro ao carregar histórico: '+e2.message); return; }
+
+  const porEmpresa={};
+  (eventos||[]).forEach(ev=>{
+    if(!ev.company_id) return;
+    const r=porEmpresa[ev.company_id]||(porEmpresa[ev.company_id]={n:0,ultima:null});
+    r.n++;
+    if(!r.ultima || ev.created_at>r.ultima) r.ultima=ev.created_at;
+  });
+
+  histCache=(empresas||[]).map(c=>({
+    id:c.id, name:c.name, ativo:c.ativo!==false,
+    resp:(c.profiles&&c.profiles[0]&&c.profiles[0].nome)||'—',
+    total:(porEmpresa[c.id]&&porEmpresa[c.id].n)||0,
+    ultima:(porEmpresa[c.id]&&porEmpresa[c.id].ultima)||null
+  }));
+  renderHistoricoClientes('');
+}
+
+function renderHistoricoClientes(filtro){
+  const lista=filtro
+    ? histCache.filter(c=>c.name.toLowerCase().includes(filtro.toLowerCase()))
+    : histCache;
+  const body=document.getElementById('hist-clientes-body');
+  const table=document.getElementById('hist-clientes-table');
+  const empty=document.getElementById('hist-clientes-empty');
+  if(histCache.length===0){ table.style.display='none'; empty.style.display='block'; return; }
+  table.style.display='table'; empty.style.display='none';
+
+  body.innerHTML=lista.map(c=>`<tr data-id="${c.id}" data-name="${escapeHtml(c.name)}" style="cursor:pointer;">
+    <td data-label="Empresa"><strong>${escapeHtml(c.name)}</strong></td>
+    <td class="cell-muted" data-label="Responsável">${escapeHtml(c.resp)}</td>
+    <td data-label="Situação">${c.ativo?'<span class="status-pill INDEXADO">Ativa</span>':'<span class="status-pill ERRO">Inativa</span>'}</td>
+    <td class="cell-mono" data-label="Alterações">${c.total}</td>
+    <td class="cell-muted" data-label="Última">${c.ultima?new Date(c.ultima).toLocaleString('pt-BR'):'—'}</td>
+  </tr>`).join('');
+
+  body.querySelectorAll('tr').forEach(tr=>{
+    tr.addEventListener('click',()=>abrirHistoricoEmpresa(tr.dataset.id, tr.dataset.name));
+  });
+}
+
+async function abrirHistoricoEmpresa(companyId, nome){
+  histEmpresaAtual=companyId;
+  document.getElementById('hist-lista').style.display='none';
+  document.getElementById('hist-detalhe').style.display='block';
+  document.getElementById('hist-voltar').style.display='inline-flex';
+  document.getElementById('hist-titulo').textContent=nome;
+  document.getElementById('hist-sub').textContent='Alterações registradas nesta conta, da mais recente para a mais antiga.';
+
+  const {data, error}=await sb.from('auditoria')
+    .select('created_at, ator_email, ator_admin, impersonando, entidade, acao, campos, detalhe')
+    .eq('company_id', companyId)
+    .order('created_at',{ascending:false})
+    .limit(300);
+  if(error){ showToast('Erro ao carregar histórico: '+error.message); return; }
+
+  const body=document.getElementById('hist-eventos-body');
+  const table=document.getElementById('hist-eventos-table');
+  const empty=document.getElementById('hist-eventos-empty');
+  if(!data || data.length===0){ table.style.display='none'; empty.style.display='block'; return; }
+  table.style.display='table'; empty.style.display='none';
+
+  body.innerHTML=data.map(ev=>{
+    const quando=new Date(ev.created_at).toLocaleString('pt-BR');
+    const quem=ev.ator_email || '<span class="cell-muted">sistema</span>';
+    const marca=ev.impersonando ? ' <span class="hist-badge">admin</span>' : '';
+    const onde=HIST_ENTIDADE[ev.entidade] || ev.entidade;
+    let mudou;
+    if(ev.campos && Object.keys(ev.campos).length){
+      mudou=Object.entries(ev.campos).map(([k,v])=>
+        `<span class="hist-campo"><b>${escapeHtml(HIST_CAMPO[k]||k)}:</b> `+
+        `<span class="hist-de">${histValor(v.de)}</span> → `+
+        `<span class="hist-para">${histValor(v.para)}</span></span>`).join('');
+    } else {
+      mudou=`<span class="cell-muted">${escapeHtml(ev.detalhe || HIST_ACAO[ev.acao] || ev.acao)}</span>`;
+    }
+    return `<tr>
+      <td class="cell-muted" data-label="Quando" style="white-space:nowrap;">${quando}</td>
+      <td data-label="Quem">${quem}${marca}</td>
+      <td data-label="Onde">${escapeHtml(onde)} <span class="cell-muted">(${HIST_ACAO[ev.acao]||ev.acao})</span></td>
+      <td data-label="O que mudou">${mudou}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('hist-voltar').addEventListener('click', refreshHistoricoClientes);
+document.getElementById('hist-search').addEventListener('input', e=>renderHistoricoClientes(e.target.value));
 
 document.getElementById('admin-search').addEventListener('input', e=>renderAdminClientList(e.target.value));
 
@@ -3477,38 +4433,9 @@ function setCommTypeUI(tipo){
 }
 document.querySelectorAll('.comm-type-btn').forEach(b=>b.addEventListener('click',()=>setCommTypeUI(b.dataset.type)));
 
-document.getElementById('admin-asaas-create-btn').addEventListener('click', async ()=>{
-  if(!adminSelectedCompanyId) return;
-  const email=document.getElementById('admin-asaas-email').value.trim();
-  const cpfCnpj=document.getElementById('admin-asaas-cpfcnpj').value.replace(/\D/g,'');
-  const companyType=document.getElementById('admin-asaas-tipo').value;
-  const birthDate=document.getElementById('admin-asaas-nascimento').value;
-  const address=document.getElementById('admin-asaas-endereco').value.trim();
-  const addressNumber=document.getElementById('admin-asaas-numero').value.trim();
-  const province=document.getElementById('admin-asaas-bairro').value.trim();
-  const postalCode=document.getElementById('admin-asaas-cep').value.replace(/\D/g,'');
-  const phone=document.getElementById('admin-asaas-telefone').value.trim();
-  if(!email || !cpfCnpj){ showToast('Preencha e-mail e CPF/CNPJ do cliente.'); return; }
-  if((companyType==='MEI' || companyType==='INDIVIDUAL') && !birthDate){ showToast('Data de nascimento é obrigatória para MEI e Pessoa física.'); return; }
-  if(!address || !addressNumber || !province || !postalCode){ showToast('Preencha endereço, número, bairro e CEP.'); return; }
-  const btn=document.getElementById('admin-asaas-create-btn');
-  btn.disabled=true; btn.textContent='Criando...';
-  try{
-    const {data,error}=await sb.functions.invoke('asaas', {body:{
-      action:'create_subaccount',
-      company_id:adminSelectedCompanyId,
-      email, cpfCnpj, companyType, birthDate,
-      address, addressNumber, province, postalCode, phone,
-    }});
-    if(error){ let m=error.message; try{const b=await error.context.json(); if(b?.error)m=b.error;}catch(_e){} throw new Error(m); }
-    if(data?.error) throw new Error(data.error);
-    showToast('Subconta criada! Aguardando aprovação do Asaas.');
-    // recarrega a seção
-    const {data:full}=await sb.from('companies').select('asaas_wallet_id, asaas_account_status, asaas_commission_type, asaas_commission_percentage, asaas_commission_fixed_cents').eq('id', adminSelectedCompanyId).single();
-    renderAsaasSection(full||{});
-  }catch(e){ showToast('Erro: '+(e.message||e)); }
-  btn.disabled=false; btn.textContent='Criar subconta Asaas';
-});
+/* Criação de subconta pelo admin removida: gravava wallet sem registrar aceite
+   de termos. O caminho único é a Edge Function criar-subconta, disparada pelo
+   cliente no wizard. A action create_subaccount da função asaas devolve 410. */
 
 document.getElementById('admin-asaas-sync-btn').addEventListener('click', async ()=>{
   if(!adminSelectedCompanyId) return;
@@ -3635,6 +4562,10 @@ function openPaymentFlow(frameEl, valor, onDone){
       setTimeout(()=>{
         card.remove();
         frameEl.insertAdjacentHTML('beforeend', paymentSuccessHtml(method, valorLabel));
+        /* sem esta confirmação a conversa terminava no comprovante e o cliente
+           ficava sem saber o que acontece depois */
+        frameEl.insertAdjacentHTML('beforeend', `<div class="bubble out">Pagamento confirmado! 🎉 Seu pedido já está registrado e a nossa equipe vai te avisar por aqui assim que ele for separado. Qualquer dúvida, é só me chamar.</div>`);
+        frameEl.insertAdjacentHTML('beforeend', `<div class="sim-nota">Conversa de teste — a venda foi registrada em Vendas.</div>`);
         frameEl.scrollTop=frameEl.scrollHeight;
         onDone(method);
       }, processingTimeFor(method));
@@ -3652,6 +4583,14 @@ let vendasCache=[];
 let viewingCompanyId=null;
 let viewingCompanyName=null;
 let viewingProductsMap={}; // id -> {nome, preco_padrao} (quando em visão macro, montado via RPC)
+
+/* AMBIENTE DO CLIENTE — empresa alvo de leitura E escrita.
+   O admin age no ambiente do cliente em vez de só observar: a trigger
+   fn_auditoria grava cada alteração com impersonando=true, e o Histórico
+   mostra quem fez o quê. Sem isto, toda escrita usaria a empresa do admin. */
+function empresaAlvo(){
+  return viewingCompanyId || (currentProfile && currentProfile.company_id) || null;
+}
 
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
 function minAgoFrom(ts){ return ts ? Math.max(0, Math.round((Date.now()-new Date(ts).getTime())/60000)) : 999999; }
@@ -3731,6 +4670,9 @@ async function loadVendas(){
 
 async function refreshOperacao(){
   if(viewingCompanyId) await loadViewingProductsMap();
+  /* a grade de Produtos vive em productsCache: sem este refresh ela guardaria
+     o cache da empresa anterior ao entrar/sair do ambiente de um cliente */
+  if(currentProfile) await refreshProductsFromDb();
   await loadConversas();
   await loadVendas();
   refreshDashboardTable();
@@ -3956,23 +4898,87 @@ function addSystemNote(text){
   frame.scrollTop=frame.scrollHeight;
 }
 
+/* A mensagem do lojista precisa CHEGAR ao cliente. Antes isto só gravava em
+   `mensagens`: o painel mostrava a bolha como enviada e o WhatsApp do cliente
+   nunca recebia nada. Agora quem grava é a Edge Function, e só depois de o
+   envio ter dado certo — o painel nunca mostra o que não saiu. */
 async function sendHumanMessage(){
   const input=document.getElementById('atend-composer-input');
+  const btn=document.getElementById('atend-composer-send');
   const text=input.value.trim();
   if(!text || currentMode!=='humano' || !currentAtendId) return;
-  const {error}=await sb.from('mensagens').insert({
-    conversa_id:currentAtendId, company_id:currentProfile.company_id, role:'humano', content:text
-  });
-  if(error){ showToast('Erro ao enviar: '+error.message); return; }
-  await sb.from('conversas').update({
-    ultima_msg:text.slice(0,200), ultima_msg_role:'humano', ultima_msg_at:new Date().toISOString()
-  }).eq('id', currentAtendId);
+
+  input.disabled=true; if(btn) btn.disabled=true;
+  let data=null, error=null;
+  try{
+    ({data, error}=await sb.functions.invoke('enviar-mensagem-humana',{
+      body:{conversation_id: currentAtendId, text}
+    }));
+  }catch(e){ error=e; }
+  input.disabled=false; if(btn) btn.disabled=false; input.focus();
+
+  if(error || !data || data.ok===false){
+    const msg=(data && data.error) || 'Não foi possível enviar a mensagem ao cliente. Tente de novo.';
+    showToast(msg);
+    return; // sem bolha: nada foi entregue
+  }
+
   const c=conversasCache.find(x=>x.id===currentAtendId);
   if(c){ c.ultimaMsg=text; c.minAgo=0; }
   const frame=document.getElementById('atend-phone-frame');
   frame.insertAdjacentHTML('beforeend', `<div class="bubble out">${escapeHtml(text)}</div>`);
+  if(data.entrega==='simulado') addSystemNote('Conversa de teste — nada foi enviado por WhatsApp.');
+  /* Sem isto a resposta do lojista morre dentro desta conversa: outro cliente
+     com a mesma dúvida amanhã ouviria de novo "vou confirmar com a equipe". */
+  ofereceSalvarConhecimento(text);
   frame.scrollTop=frame.scrollHeight;
   input.value='';
+}
+
+let currentAtendProductId=null;
+let currentAtendProduto='';
+
+/* Última pergunta do cliente na conversa: guardada junto da resposta porque a
+   busca é semântica sobre a mensagem do cliente — um trecho que contém a
+   pergunta casa muito melhor do que a resposta isolada. */
+function ultimaPerguntaDoCliente(){
+  const frame=document.getElementById('atend-phone-frame');
+  if(!frame) return '';
+  const entradas=[...frame.querySelectorAll('.bubble.in')];
+  const ultima=entradas[entradas.length-1];
+  return ultima ? ultima.textContent.trim().slice(0,500) : '';
+}
+
+function ofereceSalvarConhecimento(resposta){
+  if(!currentAtendProductId) return;
+  const frame=document.getElementById('atend-phone-frame');
+  const pergunta=ultimaPerguntaDoCliente();
+  const id='saveKb-'+Date.now();
+  frame.insertAdjacentHTML('beforeend',
+    `<div class="kb-offer" id="${id}">`+
+      `<span>Salvar esta resposta no material de <b>${escapeHtml(currentAtendProduto||'este produto')}</b>? A IA passa a responder sozinha da próxima vez.</span>`+
+      `<button type="button" class="kb-offer-btn">Salvar</button>`+
+    `</div>`);
+  const box=document.getElementById(id);
+  box.querySelector('.kb-offer-btn').addEventListener('click', async ()=>{
+    const btn=box.querySelector('.kb-offer-btn');
+    btn.disabled=true; btn.textContent='Salvando…';
+    let data=null, error=null;
+    try{
+      ({data, error}=await sb.functions.invoke('salvar-conhecimento',{
+        body:{product_id:currentAtendProductId, pergunta, resposta, conversation_id:currentAtendId}
+      }));
+    }catch(e){ error=e; }
+    if(error || !data || data.ok!==true){
+      btn.disabled=false; btn.textContent='Salvar';
+      showToast((data && data.error) || 'Não foi possível salvar agora. Tente de novo.');
+      return;
+    }
+    box.innerHTML='<span>✓ Guardado no material de <b>'+escapeHtml(data.produto||'')+'</b>. A IA já pode usar isso.</span>';
+    box.classList.add('salvo');
+    await refreshKbDocsFromDb().catch(()=>{});
+    updateBellBadge();
+  });
 }
 document.getElementById('atend-composer-send').addEventListener('click',sendHumanMessage);
 document.getElementById('atend-composer-input').addEventListener('keydown',e=>{
@@ -3983,15 +4989,19 @@ async function openAtendDrawer(id){
   const a=conversasCache.find(x=>x.id===id);
   if(!a) return;
   currentAtendId=id;
+  currentAtendProductId=a.productId||null;
+  currentAtendProduto=a.produto||'';
   currentMode = a.atendidoPor==='humano' ? 'humano' : 'ia';
   document.getElementById('atend-drawer-name').textContent=a.cliente;
   document.getElementById('atend-drawer-meta').textContent=a.produto+' · '+notifTimeLabel(a.minAgo);
   const frame=document.getElementById('atend-phone-frame');
   frame.innerHTML='<div class="system-note">Carregando conversa...</div>';
   updateModeUI();
-  // Em visão macro (admin observando outro cliente) o modo é somente leitura.
-  const somenteLeitura=!!viewingCompanyId;
-  document.getElementById('atend-drawer').classList.toggle('read-only', somenteLeitura);
+  /* No ambiente de um cliente o admin também age: assume conversa, responde e
+     fecha venda. Cada ação fica registrada na auditoria com impersonando=true. */
+  const drawerEl=document.getElementById('atend-drawer');
+  drawerEl.classList.remove('read-only');
+  drawerEl.classList.toggle('ambiente-cliente', !!viewingCompanyId);
   const closeVendaBtn=document.getElementById('atend-close-venda-btn');
   closeVendaBtn.disabled = a.rawStatus==='vendida';
   closeVendaBtn.innerHTML = a.rawStatus==='vendida'
@@ -4025,7 +5035,6 @@ async function loadCobrancaPendente(convId){
   const banner=document.getElementById('atend-cobranca-banner');
   cobrancaPendenteAtual=null;
   banner.style.display='none';
-  if(viewingCompanyId) return; // macro-view é somente leitura
   const {data}=await sb.from('cobrancas')
     .select('id, qtd, valor_cents, product_id, products(nome)')
     .eq('conversa_id', convId).eq('status','pendente_aprovacao').maybeSingle();
@@ -4123,8 +5132,8 @@ function iaTestSetSending(sending){
   document.getElementById('ia-test-composer-send').disabled=sending||iaTestClosed;
 }
 
-async function iaTestCallNegotiate(message, start){
-  const body = start ? {product_id:iaTestProduct.id, history:iaTestHistory, start:true} : {product_id:iaTestProduct.id, history:iaTestHistory, message};
+async function iaTestCallNegotiate(message){
+  const body={product_id:iaTestProduct.id, history:iaTestHistory, message};
   body.cliente_nome='Teste do gestor';
   if(iaTestConversationId) body.conversation_id=iaTestConversationId;
   const {data, error}=await sb.functions.invoke('negotiate', { body });
@@ -4135,31 +5144,34 @@ async function iaTestCallNegotiate(message, start){
   }
   if(data?.error) throw new Error(data.error);
   if(data.conversation_id) iaTestConversationId=data.conversation_id;
+  /* a IA pode ter trocado de produto sozinha: o painel acompanha o foco real */
+  if(data.produto_foco && data.produto_foco.id){
+    const noCache=productsCache.find(p=>p.id===data.produto_foco.id);
+    if(noCache) iaTestProduct=noCache;
+    iaTestSetFoco(data.produto_foco.nome, data.ambiguidade);
+  }
   iaTestHistory.push({role:'user', content:data.userTurn});
   iaTestHistory.push({role:'assistant', content:data.reply});
   return data.reply;
 }
 
-async function iaTestStartConversation(){
-  const frame=document.getElementById('ia-test-phone-frame');
-  iaTestSetSending(true);
-  const typingId=iaTestShowTyping();
-  try{
-    const reply=await iaTestCallNegotiate(null, true);
-    iaTestRemoveTyping(typingId);
-    frame.insertAdjacentHTML('beforeend', `<div class="bubble out">${reply}</div>`);
-    frame.scrollTop=frame.scrollHeight;
-  }catch(e){
-    iaTestRemoveTyping(typingId);
-    frame.insertAdjacentHTML('beforeend', `<div class="bubble out">Desculpe, tive um problema para iniciar a conversa.</div>`);
-    showToast('Erro ao falar com a IA: '+e.message);
+function iaTestSetFoco(nome, ambiguidade){
+  const el=document.getElementById('ia-test-foco-nome');
+  if(!el) return;
+  if(ambiguidade && ambiguidade.length){
+    el.textContent='aguardando o cliente escolher';
+    el.classList.add('indefinido');
+    return;
   }
-  iaTestSetSending(false);
+  el.textContent=nome||'—';
+  el.classList.remove('indefinido');
 }
 
 async function iaTestSend(text){
   if(!text.trim() || iaTestSending || iaTestClosed || !iaTestProduct) return;
   const frame=document.getElementById('ia-test-phone-frame');
+  const vazio=frame.querySelector('.ia-test-vazio');
+  if(vazio) vazio.remove();
   frame.insertAdjacentHTML('beforeend', `<div class="bubble in">${text}</div>`);
   frame.scrollTop=frame.scrollHeight;
   iaTestSetSending(true);
@@ -4189,27 +5201,30 @@ document.getElementById('ia-test-composer-input').addEventListener('keydown',e=>
   }
 });
 
-document.getElementById('ia-test-product-select').addEventListener('change',(e)=>{
-  iaTestProduct=productsCache.find(p=>p.id===e.target.value);
+/* A conversa comeca vazia: quem fala primeiro e o cliente, igual ao WhatsApp.
+   O produto de entrada e apenas o ponto de partida — a IA troca sozinha. */
+function iaTestReset(){
+  iaTestProduct=productsCache[0]||null;
   iaTestHistory=[];
   iaTestConversationId=null;
   iaTestClosed=false;
   iaTestSetSending(false);
+  iaTestSetFoco(iaTestProduct?iaTestProduct.nome:null, null);
   const frame=document.getElementById('ia-test-phone-frame');
-  frame.innerHTML='';
+  frame.innerHTML=iaTestProduct
+    ? '<div class="ia-test-vazio">Escreva abaixo como se fosse o cliente para começar a conversa.</div>'
+    : '<div class="ia-test-vazio">Cadastre pelo menos um produto para testar a IA.</div>';
   const btn=document.getElementById('ia-test-close-venda-btn');
-  btn.disabled=false;
+  btn.disabled=!iaTestProduct;
   btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9"/></svg>Fechar venda';
-  if(iaTestProduct){
-    iaTestStartConversation();
-  }
-});
+  const input=document.getElementById('ia-test-composer-input');
+  input.disabled=!iaTestProduct;
+}
+document.getElementById('ia-test-reset').addEventListener('click', iaTestReset);
 
 function openIaTestDrawer(){
-  const select=document.getElementById('ia-test-product-select');
-  select.innerHTML=productsCache.map(p=>`<option value="${p.id}">${p.nome}</option>`).join('');
+  iaTestReset();
   iaTestOverlay.classList.add('open'); iaTestDrawer.classList.add('open');
-  select.dispatchEvent(new Event('change'));
 }
 document.getElementById('btn-testar-ia').addEventListener('click', openIaTestDrawer);
 function closeIaTestDrawer(){ iaTestOverlay.classList.remove('open'); iaTestDrawer.classList.remove('open'); }
@@ -4262,7 +5277,7 @@ let productsCache=[];
 
 function dbProductToForm(p){
   return {
-    id:p.id, nome:p.nome, tipo:p.tipo, descricao:p.descricao||'',
+    id:p.id, nome:p.nome, tipo:p.tipo, descricao:p.descricao||'', diferencial:p.diferencial||'',
     precoPadrao:Number(p.preco_padrao).toFixed(2).replace('.',','),
     unidade:p.unidade, descontoMax:Number(p.desconto_max),
     estrategia:p.estrategia, regras:p.regras||[],
@@ -4273,7 +5288,16 @@ function dbProductToForm(p){
 }
 
 async function refreshProductsFromDb(){
-  const {data, error}=await sb.from('products').select('*').eq('company_id', currentProfile.company_id).order('created_at',{ascending:true});
+  /* No ambiente de um cliente a leitura passa pela RPC de admin — mesmo
+     caminho já usado por conversas e vendas. Sem isso a grade buscaria os
+     produtos da empresa do admin e apareceria vazia. */
+  let data, error;
+  if(viewingCompanyId){
+    ({data, error}=await sb.rpc('admin_get_company_products', {p_company_id:viewingCompanyId}));
+    if(!error) data=(data||[]).slice().sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at)));
+  }else{
+    ({data, error}=await sb.from('products').select('*').eq('company_id', currentProfile.company_id).order('created_at',{ascending:true}));
+  }
   if(error){ showToast('Erro ao carregar produtos: '+error.message); return; }
   productsCache=(data||[]).map(dbProductToForm);
   renderProductGrid('');
@@ -4320,7 +5344,7 @@ productPhotoInput.addEventListener('change', async ()=>{
   for(const file of files){
     if(!file.type.startsWith('image/')){ showToast(file.name+' não é uma imagem, pulado.'); continue; }
     if(file.size > 8*1024*1024){ showToast(file.name+' é maior que 8MB, pulado.'); continue; }
-    const path=`${currentProfile.company_id}/${productImageFolder}/${Date.now()}-${file.name}`;
+    const path=`${empresaAlvo()}/${productImageFolder}/${Date.now()}-${file.name}`;
     const {error}=await sb.storage.from('product-images').upload(path, file);
     if(error){ showToast('Erro ao enviar '+file.name+': '+error.message); continue; }
     const {data:pub}=sb.storage.from('product-images').getPublicUrl(path);
@@ -4400,12 +5424,12 @@ productDocInput.addEventListener('change', async ()=>{
   if(file.size > 20*1024*1024){ showToast('Arquivo maior que 20MB não é suportado.'); return; }
 
   showToast('Enviando '+file.name+'...');
-  const path=`${currentProfile.company_id}/${Date.now()}-${safeStorageName(file.name)}`;
+  const path=`${empresaAlvo()}/${Date.now()}-${safeStorageName(file.name)}`;
   const {error:upErr}=await sb.storage.from('knowledge').upload(path, file);
   if(upErr){ showToast('Erro no upload: '+upErr.message); return; }
 
   const {data:newDoc, error:insErr}=await sb.from('knowledge_documents')
-    .insert({company_id:currentProfile.company_id, product_id:editingId, filename:file.name, storage_path:path, status:'processing'})
+    .insert({company_id:empresaAlvo(), product_id:editingId, filename:file.name, storage_path:path, status:'processing'})
     .select().single();
   if(insErr){ showToast('Erro ao registrar arquivo: '+insErr.message); return; }
 
@@ -4498,6 +5522,7 @@ function resetForm(){
   document.getElementById('btn-salvar-label').textContent='Salvar produto';
   document.getElementById('f-nome').value='';
   document.getElementById('f-descricao').value='';
+  document.getElementById('f-diferencial').value='';
   setTipo('produto');
   document.getElementById('f-preco-padrao').value='';
   document.getElementById('f-unidade').value='Unidade';
@@ -4669,6 +5694,7 @@ function openProductForm(product){
     document.getElementById('btn-salvar-label').textContent='Salvar alterações';
     document.getElementById('f-nome').value=product.nome;
     document.getElementById('f-descricao').value=product.descricao||'';
+    document.getElementById('f-diferencial').value=product.diferencial||'';
     setTipo(product.tipo);
     document.getElementById('f-preco-padrao').value=product.precoPadrao;
     document.getElementById('f-unidade').value=product.unidade;
@@ -4709,6 +5735,7 @@ document.getElementById('btn-salvar-produto').addEventListener('click', async ()
   const payload={
     nome,
     descricao:document.getElementById('f-descricao').value.trim(),
+    diferencial:document.getElementById('f-diferencial').value.trim(),
     tipo:getTipo(),
     preco_padrao:parseValor(document.getElementById('f-preco-padrao').value),
     unidade:document.getElementById('f-unidade').value,
@@ -4728,7 +5755,7 @@ document.getElementById('btn-salvar-produto').addEventListener('click', async ()
   if(editingId){
     ({error}=await sb.from('products').update(payload).eq('id', editingId));
   }else{
-    payload.company_id=currentProfile.company_id;
+    payload.company_id=empresaAlvo();
     const {data:created, error:insErr}=await sb.from('products').insert(payload).select().single();
     error=insErr;
     if(created) editingId=created.id;
@@ -5242,12 +6269,12 @@ kbFileInput.addEventListener('change', async ()=>{
   if(file.size > 20*1024*1024){ showToast('Arquivo maior que 20MB não é suportado.'); return; }
 
   showToast('Enviando '+file.name+'...');
-  const path=`${currentProfile.company_id}/${Date.now()}-${safeStorageName(file.name)}`;
+  const path=`${empresaAlvo()}/${Date.now()}-${safeStorageName(file.name)}`;
   const {error:upErr}=await sb.storage.from('knowledge').upload(path, file);
   if(upErr){ showToast('Erro no upload: '+upErr.message); return; }
 
   const {data:newDoc, error:insErr}=await sb.from('knowledge_documents')
-    .insert({company_id:currentProfile.company_id, filename:file.name, storage_path:path, status:'processing'})
+    .insert({company_id:empresaAlvo(), filename:file.name, storage_path:path, status:'processing'})
     .select().single();
   if(insErr){ showToast('Erro ao registrar documento: '+insErr.message); return; }
 
@@ -5603,7 +6630,6 @@ function renderAlertas(){
   }).join('');
 
   list.querySelectorAll('.alerta-ver-conv').forEach(b=>b.addEventListener('click',()=>{
-    if(viewingCompanyId){ showToast('Abra o ambiente do cliente para ver a conversa.'); return; }
     openAtendDrawer(b.dataset.conv);
   }));
   list.querySelectorAll('.alerta-marcar-lido').forEach(b=>b.addEventListener('click',()=>marcarAlerta(b.dataset.id,{lido:true})));
@@ -5611,7 +6637,6 @@ function renderAlertas(){
 }
 
 async function marcarAlerta(id, campos){
-  if(viewingCompanyId){ showToast('Somente leitura — entre no ambiente do cliente para agir.'); return; }
   const {error}=await sb.from('agente_alertas').update(campos).eq('id', id);
   if(error){ showToast('Erro: '+error.message); return; }
   // sincroniza os dois caches (tela Agente + sino)
@@ -5623,9 +6648,8 @@ async function marcarAlerta(id, campos){
 }
 
 async function marcarTodosAlertasLidos(){
-  if(viewingCompanyId){ showToast('Somente leitura — entre no ambiente do cliente para agir.'); return; }
   const {error}=await sb.from('agente_alertas').update({lido:true})
-    .eq('company_id', currentProfile.company_id).eq('lido', false).eq('resolvido', false);
+    .eq('company_id', empresaAlvo()).eq('lido', false).eq('resolvido', false);
   if(error){ showToast('Erro: '+error.message); return; }
   alertasCache.forEach(a=>{ if(!a.resolvido) a.lido=true; });
   sinoAlertasCache.forEach(a=>{ if(!a.resolvido) a.lido=true; });
@@ -5725,8 +6749,626 @@ document.querySelectorAll('.agente-filtro').forEach(btn=>{
 });
 
 document.getElementById('agente-cta-btn').addEventListener('click',()=>{
-  showToast('Pedido registrado! A equipe Negotia vai entrar em contato para liberar seu teste.');
+  showToast('Pedido registrado! A equipe Mercs vai entrar em contato para liberar seu teste.');
 });
+
+/* RECEBIMENTO: módulo */
+/* ===================== RECEBIMENTO (BaaS/Asaas) ===================== */
+const RCB = (function(){
+  const CHK='<svg viewBox="0 0 12 12" fill="none"><path d="M2 6.2l2.5 2.5L10 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const VERSOES={termos_uso:'1.0',privacidade:'1.0',aviso_asaas:'1.0',marketing:'1.0'};
+  const TITULOS=['Dados da empresa','Meios de cobrança','Destino do repasse','Termos'];
+  let st=null, pollTimer=null, navAttached=false;
+
+  function novoEstado(){
+    return {
+      loaded:false,status:null,walletId:null,destinoDisplay:null,onboardingUrl:null,
+      step:0,phase:'form',
+      dados:{name:'',cpfCnpj:'',companyType:'MEI',email:'',mobilePhone:'',birthDate:'',incomeValue:'',postalCode:'',address:'',addressNumber:'',province:''},
+      cobranca:{pix:true,boleto:false,cartao:false},
+      repasse:{pixAddressKeyType:'CNPJ',pixAddressKey:''},
+      termos:{termos_uso:false,privacidade:false,aviso_asaas:false,marketing:false},
+      erros:{}
+    };
+  }
+
+  /* O wizard e renderizado no modal enquanto a conta nao existe, e na secao
+     Recebimento depois disso. Um mount() dinamico evita duplicar render(). */
+  let modalAberto=false;
+  const mount=()=>document.getElementById(modalAberto?'rcb-mount-modal':'rcb-mount');
+
+  function abrirModal(){
+    if(modalAberto) return;
+    const ov=document.getElementById('rcb-modal-overlay');
+    if(!ov){ console.warn('RCB: overlay do modal ausente'); return; }
+    modalAberto=true;
+    ov.classList.add('open');
+    document.body.classList.add('rcb-modal-aberto');
+  }
+  function fecharModal(){
+    if(!modalAberto) return;
+    modalAberto=false;
+    const ov=document.getElementById('rcb-modal-overlay');
+    if(ov) ov.classList.remove('open');
+    document.body.classList.remove('rcb-modal-aberto');
+    const mm=document.getElementById('rcb-mount-modal');
+    if(mm) mm.innerHTML='';
+  }
+
+  /* Fallback visivel na secao Recebimento enquanto o modal esta aberto.
+     NAO desenha o wizard aqui: os ids internos (rcb-body e campos) ficariam
+     duplicados no DOM e o getElementById do modal passaria a escrever na
+     secao. Um cartao estatico com botao evita isso e cumpre o mesmo papel. */
+  function renderNaSecao(){
+    const alvo=document.getElementById('rcb-mount');
+    if(!alvo) return;
+    alvo.innerHTML='<div class="card"><div class="rcb-center">'+
+      '<h2 class="card-title" style="text-align:center">Falta configurar seu recebimento</h2>'+
+      '<p class="page-sub">Para você receber o dinheiro das suas vendas, precisamos criar sua conta de recebimento. São 4 perguntas simples.</p>'+
+      '<button class="rcb-btn primary" id="rcb-reabrir" style="flex:0 0 auto;min-width:200px;margin-top:6px">Configurar agora</button>'+
+      '</div></div>';
+    const b=document.getElementById('rcb-reabrir');
+    if(b) b.addEventListener('click',()=>{ abrirModal(); render(); });
+  }
+  /* Binding defensivo: se este elemento nao existir no DOM, o addEventListener
+     lancaria e derrubaria o modulo RCB inteiro — foi exatamente o que
+     aconteceu enquanto o HTML do modal era declarado apos o fim do script. */
+  /* Pular tem que estar disponivel em QUALQUER passo, nao so no acolhimento:
+     quem chegou ate o CNPJ e travou precisa de saida sem perder a conta. */
+  const btnPular=document.getElementById('rcb-modal-pular');
+  if(btnPular) btnPular.addEventListener('click', ()=>escolherCobrancaPropria());
+
+  const btnSair=document.getElementById('rcb-modal-sair');
+  if(btnSair) btnSair.addEventListener('click',()=>{
+    /* confirmacao porque no celular este link fica na base da tela, onde o
+       toque acidental e comum, e sair no meio do cadastro perde o preenchido */
+    if(!confirm('Sair da conta? O que você preencheu até aqui será perdido.')) return;
+    const btn=document.getElementById('logout-btn');
+    if(btn) btn.click(); else sb.auth.signOut().then(()=>location.reload());
+  });
+
+  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function maskCNPJ(v){v=v.replace(/\D/g,'').slice(0,14);return v.replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d)/,'$1-$2');}
+  function maskCEP(v){v=v.replace(/\D/g,'').slice(0,8);return v.replace(/^(\d{5})(\d)/,'$1-$2');}
+  function maskFone(v){v=v.replace(/\D/g,'').slice(0,11);return v.replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d{1,4})$/,'$1-$2');}
+  function maskMoeda(v){v=String(v).replace(/\D/g,'').slice(0,11);if(!v)return '';return (Number(v)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function parseMoeda(v){const n=String(v).replace(/\D/g,'');return n?Number(n)/100:0;}
+  function exigeNascimento(t){return t==='MEI'||t==='INDIVIDUAL';}
+  function maskPix(t,c){if(!c)return '—';t=(t||'').toUpperCase();if(t==='EMAIL'){const p=c.split('@');return '•••@'+(p[1]||'');}const d=c.replace(/\D/g,'');if(t==='CPF'||t==='CNPJ'||t==='PHONE')return '•••'+d.slice(-4);return '•••'+c.slice(-6);}
+  function asaasNote(txt){return '<div class="rcb-asaas"><span class="b">Asaas</span><div>'+txt+'</div></div>';}
+
+  /* Consulta o Asaas e persiste a mudanca. Sem isso o status fica preso em
+     aguardando_prova_vida: nao existe webhook de conta ainda. */
+  async function sincronizarStatus(){
+    try{
+      const {data:{session}}=await sb.auth.getSession();
+      if(!session) return null;
+      const r=await fetch(SUPABASE_URL+'/functions/v1/status-subconta',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+session.access_token,'Content-Type':'application/json'}
+      });
+      const j=await r.json().catch(()=>null);
+      return j&&j.ok?j:null;
+    }catch(e){ console.warn('sincronizarStatus',e); return null; }
+  }
+  async function carregarStatus(){
+    if(!currentProfile||!currentProfile.company_id) return;
+    const cid=currentProfile.company_id;
+    if(!st) st=novoEstado();
+    try{
+      const [c,r,s]=await Promise.all([
+        sb.from('companies').select('asaas_account_status,asaas_wallet_id,payment_methods,name').eq('id',cid).single(),
+        sb.from('repasse_config').select('destino_display,tipo_destino').eq('company_id',cid).maybeSingle(),
+        sb.from('subcontas_asaas').select('asaas_onboarding_url,asaas_account_id').eq('company_id',cid).maybeSingle()
+      ]);
+      const comp=c.data, rep=r.data, sub=s.data;
+      st.loaded=true;
+      st.status=(comp&&comp.asaas_account_status)||'nao_configurado';
+      st.walletId=comp?comp.asaas_wallet_id:null;
+      st.destinoDisplay=rep?rep.destino_display:null;
+      st.onboardingUrl=sub?sub.asaas_onboarding_url:null;
+      st.asaasAccountId=sub?sub.asaas_account_id:null;
+      st.tipoDestino=rep?rep.tipo_destino:null;
+      if(comp&&comp.name&&!st.dados.name) st.dados.name=comp.name;
+      /* o e-mail da conta ja e conhecido: pedir de novo em campo vazio faz o
+         usuario achar que errou algo no cadastro */
+      if(!st.dados.email && currentSession && currentSession.user) st.dados.email=currentSession.user.email||'';
+      if(comp&&comp.payment_methods) st.cobranca={pix:true,boleto:false,cartao:false,...comp.payment_methods};
+    }catch(e){ st.loaded=true; st.status=st.status||'nao_configurado'; console.warn('RCB status',e); }
+  }
+
+  /* ---------- render raiz (dirigido por status) ---------- */
+  function render(){
+    const m=mount(); if(!m) return;
+    if(!st||!st.loaded){ m.innerHTML='<div class="card"><div class="rcb-center"><div class="rcb-spin"></div><p class="page-sub">Carregando…</p></div></div>'; return; }
+    /* A conta da Mercs nao vende pela plataforma: mostrar o wizard de abertura
+       de subconta aqui seria oferecer algo que o admin nao deve fazer. */
+    if(document.body.classList.contains('is-admin-user') && st.status==='nao_configurado'){
+      m.innerHTML='<div class="card"><div class="rcb-center">'+
+        '<h2 class="card-title" style="text-align:center">Esta é a conta da Mercs</h2>'+
+        '<p class="page-sub">A conta de recebimento é criada por cada cliente na própria conta dele. Para ver a situação de um cliente, abra o ambiente dele em Administração.</p>'+
+        '</div></div>';
+      return;
+    }
+    const s=st.status;
+    if(s==='ativo') return renderAtivo();
+    if(s==='cobranca_propria') return renderCobrancaPropria();
+    if(s==='aguardando_prova_vida') return renderVerificacao();
+    if(s==='pendente') return renderPendente();
+    if(s==='recusado'||s==='bloqueada') return renderBloqueado();
+    if(st.phase==='criando') return renderCriando();
+    m.innerHTML='<div class="card">'+stepper()+'<div id="rcb-body"></div></div>';
+    renderStep();
+  }
+  /* step 0 = acolhimento (sem campo, sem barra); as 4 perguntas sao 1..4 */
+  function stepper(){
+    if(st.phase!=='form'||st.step===0) return '';
+    const i0=st.step-1;
+    let seg='';for(let i=0;i<4;i++){seg+='<div class="rcb-seg '+(i<i0?'done':(i===i0?'now':''))+'"></div>';}
+    return '<div class="rcb-steps">'+seg+'</div><p class="page-sub" style="margin:2px 0 16px">Pergunta '+st.step+' de 4 · '+TITULOS[i0]+'</p>';
+  }
+  function renderStep(){
+    if(st.step===0) return stepBoasVindas();
+    if(st.step===1) return stepDados();
+    if(st.step===2) return stepCobranca();
+    if(st.step===3) return stepRepasse();
+    if(st.step===4) return stepTermos();
+  }
+
+  /* ---------- passo 0: acolhimento ----------
+     Tela, nao modal: para quem tem pouca familiaridade com tecnologia, uma
+     camada sobre o painel se confunde com propaganda e o reflexo e fechar.
+     Aqui o unico caminho visivel e o botao. */
+  function stepBoasVindas(){
+    document.getElementById('rcb-body').innerHTML=
+      '<div class="rcb-bv">'+
+        '<div class="rcb-bv-icone">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="6" width="19" height="13" rx="2.5"/><line x1="2.5" y1="10.5" x2="21.5" y2="10.5"/></svg>'+
+        '</div>'+
+        '<h2 class="rcb-bv-titulo">Falta só um passo para começar a vender</h2>'+
+        '<p class="rcb-bv-texto">Para você receber o dinheiro das suas vendas, precisamos criar sua conta de recebimento.</p>'+
+        '<p class="rcb-bv-texto">São <b>4 perguntas simples</b>.</p>'+
+        '<div class="rcb-bv-tenha">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'+
+          '<span>Tenha em mãos: o <b>CNPJ da sua empresa</b>.</span>'+
+        '</div>'+
+        nav(false,'Começar')+
+        /* Nem todo lojista quer que a Mercs gere a cobranca: quem ja tem PIX
+           proprio ou maquininha precisa poder usar o agente mesmo assim. */
+        '<button type="button" class="rcb-bv-alternativa" id="rcb-cobranca-propria">Prefiro enviar a cobrança por conta própria</button>'+
+      '</div>';
+    bindNav(null);
+    document.getElementById('rcb-cobranca-propria').addEventListener('click', escolherCobrancaPropria);
+  }
+
+  async function escolherCobrancaPropria(){
+    if(!confirm('A Mercs não vai gerar cobranças automáticas. Quando o agente fechar uma venda, você recebe um aviso e envia o pagamento do seu jeito.\n\nVocê pode criar a conta de recebimento depois, quando quiser.')) return;
+    const btn=document.getElementById('rcb-cobranca-propria');
+    if(btn){ btn.disabled=true; btn.textContent='Salvando…'; }
+    const {error}=await sb.from('companies')
+      .update({asaas_account_status:'cobranca_propria', cobranca_auto:false})
+      .eq('id', currentProfile.company_id);
+    if(error){
+      if(btn){ btn.disabled=false; btn.textContent='Prefiro enviar a cobrança por conta própria'; }
+      toast('Não foi possível salvar: '+error.message);
+      return;
+    }
+    st.status='cobranca_propria';
+    travarPainel(false);
+    fecharModal();
+    render();
+    if(typeof switchView==='function') switchView('dashboard');
+    toast('Pronto! Você mesmo envia as cobranças. Dá para mudar isso a qualquer momento em Recebimento.');
+  }
+
+  /* ---------- passo 1 ---------- */
+  /* Todo campo do cadastro e exigido pelo Asaas: o asterisco marca isso de
+     forma visivel para quem nao esta habituado a formulario. */
+  const REQ='<abbr class="rcb-req" title="Campo obrigatório">*</abbr>';
+  function fld(label,key,val,err,type,ph,opcional){
+    return '<label class="rcb-field"><span>'+label+(opcional?'':REQ)+'</span>'+
+      '<input class="rcb-input" data-k="'+key+'" type="'+(type||'text')+'" value="'+esc(val)+'" '+(ph?'placeholder="'+ph+'"':'')+(opcional?'':' aria-required="true"')+' autocomplete="off"></label>'+
+      (err?'<div class="rcb-err">'+err+'</div>':'');
+  }
+  function selFld(label,key,val,opts,opcional){
+    const o=opts.map(x=>'<option value="'+x[0]+'"'+(x[0]===val?' selected':'')+'>'+x[1]+'</option>').join('');
+    return '<label class="rcb-field"><span>'+label+(opcional?'':REQ)+'</span><select class="rcb-select" data-k="'+key+'"'+(opcional?'':' aria-required="true"')+'>'+o+'</select></label>';
+  }
+  function stepDados(){
+    const d=st.dados,e=st.erros;
+    document.getElementById('rcb-body').innerHTML=
+      '<p class="page-sub" style="margin:0 0 6px">Essa conta fica no nome da sua empresa — é por isso que o CNPJ é obrigatório.</p>'+
+      '<p class="rcb-legenda">Os campos com '+REQ+' são obrigatórios.</p>'+
+      fld('Razão social ou nome da empresa','name',d.name,e.name)+
+      '<div class="rcb-row">'+fld('CNPJ','cpfCnpj',d.cpfCnpj,e.cpfCnpj,'text','00.000.000/0000-00')+
+        selFld('Tipo de empresa','companyType',d.companyType,[['MEI','MEI'],['INDIVIDUAL','Empresário individual'],['LIMITED','Ltda / EIRELI'],['ASSOCIATION','Associação']])+'</div>'+
+      fld('E-mail','email',d.email,e.email,'email')+
+      fld('Celular','mobilePhone',d.mobilePhone,e.mobilePhone,'tel','(00) 00000-0000')+
+      (exigeNascimento(d.companyType)
+        ? fld('Data de nascimento do titular','birthDate',d.birthDate,e.birthDate,'date')
+          +'<p class="rcb-hint">Exigida pelo Asaas quando o titular da conta é uma pessoa.</p>'
+        : '')+
+      fld('Faturamento mensal (R$)','incomeValue',d.incomeValue,e.incomeValue,'text','0,00')+
+      '<p class="rcb-hint">Informação obrigatória por exigência regulatória. Use uma média dos últimos meses.</p>'+
+      '<div class="rcb-row">'+fld('CEP','postalCode',d.postalCode,e.postalCode,'text','00000-000')+fld('Número','addressNumber',d.addressNumber,e.addressNumber)+'</div>'+
+      fld('Endereço','address',d.address,e.address)+
+      fld('Bairro','province',d.province,e.province)+
+      nav(false,'Continuar');
+    mount().querySelectorAll('[data-k]').forEach(el=>{
+      el.addEventListener('input',()=>{let v=el.value;const k=el.getAttribute('data-k');if(k==='cpfCnpj')v=el.value=maskCNPJ(v);if(k==='postalCode')v=el.value=maskCEP(v);if(k==='mobilePhone')v=el.value=maskFone(v);if(k==='incomeValue')v=el.value=maskMoeda(v);st.dados[k]=v;});
+      el.addEventListener('change',()=>{const k=el.getAttribute('data-k');st.dados[k]=el.value;
+        if(k==='companyType'){ if(!exigeNascimento(el.value)) st.dados.birthDate=''; stepDados(); }
+      });
+    });
+    bindNav(validarDados);
+  }
+  function validarDados(){
+    const d=st.dados,e={};
+    if(!d.name.trim())e.name='Informe o nome da empresa.';
+    if(d.cpfCnpj.replace(/\D/g,'').length!==14)e.cpfCnpj='CNPJ deve ter 14 dígitos.';
+    if(!/^\S+@\S+\.\S+$/.test(d.email))e.email='E-mail inválido.';
+    if(d.mobilePhone.replace(/\D/g,'').length<10)e.mobilePhone='Celular incompleto.';
+    if(exigeNascimento(d.companyType)&&!d.birthDate)e.birthDate='Informe a data de nascimento do titular.';
+    if(d.birthDate){const dt=new Date(d.birthDate+'T00:00:00');const idade=(Date.now()-dt.getTime())/31557600000;
+      if(!isFinite(idade)||idade<18)e.birthDate='O titular precisa ter 18 anos ou mais.';
+      else if(idade>120)e.birthDate='Data de nascimento inválida.';}
+    if(parseMoeda(d.incomeValue)<=0)e.incomeValue='Informe o faturamento mensal.';
+    if(!d.address.trim())e.address='Informe o endereço.';
+    if(!d.addressNumber.trim())e.addressNumber='Nº';
+    if(d.postalCode.replace(/\D/g,'').length!==8)e.postalCode='CEP incompleto.';
+    if(!d.province.trim())e.province='Informe o bairro.';
+    st.erros=e;return Object.keys(e).length===0;
+  }
+
+  /* ---------- passo 2 ---------- */
+  function optRow(on,titulo,desc,attr){
+    return '<div class="rcb-opt '+(on?'on':'')+'" '+attr+'><div class="rcb-cbox">'+CHK+'</div><div><div class="t">'+titulo+'</div><div class="d">'+desc+'</div></div></div>';
+  }
+  function stepCobranca(){
+    const c=st.cobranca;
+    document.getElementById('rcb-body').innerHTML=
+      '<p class="page-sub" style="margin:0 0 16px">Escolha os meios de pagamento que o agente pode oferecer ao fechar uma venda. Você pode mudar depois.</p>'+
+      optRow(c.pix,'PIX','Aprovação na hora.','data-c="pix"')+
+      optRow(c.boleto,'Boleto','Compensa em 1 a 2 dias úteis.','data-c="boleto"')+
+      optRow(c.cartao,'Cartão de crédito','Permite parcelamento.','data-c="cartao"')+
+      asaasNote('Os pagamentos são processados por <b>Asaas</b>, instituição de pagamento responsável pela liquidação e custódia dos valores.')+
+      nav(true,'Continuar');
+    mount().querySelectorAll('[data-c]').forEach(el=>el.addEventListener('click',()=>{const k=el.getAttribute('data-c');st.cobranca[k]=!st.cobranca[k];renderStep();}));
+    bindNav(()=>{if(!c.pix&&!c.boleto&&!c.cartao){toast('Selecione ao menos um meio de pagamento.');return false;}return true;});
+  }
+
+  /* ---------- passo 3 ---------- */
+  function stepRepasse(){
+    const r=st.repasse;
+    document.getElementById('rcb-body').innerHTML=
+      '<p class="page-sub" style="margin:0 0 16px">Informe a chave PIX onde o valor das suas vendas será depositado. Ela cai em qualquer banco.</p>'+
+      selFld('Tipo de chave','pixAddressKeyType',r.pixAddressKeyType,[['CNPJ','CNPJ'],['CPF','CPF'],['EMAIL','E-mail'],['PHONE','Celular'],['EVP','Chave aleatória']])+
+      '<label class="rcb-field"><span>Chave PIX'+REQ+'</span><input class="rcb-input" id="rcb-pix" type="text" value="'+esc(r.pixAddressKey)+'" aria-required="true" autocomplete="off"><small>Preferimos PIX porque a chave já está vinculada a uma conta verificada — reduz o risco de depósito errado.</small></label>'+
+      '<div class="rcb-preview">No painel a chave aparece mascarada: <b id="rcb-pixprev">'+maskPix(r.pixAddressKeyType,r.pixAddressKey)+'</b></div>'+
+      nav(true,'Continuar');
+    mount().querySelector('[data-k="pixAddressKeyType"]').addEventListener('change',ev=>{st.repasse.pixAddressKeyType=ev.target.value;document.getElementById('rcb-pixprev').textContent=maskPix(st.repasse.pixAddressKeyType,st.repasse.pixAddressKey);});
+    document.getElementById('rcb-pix').addEventListener('input',ev=>{st.repasse.pixAddressKey=ev.target.value;document.getElementById('rcb-pixprev').textContent=maskPix(st.repasse.pixAddressKeyType,ev.target.value);});
+    bindNav(()=>{if(!st.repasse.pixAddressKey.trim()){toast('Informe a chave PIX.');return false;}return true;});
+  }
+
+  /* ---------- passo 4 ---------- */
+  /* Titulo fora da caixa de rolagem: dentro dela ele sumia junto com o texto e
+     os tres documentos pareciam o mesmo passo repetido. */
+  function docBlock(key,titulo,corpo,ordem,marcado){
+    return '<div class="rcb-doc">'+
+      '<div class="hd"><span class="num">'+ordem+' de 3</span><h3>'+titulo+'</h3></div>'+
+      '<div class="bd" id="rcb-bd-'+key+'">'+corpo+'</div>'+
+      '<div class="ft" id="rcb-ft-'+key+'"><label class="rcb-chk"><input type="checkbox" id="rcb-ck-'+key+'"'+(marcado?' checked':'')+'> Li e aceito</label></div></div>';
+  }
+  function stepTermos(){
+    const t=st.termos;
+    document.getElementById('rcb-body').innerHTML=
+      '<p class="page-sub" style="margin:0 0 12px">São três documentos. Você pode aceitar todos de uma vez ou ler um por um.</p>'+
+      '<label class="rcb-aceitar-tudo"><input type="checkbox" id="rcb-aceitar-tudo"'+(t.termos_uso&&t.privacidade&&t.aviso_asaas?' checked':'')+'><span>Li e aceito os três documentos</span></label>'+
+      docBlock('termos_uso','Termos de Uso da Mercs',LOREM.termos,1,t.termos_uso)+
+      docBlock('privacidade','Política de Privacidade (LGPD)',LOREM.priv,2,t.privacidade)+
+      docBlock('aviso_asaas','Aviso de responsabilidade — Asaas',LOREM.asaas,3,t.aviso_asaas)+
+      '<label class="rcb-chk" style="margin:8px 2px 2px"><input type="checkbox" id="rcb-mkt" '+(t.marketing?'checked':'')+'> Quero receber novidades por e-mail <span style="font-weight:400;color:var(--text-secondary)">(opcional)</span></label>'+
+      nav(true,'Criar conta');
+    /* O 'aceitar tudo' e os tres checkboxes sao a mesma decisao vista de duas
+       formas: qualquer um dos lados atualiza o outro para nao existir estado
+       em que a tela mostra uma coisa e o registro grava outra. */
+    const chaves=['termos_uso','privacidade','aviso_asaas'];
+    const todos=document.getElementById('rcb-aceitar-tudo');
+    const sincronizarTudo=()=>{ todos.checked=chaves.every(k=>st.termos[k]); };
+    chaves.forEach(k=>{
+      const ck=document.getElementById('rcb-ck-'+k);
+      ck.addEventListener('change',ev=>{st.termos[k]=ev.target.checked;sincronizarTudo();refreshCriar();});
+    });
+    todos.addEventListener('change',ev=>{
+      chaves.forEach(k=>{
+        st.termos[k]=ev.target.checked;
+        const ck=document.getElementById('rcb-ck-'+k);
+        if(ck) ck.checked=ev.target.checked;
+      });
+      refreshCriar();
+    });
+    document.getElementById('rcb-mkt').addEventListener('change',ev=>{st.termos.marketing=ev.target.checked;});
+    bindNav(()=>{if(!(t.termos_uso&&t.privacidade&&t.aviso_asaas)){toast('É necessário aceitar os três documentos.');return false;}return true;},criar);
+    refreshCriar();
+  }
+  function refreshCriar(){const b=document.getElementById('rcb-primary');if(b)b.disabled=!(st.termos.termos_uso&&st.termos.privacidade&&st.termos.aviso_asaas);}
+
+  /* ---------- criação (chamada real) ---------- */
+  async function criar(){
+    st.phase='criando';render();
+    try{
+      const {data:{session}}=await sb.auth.getSession();
+      const token=session?session.access_token:null;
+      const resp=await fetch(SUPABASE_URL+'/functions/v1/criar-subconta',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body:JSON.stringify({
+          cadastro:Object.assign({},st.dados,{incomeValue:parseMoeda(st.dados.incomeValue)}),
+          payment_methods:st.cobranca,
+          repasse:{tipo:'pix',pixAddressKey:st.repasse.pixAddressKey,pixAddressKeyType:st.repasse.pixAddressKeyType},
+          aceites:{termos_uso_versao:VERSOES.termos_uso,privacidade_versao:VERSOES.privacidade,aviso_asaas_versao:st.termos.aviso_asaas?VERSOES.aviso_asaas:null,marketing_versao:st.termos.marketing?VERSOES.marketing:null}
+        })
+      });
+      const j=await resp.json().catch(()=>({}));
+      if(!resp.ok||!j.ok) throw new Error(j.erro||'Não foi possível criar a conta agora.');
+      await carregarStatus();
+      travarPainel(false);
+      st.status=j.accountStatus||st.status||'aguardando_prova_vida';
+      st.onboardingUrl=j.onboardingUrl||st.onboardingUrl;
+      /* conta criada: o painel abre e o acompanhamento sai do modal para a
+         seção Recebimento, que é onde ele vive daqui em diante */
+      fecharModal();
+      st.phase='form';render();
+      if(st.status==='aguardando_prova_vida') iniciarPoll();
+      if(window.companyPaymentMethods) window.companyPaymentMethods={...window.companyPaymentMethods,...st.cobranca};
+    }catch(e){ st.phase='form'; render(); toast(e.message||'Erro ao criar a conta.'); }
+  }
+  function renderCriando(){mount().innerHTML='<div class="card"><div class="rcb-center"><div class="rcb-spin"></div><h2 class="card-title" style="text-align:center">Criando sua conta de recebimento…</h2><p class="page-sub">Só um instante. Estamos abrindo sua subconta e registrando seus dados com segurança.</p></div></div>';}
+
+  /* ---------- verificação (prova de vida) ---------- */
+  function miniLi(cls,txt){return '<div class="li '+cls+'"><span class="dot"></span><span>'+txt+'</span></div>';}
+  function renderVerificacao(){
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<span class="rcb-badge pending">● Verificação de identidade pendente</span>'+
+      '<h2 class="card-title" style="text-align:center">Falta um passo rápido</h2>'+
+      '<p class="page-sub">A verificação é feita no ambiente do Asaas, a instituição que cuida dos seus recebimentos. Abre em uma nova aba e leva cerca de 5 minutos.</p></div>'+
+      asaasNote(st.onboardingUrl
+        ? 'Você será direcionado ao <b>Asaas</b> para enviar uma selfie e concluir a verificação. A Mercs não tem acesso a esses dados.'
+        : 'A verificação é feita no painel do <b>Asaas</b>. Entre com o mesmo e-mail que você cadastrou aqui — o Asaas envia um e-mail de acesso ao criar a conta. A Mercs não tem acesso a esses dados.')+
+      '<div class="rcb-mini">'+miniLi('done','Conta de recebimento criada')+miniLi('active','Verificação de identidade (selfie)')+miniLi('','Recebimentos liberados')+'</div>'+
+      '<div class="rcb-nav"><button class="rcb-btn primary" id="rcb-pv">Fazer verificação agora</button></div>'+
+      '<div class="rcb-nav" style="margin-top:10px"><button class="rcb-btn ghost" id="rcb-check" style="flex:1">Já concluí — verificar status</button></div>'+
+      '<p class="page-sub" style="text-align:center;margin:14px 0 0">Pode fechar esta tela. Assim que o Asaas aprovar, seus recebimentos são liberados automaticamente.</p></div>';
+    /* Nem toda resposta do Asaas traz um link direto de onboarding. Sem
+       fallback, o usuario ficava preso num toast de erro sem saida — o painel
+       do Asaas resolve a verificacao pelo mesmo e-mail do cadastro. */
+    document.getElementById('rcb-pv').addEventListener('click',()=>{
+      if(st.onboardingUrl){ window.open(st.onboardingUrl,'_blank','noopener'); return; }
+      window.open('https://www.asaas.com/login','_blank','noopener');
+      toast('Entre no Asaas com o e-mail que você cadastrou para concluir a verificação.');
+    });
+    document.getElementById('rcb-check').addEventListener('click',async()=>{ await sincronizarStatus(); await carregarStatus(); render(); if(st.status==='ativo'){ travarPainel(false); toast('Conta aprovada! Você já pode cobrar.'); } else toast('Ainda em análise. Assim que aprovar, liberamos automaticamente.'); });
+    iniciarPoll();
+  }
+  function iniciarPoll(){
+    pararPoll();
+    pollTimer=setInterval(async()=>{
+      if(!currentProfile) return;
+      const {data}=await sb.from('companies').select('asaas_account_status').eq('id',currentProfile.company_id).single();
+      if(data&&data.asaas_account_status&&data.asaas_account_status!==st.status){ st.status=data.asaas_account_status; if(st.status==='ativo') pararPoll(); render(); }
+    },8000);
+  }
+  function pararPoll(){ if(pollTimer){clearInterval(pollTimer);pollTimer=null;} }
+
+  /* ---------- estados finais ---------- */
+  function renderCobrancaPropria(){
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<div class="rcb-icon-ok" style="background:var(--accent-soft)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-dark)" stroke-width="1.9"><path d="M20 7H4a1 1 0 00-1 1v11a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>'+
+      '<h2 class="card-title" style="text-align:center">Você envia as cobranças</h2>'+
+      '<p class="page-sub">Quando o agente fechar uma venda, você recebe um aviso com o produto, a quantidade e o valor acordado. O pagamento você combina direto com o cliente, do seu jeito.</p>'+
+      '</div>'+
+      '<div class="rcb-edit-bloco">'+
+        '<h3 class="rcb-edit-titulo">Quer que a Mercs cuide disso?</h3>'+
+        '<p class="page-sub" style="margin:0 0 4px">Criando sua conta de recebimento, o agente já envia o link de pagamento para o cliente na hora do fechamento — e o dinheiro cai direto para você. São 4 perguntas simples.</p>'+
+        '<button class="rcb-btn primary" id="rcb-configurar-agora" style="flex:0 0 auto;min-width:220px;margin-top:12px">Criar conta de recebimento</button>'+
+      '</div></div>';
+    document.getElementById('rcb-configurar-agora').addEventListener('click', async ()=>{
+      /* volta ao inicio do wizard sem apagar o que ja foi digitado antes */
+      st.status='nao_configurado';
+      st.phase='form';
+      st.step=0;
+      abrirModal();
+      render();
+    });
+  }
+
+  function renderAtivo(){
+    const pixLabel=st.destinoDisplay||'PIX cadastrado';
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<div class="rcb-icon-ok"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'+
+      '<span class="rcb-badge ok">● Conta ativa</span>'+
+      '<h2 class="card-title" style="text-align:center">Tudo pronto</h2>'+
+      '<p class="page-sub">Suas vendas caem direto para você, com a comissão da Mercs separada automaticamente.</p></div>'+
+      '<div style="margin-top:8px">'+
+        '<div class="rcb-srow"><span class="k">Destino do repasse</span><span class="v">'+esc(pixLabel)+'</span></div>'+
+        '<div class="rcb-srow"><span class="k">Carteira Asaas</span><span class="v">'+esc(st.walletId||'—')+'</span></div>'+
+      '</div>'+
+      /* Os meios de cobranca sao configuracao da propria empresa (payment_methods),
+         entao podem ser editados aqui. Ja a chave PIX e os dados cadastrais vivem
+         na subconta do Asaas e nao sao alteraveis por este painel. */
+      '<div class="rcb-edit-bloco">'+
+        '<h3 class="rcb-edit-titulo">Como seus clientes podem pagar</h3>'+
+        '<p class="page-sub" style="margin:0 0 12px">Marque as formas de pagamento que a IA pode oferecer ao fechar uma venda.</p>'+
+        optRow(st.cobranca.pix,'PIX','Aprovação na hora.','data-c="pix"')+
+        optRow(st.cobranca.boleto,'Boleto','Compensa em 1 a 2 dias úteis.','data-c="boleto"')+
+        optRow(st.cobranca.cartao,'Cartão de crédito','Permite parcelamento.','data-c="cartao"')+
+        '<p class="rcb-err" id="rcb-cobranca-err" style="display:none"></p>'+
+        '<button class="rcb-btn primary" id="rcb-salvar-cobranca" style="margin-top:6px">Salvar formas de pagamento</button>'+
+      '</div>'+
+      '<div class="rcb-edit-bloco">'+
+        '<h3 class="rcb-edit-titulo">Seus dados de recebimento</h3>'+
+        '<p class="page-sub" style="margin:0 0 14px">Estes dados ficam guardados no <b>Asaas</b>, que é quem custodia o seu dinheiro. Por segurança, eles não podem ser alterados por aqui — a mudança é feita direto no painel do Asaas.</p>'+
+        campoBloqueado('Razão social ou nome da empresa', st.dados.name||'')+
+        campoBloqueado('E-mail da conta', st.dados.email||'')+
+        campoBloqueado('Chave PIX para receber', st.destinoDisplay||'')+
+        campoBloqueado('Identificador da sua conta Asaas', st.asaasAccountId||'')+
+        campoBloqueado('Carteira de repasse', st.walletId||'')+
+        '<a class="rcb-btn primary rcb-btn-link" id="rcb-abrir-asaas" target="_blank" rel="noopener noreferrer">'+
+          'Alterar no Asaas'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'+
+        '</a>'+
+        '<p class="hint" style="margin:10px 0 0">Você entra no Asaas com o mesmo e-mail cadastrado acima.</p>'+
+      '</div>'+
+      asaasNote('Pagamentos processados e custodiados por <b>Asaas</b>, instituição de pagamento autorizada pelo Banco Central.')+'</div>';
+
+    bindCobrancaRows();
+    /* O onboardingUrl e o acesso que o Asaas gerou para esta subconta; se ele
+       nao existir mais, o painel geral resolve com o mesmo login. */
+    const linkAsaas=document.getElementById('rcb-abrir-asaas');
+    const base=(st.onboardingUrl && /^https?:\/\//.test(st.onboardingUrl))
+      ? st.onboardingUrl
+      : 'https://www.asaas.com/login';
+    linkAsaas.setAttribute('href', base);
+    document.getElementById('rcb-salvar-cobranca').addEventListener('click', salvarCobranca);
+  }
+
+  /* Campo somente leitura: mostra o dado quando ele existe aqui, e diz onde
+     ele esta quando nao existe — em vez de um campo vazio sem explicacao. */
+  function campoBloqueado(label, valor){
+    const temValor=!!(valor && String(valor).trim());
+    return '<label class="rcb-field rcb-field-lock"><span>'+label+'</span>'+
+      '<input class="rcb-input" type="text" disabled value="'+esc(temValor?valor:'')+'"'+
+      (temValor?'':' placeholder="Guardado no Asaas"')+'></label>';
+  }
+
+  /* Liga os cliques dos meios de cobranca reaproveitando o mesmo markup do
+     passo 2 do wizard, para nao existirem dois componentes com regras
+     diferentes para a mesma configuracao. */
+  function bindCobrancaRows(){
+    mount().querySelectorAll('.rcb-opt').forEach(row=>{
+      row.addEventListener('click',()=>{
+        const k=row.dataset.c;
+        if(!k) return;
+        st.cobranca[k]=!st.cobranca[k];
+        row.classList.toggle('on', st.cobranca[k]);
+      });
+    });
+  }
+
+  async function salvarCobranca(){
+    const err=document.getElementById('rcb-cobranca-err');
+    const btn=document.getElementById('rcb-salvar-cobranca');
+    err.style.display='none';
+    if(!st.cobranca.pix && !st.cobranca.boleto && !st.cobranca.cartao){
+      err.textContent='Escolha pelo menos uma forma de pagamento.';
+      err.style.display='block';
+      return;
+    }
+    btn.disabled=true; btn.textContent='Salvando…';
+    const {error}=await sb.from('companies')
+      .update({payment_methods:{pix:!!st.cobranca.pix, boleto:!!st.cobranca.boleto, cartao:!!st.cobranca.cartao}})
+      .eq('id', currentProfile.company_id);
+    btn.disabled=false; btn.textContent='Salvar formas de pagamento';
+    if(error){
+      err.textContent='Não foi possível salvar: '+error.message;
+      err.style.display='block';
+      return;
+    }
+    toast('Formas de pagamento atualizadas.');
+  }
+  function renderPendente(){
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<span class="rcb-badge pending">● Em análise</span>'+
+      '<h2 class="card-title" style="text-align:center">Sua conta está em análise</h2>'+
+      '<p class="page-sub">O Asaas está validando seus dados. Assim que concluir, seus recebimentos são liberados.</p>'+
+      '<div class="rcb-nav" style="justify-content:center"><button class="rcb-btn ghost" id="rcb-check2">Verificar status</button></div></div></div>';
+    document.getElementById('rcb-check2').addEventListener('click',async()=>{await sincronizarStatus();await carregarStatus();if(st.status==='ativo')travarPainel(false);render();});
+    iniciarPoll();
+  }
+  function renderBloqueado(){
+    mount().innerHTML='<div class="card"><div class="rcb-center">'+
+      '<span class="rcb-badge pending" style="background:var(--red-bg) !important;color:var(--red) !important">● Não aprovada</span>'+
+      '<h2 class="card-title" style="text-align:center">Não foi possível ativar sua conta</h2>'+
+      '<p class="page-sub">O Asaas não aprovou a conta de recebimento. Fale com o suporte da Mercs para entender o motivo e reenviar seus dados.</p></div></div>';
+  }
+
+  /* ---------- navegação do wizard ---------- */
+  function nav(hasBack,label){
+    return '<div class="rcb-nav">'+(hasBack?'<button class="rcb-btn ghost" id="rcb-back">Voltar</button>':'')+'<button class="rcb-btn primary" id="rcb-primary">'+label+'</button></div>';
+  }
+  function bindNav(validate,override){
+    const back=document.getElementById('rcb-back');
+    if(back) back.addEventListener('click',()=>{st.erros={};st.step--;render();});
+    const p=document.getElementById('rcb-primary');
+    if(p) p.addEventListener('click',()=>{ if(validate&&!validate()){render();return;} if(override){override();return;} st.step++; render(); });
+  }
+  function toast(msg){ if(window.showToast) showToast(msg); else alert(msg); }
+
+  /* ---------- integração com o painel ---------- */
+  function attachNav(){
+    if(navAttached) return; navAttached=true;
+    document.querySelectorAll('.nav-item[data-view]').forEach(it=>{
+      it.addEventListener('click',()=>{
+        if(it.dataset.view==='recebimento'){
+          /* pinta o que ja se sabe na hora; a sincronizacao com o Asaas e
+             lenta e, se falhasse, a tela ficava em branco esperando */
+          render();
+          sincronizarStatus().then(carregarStatus).then(render).catch(()=>{});
+        }
+        else pararPoll();
+      });
+    });
+  }
+  /* Sem conta de recebimento nao ha cobranca: liberar o resto do painel
+     produziria telas que falham na hora de vender. */
+  function travarPainel(travar){
+    document.querySelectorAll('.nav-item[data-view]').forEach(it=>{
+      if(it.dataset.view==='recebimento') return;
+      it.style.pointerEvents=travar?'none':'';
+      it.style.opacity=travar?'0.45':'';
+      it.setAttribute('aria-disabled',travar?'true':'false');
+      it.title=travar?'Disponível depois de criar sua conta de recebimento.':'';
+    });
+  }
+  async function afterLogin(){
+    st=novoEstado();
+    attachNav();
+    await carregarStatus();
+    if(st.status&&st.status!=='nao_configurado'&&st.status!=='ativo'){
+      await sincronizarStatus(); await carregarStatus();
+    }
+    /* administradores da Mercs nao vendem pela plataforma: nao passam pelo wizard */
+    const ehAdmin=document.body.classList.contains('is-admin-user');
+    const semConta=(st.status==='nao_configurado' && !ehAdmin);
+    travarPainel(semConta);
+    if(semConta){
+      if(typeof switchView==='function') switchView('recebimento');
+      abrirModal();
+      render();
+      /* Defesa em profundidade: o wizard tambem e desenhado na secao
+         Recebimento. Se o modal falhar em aparecer por qualquer motivo, a
+         configuracao continua acessivel em vez de sumir da interface. */
+      renderNaSecao();
+    }else{
+      fecharModal();
+      /* Sem este render a secao Recebimento ficava literalmente em branco para
+         quem nao passa pelo wizard (admin, ou conta ja configurada): o mount
+         so era preenchido dentro do fluxo do modal. */
+      render();
+    }
+  }
+
+  const LOREM={
+    termos:'Texto de exemplo do Termo de Uso. O documento final define objeto do serviço, responsabilidades da Mercs como operadora, obrigações do contratante, uso do agente de vendas e regras de cancelamento. '.repeat(6),
+    priv:'Texto de exemplo da Política de Privacidade (LGPD). Descreve dados tratados, base legal, o papel da Mercs como operadora e do contratante como controlador, direitos do titular e o encarregado (DPO). '.repeat(6),
+    asaas:'Texto de exemplo do aviso de responsabilidade do Asaas — o conteúdo oficial vem no Playbook de adequação. Esclarece que os pagamentos são processados e custodiados pelo Asaas, instituição autorizada pelo Banco Central. '.repeat(6)
+  };
+
+  return { afterLogin, render, carregarStatus, travarPainel, wizardAberto: ()=>modalAberto };
+})();
+window.RCB=RCB;
+
 
 /* ===================== inicialização ===================== */
 showProductList();
