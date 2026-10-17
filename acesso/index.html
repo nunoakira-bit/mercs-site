@@ -1259,6 +1259,31 @@
   .rcb-srow:last-child{border-bottom:none;}
   .rcb-srow .k{color:var(--text-secondary);}
   .rcb-srow .v{font-weight:600;color:var(--text-primary);text-align:right;}
+
+  /* ===================== FECHAMENTO POR LINK (v1.23.0) ===================== */
+  .lnk-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .lnk-opt{display:flex;gap:12px;align-items:flex-start;padding:15px;border:1px solid var(--border-strong);
+    border-radius:var(--radius-md);background:#fff !important;cursor:pointer;transition:border-color .15s, background .15s;}
+  .lnk-opt:hover{border-color:var(--accent);}
+  .lnk-opt:focus-within{box-shadow:0 0 0 3px var(--accent-soft);}
+  .lnk-opt.active{border-color:var(--accent);background:var(--accent-soft) !important;}
+  .lnk-opt input{accent-color:var(--accent);margin-top:3px;flex-shrink:0;}
+  .lnk-opt .t{display:block;font-size:13.5px;font-weight:600;color:var(--text-primary);}
+  .lnk-opt .d{display:block;font-size:12.5px;color:var(--text-secondary);margin-top:3px;line-height:1.45;}
+  .lnk-url{display:none;margin-top:18px;}
+  .lnk-url.show{display:block;}
+  .lnk-url input.lnk-invalid{border-color:var(--red) !important;}
+  .lnk-err{display:none;color:var(--red);font-size:12.5px;margin:8px 0 0;}
+  .lnk-err.show{display:block;}
+  .lnk-lock-note{display:none;align-items:flex-start;gap:9px;margin:0 0 20px;padding:11px 13px;border-radius:var(--radius-sm);
+    background:var(--accent-soft) !important;border:1px solid var(--accent-soft-border);font-size:12.5px;line-height:1.5;color:var(--accent-dark) !important;}
+  .lnk-lock-note svg{width:15px;height:15px;flex-shrink:0;margin-top:2px;}
+  .lnk-locked .lnk-lock-note{display:flex;}
+  .lnk-locked .lnk-lockable{opacity:.42;pointer-events:none;user-select:none;}
+  .lnk-badge{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent-dark);}
+  .bubble a{color:inherit;text-decoration:underline;word-break:break-all;}
+  @media (max-width:900px){ .lnk-opts{grid-template-columns:1fr;} }
+  @media (prefers-reduced-motion: reduce){ .lnk-opt{transition:none;} }
 </style>
 <!-- Detalhe de notificação: texto completo + caminho para resolver -->
 <div class="notif-det-overlay" id="notif-det-overlay" role="dialog" aria-modal="true" aria-labelledby="notif-det-titulo">
@@ -1785,8 +1810,35 @@
             </div>
           </section>
 
+          <!-- FECHAMENTO POR LINK: card "Como fechar a venda" -->
+          <section class="card" id="card-fechamento">
+            <div class="card-header">
+              <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 14a4 4 0 005.66 0l3-3a4 4 0 00-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 00-5.66 0l-3 3a4 4 0 005.66 5.66l1-1"/></svg></div>
+              <div>
+                <p class="card-title">Como fechar a venda</p>
+                <p class="card-sub">O que acontece quando o cliente diz que quer comprar</p>
+              </div>
+            </div>
+            <div class="lnk-opts" role="radiogroup" aria-label="Como fechar a venda">
+              <label class="lnk-opt active" data-modo="equipe">
+                <input type="radio" name="lnk-modo" value="equipe" checked>
+                <span><span class="t">Equipe finaliza na conversa</span><span class="d">A IA negocia dentro das suas regras, confirma o pedido e chama você para finalizar.</span></span>
+              </label>
+              <label class="lnk-opt" data-modo="link">
+                <input type="radio" name="lnk-modo" value="link">
+                <span><span class="t">Enviar link de compra da loja</span><span class="d">A IA vende pelo preço cadastrado, sem negociar valores, e envia o link da sua loja para o cliente comprar.</span></span>
+              </label>
+            </div>
+            <div class="lnk-url" id="lnk-url-wrap">
+              <label class="field-label" for="f-link-compra">Link de compra deste produto</label>
+              <input type="text" id="f-link-compra" inputmode="url" autocomplete="off" spellcheck="false" maxlength="2048" placeholder="https://sualoja.com.br/produto" aria-describedby="lnk-hint lnk-err">
+              <p class="lnk-err" id="lnk-err" role="alert"></p>
+              <p class="hint" id="lnk-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8.2" r="0.6" fill="currentColor"/></svg>Confira se o preço da página é o mesmo cadastrado aqui. A IA nunca escreve links por conta própria: quem envia é o sistema, só no fechamento.</p>
+            </div>
+          </section>
+
           <!-- CARD 2 — Limites da negociação -->
-          <section class="card">
+          <section class="card" id="card-negociacao" data-lnk-lock>
             <div class="card-header">
               <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="2"/><circle cx="17" cy="17" r="2"/><line x1="19" y1="5" x2="5" y2="19"/></svg></div>
               <div>
@@ -1795,7 +1847,8 @@
               </div>
             </div>
 
-            <div class="field">
+            <div class="lnk-lock-note" role="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg><span>Com o link de compra da loja, a IA vende pelo preço cadastrado. Para negociar valores, escolha <strong>Equipe finaliza na conversa</strong> em “Como fechar a venda”.</span></div>
+            <div class="field lnk-lockable">
               <label class="field-label">Desconto máximo permitido</label>
               <div class="slider-row">
                 <input type="range" id="f-discount-slider" min="0" max="50" step="1" value="15">
@@ -1806,8 +1859,8 @@
             </div>
 
             <div class="field" style="margin-bottom:0;">
-              <p class="section-label">Estratégia inicial</p>
-              <div class="radio-group" id="strategy-group">
+              <p class="section-label lnk-lockable">Estratégia inicial</p>
+              <div class="radio-group lnk-lockable" id="strategy-group">
                 <label class="radio-card">
                   <input type="radio" name="strategy" value="nunca">
                   <span>Nunca oferecer desconto primeiro</span>
@@ -1825,7 +1878,7 @@
           </section>
 
           <!-- CARD 3 — Desconto por quantidade -->
-          <section class="card" id="card-regras-qtd">
+          <section class="card" id="card-regras-qtd" data-lnk-lock>
             <div class="card-header">
               <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.2" cy="6" r="1"/><circle cx="4.2" cy="12" r="1"/><circle cx="4.2" cy="18" r="1"/></svg></div>
               <div>
@@ -1834,7 +1887,8 @@
               </div>
             </div>
 
-            <div class="rules-table" id="rules-table">
+            <div class="lnk-lock-note" role="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg><span>Com o link de compra da loja, a IA vende pelo preço cadastrado. Para negociar valores, escolha <strong>Equipe finaliza na conversa</strong> em “Como fechar a venda”.</span></div>
+            <div class="lnk-lockable"><div class="rules-table" id="rules-table">
               <div class="rules-header"><span>Quantidade mínima</span><span>Desconto</span><span></span></div>
               <div class="rule-row">
                 <div class="rule-input"><input type="text" value="5"><span class="suffix">unid.</span></div>
@@ -1856,7 +1910,7 @@
             <button class="add-rule-btn" id="add-rule">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Adicionar regra
-            </button>
+            </button></div>
           </section>
 
           <!-- CARD 3B — Plano: preços por duração -->
@@ -3226,7 +3280,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.22.0';
+const APP_VERSION='1.23.0';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
@@ -4894,7 +4948,7 @@ document.getElementById('atend-mode-toggle').addEventListener('click', async ()=
 
 function addSystemNote(text){
   const frame=document.getElementById('atend-phone-frame');
-  frame.insertAdjacentHTML('beforeend', `<div class="system-note">${text}</div>`);
+  frame.insertAdjacentHTML('beforeend', `<div class="system-note">${escapeHtml(text)}</div>`);
   frame.scrollTop=frame.scrollHeight;
 }
 
@@ -5172,14 +5226,14 @@ async function iaTestSend(text){
   const frame=document.getElementById('ia-test-phone-frame');
   const vazio=frame.querySelector('.ia-test-vazio');
   if(vazio) vazio.remove();
-  frame.insertAdjacentHTML('beforeend', `<div class="bubble in">${text}</div>`);
+  frame.insertAdjacentHTML('beforeend', `<div class="bubble in">${escapeHtml(text)}</div>`);
   frame.scrollTop=frame.scrollHeight;
   iaTestSetSending(true);
   const typingId=iaTestShowTyping();
   try{
     const reply=await iaTestCallNegotiate(text);
     iaTestRemoveTyping(typingId);
-    frame.insertAdjacentHTML('beforeend', `<div class="bubble out">${reply}</div>`);
+    frame.insertAdjacentHTML('beforeend', `<div class="bubble out">${linkifyEscapado(reply)}</div>`);
     frame.scrollTop=frame.scrollHeight;
   }catch(e){
     iaTestRemoveTyping(typingId);
@@ -5244,7 +5298,7 @@ document.getElementById('ia-test-close-venda-btn').addEventListener('click', asy
   try{
     reply=await iaTestCallNegotiate('Quero fechar o pedido, pode confirmar o valor final?');
     iaTestRemoveTyping(typingId);
-    frame.insertAdjacentHTML('beforeend', `<div class="bubble out">${reply}</div>`);
+    frame.insertAdjacentHTML('beforeend', `<div class="bubble out">${linkifyEscapado(reply)}</div>`);
     frame.scrollTop=frame.scrollHeight;
   }catch(e){
     iaTestRemoveTyping(typingId);
@@ -5275,6 +5329,58 @@ document.getElementById('ia-test-close-venda-btn').addEventListener('click', asy
 /* ===================== produtos: persistência (Supabase) ===================== */
 let productsCache=[];
 
+/* ===================== FECHAMENTO POR LINK (v1.23.0) =====================
+   Produto com link_compra = fechamento pelo link da loja e preço fixo. A regra
+   que vale é a do negotiate (zera margem e faixas no código); aqui o painel só
+   reflete isso: bloqueia os cards de negociação sem apagar o que estava salvo. */
+const LINK_COMPRA_RE=/^https:\/\/[^\s]+$/i;
+function setFechamento(modo, link){
+  const m = modo==='link' ? 'link' : 'equipe';
+  document.querySelectorAll('#card-fechamento .lnk-opt').forEach(o=>{
+    const on=o.dataset.modo===m;
+    o.classList.toggle('active', on);
+    o.querySelector('input').checked=on;
+  });
+  if(typeof link==='string') document.getElementById('f-link-compra').value=link;
+  document.getElementById('lnk-url-wrap').classList.toggle('show', m==='link');
+  setLinkErro('');
+  document.querySelectorAll('[data-lnk-lock]').forEach(card=>{
+    card.classList.toggle('lnk-locked', m==='link');
+    card.querySelectorAll('.lnk-lockable').forEach(el=>{ el.inert = (m==='link'); });
+  });
+}
+function getFechamentoModo(){
+  const el=document.querySelector('#card-fechamento input[name="lnk-modo"]:checked');
+  return el ? el.value : 'equipe';
+}
+function setLinkErro(msg){
+  const err=document.getElementById('lnk-err');
+  const input=document.getElementById('f-link-compra');
+  err.textContent=msg||'';
+  err.classList.toggle('show', !!msg);
+  input.classList.toggle('lnk-invalid', !!msg);
+  input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+}
+function validarLinkCompra(){
+  if(getFechamentoModo()!=='link') return {ok:true, valor:null};
+  const v=document.getElementById('f-link-compra').value.trim();
+  if(!v) return {ok:false, msg:'Cole o endereço da página de compra deste produto, ou escolha “Equipe finaliza na conversa”.'};
+  if(!LINK_COMPRA_RE.test(v)) return {ok:false, msg:'O link precisa começar com https:// e não pode ter espaços.'};
+  return {ok:true, valor:v};
+}
+document.querySelectorAll('#card-fechamento input[name="lnk-modo"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    setFechamento(r.value);
+    if(r.value==='link') document.getElementById('f-link-compra').focus();
+  });
+});
+document.getElementById('f-link-compra').addEventListener('input',()=>setLinkErro(''));
+
+/* Texto da IA vira link clicável só depois de escapado (nunca HTML cru). */
+function linkifyEscapado(texto){
+  return escapeHtml(texto).replace(/https:\/\/[^\s<"']+/g, u=>`<a href="${u}" target="_blank" rel="noopener noreferrer">${u}</a>`);
+}
+
 function dbProductToForm(p){
   return {
     id:p.id, nome:p.nome, tipo:p.tipo, descricao:p.descricao||'', diferencial:p.diferencial||'',
@@ -5283,7 +5389,8 @@ function dbProductToForm(p){
     estrategia:p.estrategia, regras:p.regras||[],
     modeloPreco:p.modelo_preco_plano||'desconto', regrasDuracao:p.regras_duracao||[],
     restricoes:p.restricoes||[], restricaoOutro:p.restricao_outro||'',
-    instrucoes:p.instrucoes||'', imagens:p.imagens||[]
+    instrucoes:p.instrucoes||'', imagens:p.imagens||[],
+    linkCompra:p.link_compra||''
   };
 }
 
@@ -5468,16 +5575,18 @@ function renderProductGrid(filterText){
     <div class="product-card" data-id="${p.id}">
       <div class="product-card-top">
         <div>
-          <p class="product-name">${p.nome}</p>
+          <p class="product-name">${escapeHtml(p.nome)}</p>
           <span class="type-badge">${p.tipo==='produto'?'Produto':'Serviço'}</span>
         </div>
       </div>
       <div>
         <div class="product-price">R$ ${p.precoPadrao}</div>
-        <div class="product-price-min">a partir de R$ ${formatBRL(parseValor(p.precoPadrao)*(1-p.descontoMax/100))} · por ${p.unidade}</div>
+        <div class="product-price-min">${p.linkCompra ? 'Preço fixo' : `a partir de R$ ${formatBRL(parseValor(p.precoPadrao)*(1-p.descontoMax/100))}`} · por ${p.unidade}</div>
       </div>
       <div class="product-meta-row">
-        <span class="discount-badge" style="background:${bg};color:${col};">Desconto máx. ${p.descontoMax}%</span>
+        ${p.linkCompra
+          ? '<span class="lnk-badge">Preço fixo · link da loja</span>'
+          : `<span class="discount-badge" style="background:${bg};color:${col};">Desconto máx. ${p.descontoMax}%</span>`}
       </div>
       <div class="product-card-actions">
         <button class="ghost-action edit-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Editar</button>
@@ -5537,6 +5646,7 @@ function resetForm(){
   productImages=[]; productImageFolder=null;
   renderProductPhotoGrid();
   refreshProductDocs(null);
+  setFechamento('equipe','');
 }
 
 function setTipo(value){
@@ -5710,6 +5820,7 @@ function openProductForm(product){
     productImages=(product.imagens||[]).map(path=>({path, url:sb.storage.from('product-images').getPublicUrl(path).data.publicUrl}));
     renderProductPhotoGrid();
     refreshProductDocs(product.id);
+    setFechamento(product.linkCompra ? 'link' : 'equipe', product.linkCompra||'');
   }
   showProductForm();
 }
@@ -5727,6 +5838,14 @@ document.getElementById('btn-salvar-produto').addEventListener('click', async ()
     return;
   }
   document.getElementById('f-nome').style.borderColor='';
+
+  const linkCheck=validarLinkCompra();
+  if(!linkCheck.ok){
+    setLinkErro(linkCheck.msg);
+    document.getElementById('f-link-compra').focus();
+    showToast('Revise o link de compra antes de salvar');
+    return;
+  }
 
   const restr=getRestrictions();
   const btnSalvar=document.getElementById('btn-salvar-produto');
@@ -5747,7 +5866,8 @@ document.getElementById('btn-salvar-produto').addEventListener('click', async ()
     restricoes:restr.list,
     restricao_outro:restr.outro,
     instrucoes:document.getElementById('f-instrucoes').value,
-    imagens:productImages.map(img=>img.path)
+    imagens:productImages.map(img=>img.path),
+    link_compra:linkCheck.valor
   };
 
   const wasEditing=!!editingId;
@@ -5790,8 +5910,9 @@ const negOverlay=document.getElementById('neg-drawer-overlay');
 const negDrawer=document.getElementById('neg-drawer');
 let negSimContext={nome:'Produto', precoPadrao:0, maxDesc:0};
 document.getElementById('open-preview').addEventListener('click',()=>{
-  const maxDesc=document.getElementById('f-discount-slider').value;
-  const rules=getRules();
+  const precoFixoSim=getFechamentoModo()==='link';
+  const maxDesc=precoFixoSim ? '0' : document.getElementById('f-discount-slider').value;
+  const rules=precoFixoSim ? [] : getRules();
   const firstRule=rules[0];
   const nome=document.getElementById('f-nome').value.trim() || 'este produto';
 
@@ -5808,7 +5929,9 @@ document.getElementById('open-preview').addEventListener('click',()=>{
       {from:'in',text:`Olá, quanto custa ${nome}?`},
       {from:'out',text:`Olá! O valor é o que está configurado para este produto.`},
       {from:'in',text:'Consegue algum desconto?'},
-      {from:'out',text:`Posso oferecer no máximo ${maxDesc}% de desconto, que é o melhor valor disponível.`}
+      {from:'out',text: precoFixoSim
+        ? 'Esse produto tem preço fixo, então não consigo dar desconto. Se quiser, já te mando o link para comprar!'
+        : `Posso oferecer no máximo ${maxDesc}% de desconto, que é o melhor valor disponível.`}
     ];
   }
   document.getElementById('neg-phone-frame').innerHTML=messages.map(m=>`<div class="bubble ${m.from}">${m.text}</div>`).join('');
