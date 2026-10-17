@@ -2386,6 +2386,7 @@
           <p class="card-title">Conexão WhatsApp</p>
           <p class="card-sub">Conecte o WhatsApp da sua empresa para a IA atender seus clientes diretamente por lá. Recomendamos usar um número comercial dedicado.</p>
 
+          <p class="lnk-lock-note" id="wa-empresa-alvo" style="display:none;margin:16px 0 0;" role="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg><span>Esta é a conexão de <strong id="wa-empresa-alvo-nome"></strong>. O QR gerado aqui conecta o WhatsApp a essa empresa.</span></p>
           <div class="wa-status-row">
             <span class="wa-status-dot" id="wa-status-dot"></span>
             <span class="wa-status-text" id="wa-status-text">Verificando…</span>
@@ -3280,7 +3281,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.23.0';
+const APP_VERSION='1.23.1';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
@@ -3779,7 +3780,7 @@ iaAvatarInput.addEventListener('change', async ()=>{
   if(!file) return;
   if(!file.type.startsWith('image/')){ showToast('Envie uma imagem.'); return; }
   if(file.size > 4*1024*1024){ showToast('Imagem maior que 4MB.'); return; }
-  const path=`${currentProfile.company_id}/ia-avatar/${Date.now()}-${file.name}`;
+  const path=`${empresaAlvo()}/ia-avatar/${Date.now()}-${file.name}`;
   const {error}=await sb.storage.from('product-images').upload(path, file);
   if(error){ showToast('Erro ao enviar foto: '+error.message); return; }
   const {data:pub}=sb.storage.from('product-images').getPublicUrl(path);
@@ -3788,7 +3789,7 @@ iaAvatarInput.addEventListener('change', async ()=>{
 });
 
 async function syncIaPersonaUI(){
-  const {data, error}=await sb.from('companies').select('ia_nome, ia_foto, ia_sexo, ia_tom, cobranca_auto').eq('id', currentProfile.company_id).single();
+  const {data, error}=await sb.from('companies').select('ia_nome, ia_foto, ia_sexo, ia_tom, cobranca_auto').eq('id', empresaAlvo()).single();
   if(error || !data) return;
   document.getElementById('ia-nome-input').value=data.ia_nome || '';
   setSegmented('ia-sexo-segmented', data.ia_sexo || 'neutro');
@@ -3850,7 +3851,7 @@ document.getElementById('pp-conectar-wa').addEventListener('click', ()=>{
 });
 
 async function waFetchStatus(){
-  const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'status'}});
+  const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'status', company_id:empresaAlvo()}});
   if(error || !data){ return null; }
   waInfraConfigured=data.configured;
   waSetStatusUI(data.instancia?.status, data.instancia?.numero_conectado);
@@ -3872,6 +3873,14 @@ function waStartPolling(){
 }
 
 async function loadWhatsappCard(){
+  /* v1.23.1: no ambiente de um cliente, a conexão mostrada e gerada é a DO
+     CLIENTE. Antes o QR saía sempre para a empresa do admin logado. */
+  const aviso=document.getElementById('wa-empresa-alvo');
+  if(aviso){
+    aviso.style.display = viewingCompanyId ? 'flex' : 'none';
+    const nome=document.getElementById('wa-empresa-alvo-nome');
+    if(nome) nome.textContent = viewingCompanyName || '';
+  }
   waSetStatusUI(null, null);
   await waFetchStatus();
 }
@@ -3879,7 +3888,7 @@ async function loadWhatsappCard(){
 document.getElementById('wa-connect-btn').addEventListener('click', async ()=>{
   const btn=document.getElementById('wa-connect-btn');
   btn.disabled=true; btn.textContent='Gerando QR code…';
-  const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'connect'}});
+  const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'connect', company_id:empresaAlvo()}});
   btn.disabled=false; btn.textContent='Conectar WhatsApp';
   if(error || data?.error){ showToast(data?.error || 'Não foi possível iniciar a conexão. Tente novamente.'); return; }
   if(data.already_connected){ waSetStatusUI('conectado', null); waFetchStatus(); return; }
@@ -3896,7 +3905,7 @@ document.getElementById('wa-connect-btn').addEventListener('click', async ()=>{
 
 document.getElementById('wa-disconnect-btn').addEventListener('click', async ()=>{
   if(!confirm('Desconectar o WhatsApp? A IA deixará de atender por este canal até uma nova conexão.')) return;
-  const {error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'disconnect'}});
+  const {error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'disconnect', company_id:empresaAlvo()}});
   if(error){ showToast('Erro ao desconectar. Tente novamente.'); return; }
   waStopPolling();
   waSetStatusUI('desconectado', null);
@@ -3912,7 +3921,7 @@ document.getElementById('ia-persona-save').addEventListener('click', async ()=>{
     ia_tom:getSegmented('ia-tom-segmented'),
     ia_foto:iaAvatarPendingPath
   };
-  const {error}=await sb.from('companies').update(payload).eq('id', currentProfile.company_id);
+  const {error}=await sb.from('companies').update(payload).eq('id', empresaAlvo());
   btn.disabled=false;
   if(error){ showToast('Erro ao salvar: '+error.message); return; }
   showToast('Configurações da IA salvas com sucesso');
@@ -3962,7 +3971,7 @@ document.getElementById('cobranca-modo-save').addEventListener('click', async ()
   const btn=document.getElementById('cobranca-modo-save');
   btn.disabled=true;
   const cobrancaAuto=getSegmented('cobranca-modo-segmented')==='auto';
-  const {error}=await sb.from('companies').update({cobranca_auto:cobrancaAuto}).eq('id', currentProfile.company_id);
+  const {error}=await sb.from('companies').update({cobranca_auto:cobrancaAuto}).eq('id', empresaAlvo());
   btn.disabled=false;
   if(error){ showToast('Erro ao salvar: '+error.message); return; }
   showToast(cobrancaAuto ? 'Cobrança automática ativada.' : 'Cobrança com aprovação ativada.');
