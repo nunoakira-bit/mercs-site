@@ -1284,6 +1284,21 @@
   .bubble a{color:inherit;text-decoration:underline;word-break:break-all;}
   @media (max-width:900px){ .lnk-opts{grid-template-columns:1fr;} }
   @media (prefers-reduced-motion: reduce){ .lnk-opt{transition:none;} }
+
+  /* PRIVACIDADE (LGPD) — v1.24.0 */
+  .lgpd-card .settings-row:last-of-type{border-bottom:none;}
+  .lgpd-field{margin-top:16px;}
+  .lgpd-field input, .lgpd-field select{background:#fff !important;color:var(--text-primary) !important;}
+  .lgpd-sep{height:1px;background:var(--border);margin:22px 0 4px;}
+  .lgpd-sub{font-size:13.5px;font-weight:600;color:var(--text-primary);margin:18px 0 2px;}
+  .lgpd-acoes{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center;}
+  .lgpd-status{font-size:13px;color:var(--text-tertiary);}
+  .lgpd-status.ok{color:var(--green);}
+  .lgpd-status.err{color:var(--red);}
+  .lgpd-perigo{color:var(--red) !important;border-color:var(--red) !important;background:#fff !important;}
+  .lgpd-perigo.lgpd-confirmar{background:var(--red-bg) !important;}
+  .lgpd-perigo:focus-visible, .lgpd-card button:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-soft);}
+  @media (max-width:900px){ .lgpd-acoes{flex-direction:column;align-items:stretch;} }
 </style>
 <!-- Detalhe de notificação: texto completo + caminho para resolver -->
 <div class="notif-det-overlay" id="notif-det-overlay" role="dialog" aria-modal="true" aria-labelledby="notif-det-titulo">
@@ -2414,6 +2429,58 @@
             <strong>Privacidade por design.</strong> A IA processa somente as mensagens de texto recebidas em conversas individuais, iniciadas pelos seus clientes após a conexão. Grupos, status e o histórico anterior à conexão nunca são lidos nem armazenados, e a IA só envia mensagens como resposta dentro de uma conversa ativa.
           </div>
         </div>
+
+        <!-- PRIVACIDADE (LGPD) — v1.24.0 -->
+        <div class="card lgpd-card" id="card-lgpd" style="max-width:640px;margin-top:18px;">
+          <p class="card-title">Privacidade e LGPD</p>
+          <p class="card-sub">Como a IA trata os dados dos seus clientes e por quanto tempo as conversas ficam guardadas.</p>
+
+          <div class="settings-row">
+            <div class="settings-row-text"><p class="s-title">Aviso de privacidade no início da conversa</p><p class="s-desc">Na primeira resposta, a IA avisa que o atendimento usa inteligência artificial.</p></div>
+            <label class="toggle-switch"><input type="checkbox" id="lgpd-aviso" aria-label="Aviso de privacidade no início da conversa"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-text"><p class="s-title">Empresa da área de saúde</p><p class="s-desc">A IA não pede nem repete informações de saúde e orienta o cliente a tratá-las com o profissional.</p></div>
+            <label class="toggle-switch"><input type="checkbox" id="lgpd-saude" aria-label="Empresa da área de saúde"><span class="toggle-slider"></span></label>
+          </div>
+
+          <div class="field lgpd-field" style="margin-bottom:0;">
+            <label class="field-label" for="lgpd-politica">Link da política de privacidade (opcional)</label>
+            <input type="url" id="lgpd-politica" class="auth-input" placeholder="https://suaempresa.com.br/privacidade" style="margin-bottom:0;" maxlength="2048">
+            <p class="hint" style="margin:6px 0 0;">Se preenchido, vai junto do aviso de privacidade.</p>
+          </div>
+
+          <div class="field lgpd-field" style="margin-bottom:0;">
+            <label class="field-label" for="lgpd-retencao">Guardar conversas por</label>
+            <select class="std" id="lgpd-retencao" style="height:40px;font-size:13px;">
+              <option value="90">3 meses</option>
+              <option value="180">6 meses</option>
+              <option value="365">1 ano</option>
+              <option value="730">2 anos</option>
+              <option value="">Sem prazo (não recomendado)</option>
+            </select>
+            <p class="hint" style="margin:6px 0 0;">Depois desse prazo sem atividade, o texto das mensagens, o nome e o telefone do cliente são apagados. Valores e datas das vendas continuam nos relatórios.</p>
+          </div>
+
+          <div class="lgpd-acoes">
+            <button type="button" class="btn-primary" id="lgpd-salvar">Salvar privacidade</button>
+            <span class="lgpd-status" id="lgpd-status" role="status" aria-live="polite">—</span>
+          </div>
+
+          <div class="lgpd-sep"></div>
+          <p class="lgpd-sub">Pedido de um cliente (titular dos dados)</p>
+          <p class="card-sub" style="margin-top:2px;">Quando um cliente pedir uma cópia dos dados dele ou que eles sejam apagados, informe o telefone usado no WhatsApp.</p>
+          <div class="field lgpd-field" style="margin-bottom:0;">
+            <label class="field-label" for="lgpd-telefone">Telefone do cliente</label>
+            <input type="tel" id="lgpd-telefone" class="auth-input" placeholder="Ex.: 41 98765-4321" style="margin-bottom:0;" maxlength="20" autocomplete="off">
+          </div>
+          <div class="lgpd-acoes">
+            <button type="button" class="btn-secondary" id="lgpd-exportar">Exportar dados</button>
+            <button type="button" class="btn-secondary lgpd-perigo" id="lgpd-apagar">Apagar dados</button>
+            <span class="lgpd-status" id="lgpd-titular-status" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+        <!-- /PRIVACIDADE (LGPD) -->
       </section>
 
       <!-- ===================== ADMINISTRAÇÃO (somente admin) ===================== -->
@@ -3204,10 +3271,14 @@ function renderAtendimentoStatus(){
   btn.title = atendimentoAtivo ? 'Clique para pausar o atendimento por IA' : 'Clique para reativar o atendimento por IA';
 }
 
+/* v1.23.3 — isolamento de ambiente: tudo que é "da empresa" lê e grava em
+   empresaAlvo(). Fora do ambiente de um cliente é a própria empresa; dentro,
+   é a do cliente. Ao entrar/sair, estes dados são recarregados. */
 async function syncAtendimentoStatus(){
+  const alvo=empresaAlvo();
   const [{data:companyData}, {data:keyStatus}]=await Promise.all([
-    sb.from('companies').select('atendimento_ativo').eq('id', currentProfile.company_id).single(),
-    sb.rpc('get_llm_key_status')
+    sb.from('companies').select('atendimento_ativo').eq('id', alvo).single(),
+    viewingCompanyId ? sb.rpc('get_llm_key_status_admin', {p_company_id:alvo}) : sb.rpc('get_llm_key_status')
   ]);
   if(companyData) atendimentoAtivo = companyData.atendimento_ativo !== false;
   iaConfigurada = !!(keyStatus && keyStatus[0] && keyStatus[0].configured);
@@ -3254,6 +3325,7 @@ function subscribeAtendimentoRealtime(){
       {event:'UPDATE', schema:'public', table:'companies', filter:`id=eq.${currentProfile.company_id}`},
       (payload)=>{
         if(!payload.new || typeof payload.new.atendimento_ativo==='undefined') return;
+        if(viewingCompanyId) return; // o interruptor mostra o cliente aberto, não a própria empresa
         const novo=payload.new.atendimento_ativo!==false;
         if(novo===atendimentoAtivo) return;
         atendimentoAtivo=novo;
@@ -3272,7 +3344,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
   const novoStatus=!atendimentoAtivo;
   const btn=document.getElementById('ia-status-toggle');
   btn.disabled=true;
-  const {error}=await sb.from('companies').update({atendimento_ativo:novoStatus}).eq('id', currentProfile.company_id);
+  const {error}=await sb.from('companies').update({atendimento_ativo:novoStatus}).eq('id', empresaAlvo());
   btn.disabled=false;
   if(error){ showToast('Erro ao atualizar: '+error.message); return; }
   atendimentoAtivo=novoStatus;
@@ -3281,7 +3353,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.23.1';
+const APP_VERSION='1.24.0';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
@@ -3348,9 +3420,101 @@ function aplicarPagamentoEmBreve(){
   nav.addEventListener('mouseleave',()=>{ tip.classList.remove('show'); });
 }
 
+/* PRIVACIDADE (LGPD) — v1.24.0
+   Configuração por empresa (aviso, saúde, política, retenção) e pedidos do
+   titular. Tudo na empresa aberta (empresaAlvo): no ambiente de um cliente,
+   o admin mexe no cliente. Exportar/apagar passam por funções do banco que
+   checam se o usuário é da empresa ou admin. Apagar = anonimizar (texto,
+   nome e telefone somem; valores e datas ficam). */
+let lgpdBound=false, lgpdConfirmarAte=0;
+const LGPD_URL_RE=/^https:\/\/[^\s]+$/;
+function lgpdStatus(id, texto, tipo){
+  const el=document.getElementById(id);
+  el.className='lgpd-status'+(tipo?' '+tipo:''); el.textContent=texto;
+}
+async function carregarPrivacidade(){
+  if(!lgpdBound){
+    document.getElementById('lgpd-salvar').addEventListener('click', salvarPrivacidade);
+    document.getElementById('lgpd-exportar').addEventListener('click', exportarTitular);
+    document.getElementById('lgpd-apagar').addEventListener('click', apagarTitular);
+    lgpdBound=true;
+  }
+  const alvo=empresaAlvo(); if(!alvo) return;
+  lgpdStatus('lgpd-status','Carregando…');
+  lgpdStatus('lgpd-titular-status','');
+  const {data,error}=await sb.from('companies')
+    .select('aviso_privacidade_ativo, dados_sensiveis, politica_privacidade_url, retencao_dias').eq('id',alvo).single();
+  if(error||!data){ lgpdStatus('lgpd-status','Não foi possível carregar. Recarregue a página.','err'); return; }
+  document.getElementById('lgpd-aviso').checked=data.aviso_privacidade_ativo!==false;
+  document.getElementById('lgpd-saude').checked=data.dados_sensiveis===true;
+  document.getElementById('lgpd-politica').value=data.politica_privacidade_url||'';
+  const sel=document.getElementById('lgpd-retencao');
+  const v=data.retencao_dias==null?'':String(data.retencao_dias);
+  if(![...sel.options].some(o=>o.value===v)){ const o=document.createElement('option'); o.value=v; o.textContent=v+' dias'; sel.appendChild(o); }
+  sel.value=v;
+  lgpdStatus('lgpd-status','Tudo salvo.');
+}
+async function salvarPrivacidade(){
+  const alvo=empresaAlvo(); if(!alvo) return;
+  const url=document.getElementById('lgpd-politica').value.trim();
+  if(url && !LGPD_URL_RE.test(url)){ lgpdStatus('lgpd-status','O link precisa começar com https://','err'); return; }
+  const ret=document.getElementById('lgpd-retencao').value;
+  const btn=document.getElementById('lgpd-salvar'); btn.disabled=true;
+  lgpdStatus('lgpd-status','Salvando…');
+  const {error}=await sb.from('companies').update({
+    aviso_privacidade_ativo:document.getElementById('lgpd-aviso').checked,
+    dados_sensiveis:document.getElementById('lgpd-saude').checked,
+    politica_privacidade_url:url||null,
+    retencao_dias:ret===''?null:parseInt(ret,10),
+  }).eq('id',alvo);
+  btn.disabled=false;
+  if(error){ lgpdStatus('lgpd-status','Não salvou: '+error.message,'err'); return; }
+  lgpdStatus('lgpd-status','✓ Salvo — vale a partir da próxima mensagem.','ok');
+}
+function lgpdTelefone(){
+  const t=document.getElementById('lgpd-telefone').value.replace(/\D/g,'');
+  if(t.length<10){ lgpdStatus('lgpd-titular-status','Informe o telefone com DDD.','err'); return null; }
+  return t;
+}
+async function exportarTitular(){
+  const alvo=empresaAlvo(); const tel=lgpdTelefone(); if(!alvo||!tel) return;
+  lgpdStatus('lgpd-titular-status','Buscando…');
+  const {data,error}=await sb.rpc('exportar_dados_titular',{p_company_id:alvo, p_telefone:tel});
+  if(error){ lgpdStatus('lgpd-titular-status','Não foi possível exportar: '+error.message,'err'); return; }
+  const n=(data&&data.conversas||[]).length;
+  if(!n){ lgpdStatus('lgpd-titular-status','Nenhuma conversa com esse telefone.'); return; }
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=`dados-titular-${tel}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  lgpdStatus('lgpd-titular-status',`✓ Arquivo baixado (${n} conversa${n===1?'':'s'}).`,'ok');
+}
+async function apagarTitular(){
+  const alvo=empresaAlvo(); const tel=lgpdTelefone(); if(!alvo||!tel) return;
+  const btn=document.getElementById('lgpd-apagar');
+  /* Confirmação em dois cliques, sem diálogo do navegador. */
+  if(Date.now()>lgpdConfirmarAte){
+    lgpdConfirmarAte=Date.now()+6000;
+    btn.classList.add('lgpd-confirmar'); btn.textContent='Confirmar: apagar de vez';
+    lgpdStatus('lgpd-titular-status','Isso não pode ser desfeito. Clique de novo para confirmar.','err');
+    setTimeout(()=>{ if(Date.now()>lgpdConfirmarAte){ btn.classList.remove('lgpd-confirmar'); btn.textContent='Apagar dados'; } }, 6100);
+    return;
+  }
+  lgpdConfirmarAte=0; btn.disabled=true;
+  lgpdStatus('lgpd-titular-status','Apagando…');
+  const {data,error}=await sb.rpc('anonimizar_dados_titular',{p_company_id:alvo, p_telefone:tel});
+  btn.disabled=false; btn.classList.remove('lgpd-confirmar'); btn.textContent='Apagar dados';
+  if(error){ lgpdStatus('lgpd-titular-status','Não foi possível apagar: '+error.message,'err'); return; }
+  if(!data){ lgpdStatus('lgpd-titular-status','Nenhuma conversa com esse telefone.'); return; }
+  lgpdStatus('lgpd-titular-status',`✓ Dados apagados de ${data} conversa${data===1?'':'s'}.`,'ok');
+  refreshOperacao().catch(()=>{});
+}
+/* /PRIVACIDADE (LGPD) */
+
 /* SAC: informações gerais da empresa. Textarea única; salvar manda pro
    salvar-sac, que fatia e indexa como conhecimento de empresa (RAG). */
-let sacBound=false, sacCarregado=false;
+let sacBound=false, sacCarregado=false, sacEmpresa=null;
 async function salvarSac(){
   const ta=document.getElementById('sac-texto');
   const btn=document.getElementById('sac-salvar');
@@ -3359,7 +3523,7 @@ async function salvarSac(){
   btn.disabled=true; btn.textContent='Salvando…';
   status.className='sac-status'; status.textContent='';
   let data=null,error=null;
-  try{ ({data,error}=await sb.functions.invoke('salvar-sac',{body:{texto}})); }catch(e){ error=e; }
+  try{ ({data,error}=await sb.functions.invoke('salvar-sac',{body:{texto, company_id:empresaAlvo()}})); }catch(e){ error=e; }
   btn.disabled=false; btn.textContent='Salvar';
   if(error || !data || data.ok!==true){
     status.className='sac-status err'; status.textContent='Não salvou.';
@@ -3375,9 +3539,15 @@ async function carregarSac(){
   const ta=document.getElementById('sac-texto');
   const status=document.getElementById('sac-status');
   if(!sacBound){ document.getElementById('sac-salvar').addEventListener('click', salvarSac); sacBound=true; }
-  if(sacCarregado || !currentProfile || !currentProfile.company_id) return;
+  /* v1.23.2: o SAC exibido e gravado é o da empresa aberta (no ambiente de um
+     cliente, o do cliente). Recarrega ao trocar de empresa. */
+  const alvoSac=empresaAlvo();
+  if(!alvoSac) return;
+  if(sacCarregado && sacEmpresa===alvoSac) return;
+  ta.value='';
   status.className='sac-status'; status.textContent='Carregando…';
-  const {data,error}=await sb.from('companies').select('sac_texto').eq('id',currentProfile.company_id).single();
+  const {data,error}=await sb.from('companies').select('sac_texto').eq('id',alvoSac).single();
+  sacEmpresa=alvoSac;
   if(!error && data){ ta.value=data.sac_texto||''; }
   sacCarregado=true;
   status.textContent = ta.value.trim() ? 'Tudo salvo.' : 'Nada cadastrado ainda.';
@@ -3398,7 +3568,7 @@ async function enterCompanyView(companyId, companyName){
   viewingCompanyName=companyName;
   document.body.classList.add('macro-view');
   document.getElementById('macro-company-name').textContent=companyName;
-  await refreshOperacao();
+  await recarregarDadosDoAmbiente();
   switchView('dashboard');
   showToast('Você está no ambiente de '+companyName+' — suas alterações ficam registradas');
 }
@@ -3408,7 +3578,7 @@ async function exitCompanyView(goToAdmin){
   viewingCompanyName=null;
   viewingProductsMap={};
   document.body.classList.remove('macro-view');
-  await refreshOperacao();
+  await recarregarDadosDoAmbiente();
   irParaInicio();
 }
 
@@ -3422,12 +3592,19 @@ function switchView(name){
   if(name==='produtos'){ showProductList(); }
   if(name==='chamados'){ refreshChamados(); }
   if(name==='vendas'){ refreshVendas(); }
-  if(name==='configuracoes'){ syncIaPersonaUI(); loadWhatsappCard(); }
+  if(name==='configuracoes'){ syncIaPersonaUI(); loadWhatsappCard(); carregarPrivacidade(); }
   if(name==='usuarios'){ refreshAdminClientList(); }
   if(name==='custos'){ refreshAdminCustos(); }
   if(name==='historico'){ refreshHistoricoClientes(); }
   if(name==='saude'){ refreshAgente(); }
   if(name==='agente'){ refreshSkills(); }
+  /* Recebimento cria a conta Asaas de quem está LOGADO (funções criar-subconta
+     e status-subconta). No ambiente de um cliente isso criaria a conta errada,
+     então a tela fica bloqueada ali e o admin usa Administração > Pagamento. */
+  if(name==='recebimento' && viewingCompanyId){
+    const m=document.getElementById('rcb-mount');
+    if(m) m.innerHTML='<div class="empty-state"><h3>Recebimento é configurado pelo próprio cliente</h3><p>No ambiente de um cliente, use Administração → detalhes da empresa → aba Pagamento.</p></div>';
+  }
   if(name==='sac'){ carregarSac(); }
   iaDiagUpdateVisibility(name);
 }
@@ -3736,7 +3913,7 @@ let companyComissao=null;
 async function loadCompanyPaymentMethods(){
   const {data, error}=await sb.from('companies')
     .select('payment_methods, asaas_commission_type, asaas_commission_percentage, asaas_commission_fixed_cents')
-    .eq('id', currentProfile.company_id).single();
+    .eq('id', empresaAlvo()).single();
   if(error || !data) return;
   if(data.payment_methods) companyPaymentMethods={pix:true,cartao:true,boleto:true,...data.payment_methods};
   companyComissao={
@@ -4048,7 +4225,7 @@ async function refreshAdminCustos(){
 
 async function refreshAdminClientList(){
   const {data, error}=await sb.from('companies')
-    .select('id, name, created_at, ativo, atendimento_ativo, llm_api_key, profiles(id,nome,email,is_admin), products!products_company_id_fkey(count)')
+    .select('id, name, created_at, ativo, atendimento_ativo, llm_api_key_last4, profiles(id,nome,email,is_admin), products!products_company_id_fkey(count)')
     .order('created_at',{ascending:false});
   if(error){ showToast('Erro ao carregar clientes: '+error.message); return; }
   adminClientsCache=data||[];
@@ -4076,7 +4253,7 @@ function renderAdminClientList(filterText){
     const atendStatus=c.atendimento_ativo!==false
       ? '<span class="status-pill INDEXADO">Ativo</span>'
       : '<span class="status-pill PROCESSANDO">Pausado</span>';
-    const iaStatus=c.llm_api_key
+    const iaStatus=c.llm_api_key_last4
       ? '<span class="status-pill INDEXADO">Configurada</span>'
       : '<span class="status-pill ERRO">Pendente</span>';
     const ativa=c.ativo!==false;
@@ -4570,7 +4747,9 @@ document.getElementById('admin-llm-key-save').addEventListener('click', async ()
   if(!key){ showToast('Cole a chave de API antes de salvar.'); return; }
   const btn=document.getElementById('admin-llm-key-save');
   btn.disabled=true;
-  const {error}=await sb.from('companies').update({llm_api_key:key, llm_provider:provider}).eq('id', adminSelectedCompanyId);
+  /* v1.24.0: a chave vai direto para o Vault (definir_chave_ia); no banco fica só a referência. */
+  const {error}=await sb.rpc('definir_chave_ia', {p_company_id:adminSelectedCompanyId, p_chave:key, p_provider:provider});
+  document.getElementById('admin-llm-key-input').value='';
   btn.disabled=false;
   if(error){ showToast('Erro ao salvar a chave: '+error.message); return; }
   showToast('Chave de API salva com sucesso');
@@ -4580,7 +4759,7 @@ document.getElementById('admin-llm-key-save').addEventListener('click', async ()
 
 document.getElementById('admin-llm-key-remove').addEventListener('click', async ()=>{
   if(!adminSelectedCompanyId) return;
-  const {error}=await sb.from('companies').update({llm_api_key:null}).eq('id', adminSelectedCompanyId);
+  const {error}=await sb.rpc('definir_chave_ia', {p_company_id:adminSelectedCompanyId, p_chave:''});
   if(error){ showToast('Erro ao remover a chave: '+error.message); return; }
   showToast('Chave de API removida');
   await openAdminDrawer(adminSelectedCompanyId);
@@ -4674,6 +4853,7 @@ async function loadConversas(){
   }else{
     const {data, error}=await sb.from('conversas')
       .select('id, product_id, cliente_nome, cliente_telefone, status, atendido_por, canal, ultima_msg, ultima_msg_role, ultima_msg_at, created_at, products(nome, preco_padrao)')
+      .eq('company_id', currentProfile.company_id)
       .order('ultima_msg_at', {ascending:false, nullsFirst:false})
       .limit(200);
     if(error){ console.error('Erro ao carregar conversas:', error.message); return; }
@@ -4713,6 +4893,7 @@ async function loadVendas(){
   }else{
     const {data, error}=await sb.from('vendas')
       .select('id, conversa_id, product_id, cliente_nome, valor_cents, desconto_pct, pagamento, created_at, products(nome), conversas(atendido_por)')
+      .eq('company_id', currentProfile.company_id)
       .order('created_at', {ascending:false})
       .limit(500);
     if(error){ console.error('Erro ao carregar vendas:', error.message); return; }
@@ -4729,6 +4910,17 @@ async function loadVendas(){
     atendidoPor:(v.conversas && v.conversas.atendido_por==='humano') ? 'Humano' : 'IA',
     minAgo:minAgoFrom(v.created_at)
   }));
+}
+
+async function recarregarDadosDoAmbiente(){
+  sacCarregado=false;
+  await refreshOperacao();
+  await Promise.all([
+    syncAtendimentoStatus().catch(()=>{}),
+    loadCompanyPaymentMethods().catch(()=>{}),
+    refreshKbDocsFromDb().catch(()=>{}),
+    loadAgenteEstado().then(()=>loadAlertas()).then(()=>updateAgenteBadge()).catch(()=>{}),
+  ]);
 }
 
 async function refreshOperacao(){
@@ -6322,7 +6514,7 @@ function kbStatusInfo(status){
 }
 
 async function refreshKbDocsFromDb(){
-  const {data, error}=await sb.from('knowledge_documents').select('*').order('created_at',{ascending:false});
+  const {data, error}=await sb.from('knowledge_documents').select('*').eq('company_id', empresaAlvo()).order('created_at',{ascending:false});
   if(error){ showToast('Erro ao carregar base de conhecimento: '+error.message); return; }
   kbDocsCache=data||[];
   renderKbDocs();
@@ -6658,7 +6850,7 @@ async function iaDiagRun(){
   const scope=iaDiagCurrentView;
   iaDiagRenderCurrent();
   try{
-    const {data, error}=await sb.functions.invoke('diagnose', {body:{scope}});
+    const {data, error}=await sb.functions.invoke('diagnose', {body:{scope, company_id:empresaAlvo()}});
     if(error){
       let msg=error.message;
       try{ const b=await error.context.json(); if(b?.error) msg=b.error; }catch(_e){}
@@ -6717,7 +6909,7 @@ async function loadAgenteEstado(){
 async function loadAlertas(){
   if(!agenteAtivoEmpresa){ alertasCache=[]; return; }
   let query=sb.from('agente_alertas').select('*').order('created_at',{ascending:false}).limit(100);
-  if(viewingCompanyId) query=query.eq('company_id', viewingCompanyId);
+  query=query.eq('company_id', empresaAlvo());
   const {data,error}=await query;
   if(error){ console.error('Erro ao carregar alertas:', error.message); return; }
   alertasCache=data||[];
@@ -6781,7 +6973,7 @@ async function marcarAlerta(id, campos){
 
 async function marcarTodosAlertasLidos(){
   const {error}=await sb.from('agente_alertas').update({lido:true})
-    .eq('company_id', empresaAlvo()).eq('lido', false).eq('resolvido', false);
+    .eq('company_id', currentProfile.company_id).eq('lido', false).eq('resolvido', false);
   if(error){ showToast('Erro: '+error.message); return; }
   alertasCache.forEach(a=>{ if(!a.resolvido) a.lido=true; });
   sinoAlertasCache.forEach(a=>{ if(!a.resolvido) a.lido=true; });
@@ -6818,7 +7010,7 @@ async function refreshAgente(){
 
 /* ===================== agente vendedor: técnicas de venda ===================== */
 async function refreshSkills(){
-  const cid=currentProfile && currentProfile.company_id;
+  const cid=empresaAlvo();
   if(!cid) return;
   const list=document.getElementById('skills-list');
   const loading=document.getElementById('skills-loading');
