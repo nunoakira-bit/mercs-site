@@ -5555,7 +5555,7 @@ async function salvarModulos(){
   if(!modCompanyId) return;
   const limite=Math.max(0, parseInt(document.getElementById('mod-totem-limite').value,10)||0);
   const linhas=[
-    {company_id:modCompanyId, modulo:'whatsapp', ativo:document.getElementById('mod-whatsapp-ativo').checked, modo:modGetModo('mod-whatsapp-modo')},
+    {company_id:modCompanyId, modulo:'whatsapp', ativo:document.getElementById('mod-whatsapp-ativo').checked, modo:modGetModo('mod-whatsapp-modo'), limite_dispositivos:0},
     {company_id:modCompanyId, modulo:'totem', ativo:document.getElementById('mod-totem-ativo').checked, modo:modGetModo('mod-totem-modo'), limite_dispositivos:limite},
   ];
   const btn=document.getElementById('mod-salvar');
