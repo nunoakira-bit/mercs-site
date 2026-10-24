@@ -684,6 +684,26 @@
   body.somente-leitura .cfg-view .toggle-switch,
   body.somente-leitura .cfg-view .segmented{pointer-events:none;opacity:.75;}
 
+  .disp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .disp-form{display:none;border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:18px;margin-top:16px;}
+  .disp-form.open{display:block;}
+  .disp-form-t{font-weight:600;margin:0 0 4px;}
+  .disp-codigo-input{font-family:var(--font-mono, monospace);font-size:24px !important;letter-spacing:.25em;max-width:220px;}
+  .disp-lista{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+  .disp-item{display:grid;grid-template-columns:40px 1fr auto;gap:14px;align-items:center;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;}
+  .disp-item.inativo{opacity:.55;}
+  .disp-ico{width:40px;height:40px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;}
+  .disp-ico svg{width:20px;height:20px;}
+  .disp-nome{font-weight:600;margin:0;}
+  .disp-meta{color:var(--text-secondary);font-size:13px;margin:3px 0 0;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;}
+  .disp-online{display:inline-flex;align-items:center;gap:6px;font-weight:600;}
+  .disp-online::before{content:"";width:8px;height:8px;border-radius:50%;background:#16A34A;}
+  .disp-online.off{color:var(--text-tertiary);}
+  .disp-online.off::before{background:#D1D5DB;}
+  .disp-acoes{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
+  @media (max-width:720px){ .disp-item{grid-template-columns:40px 1fr;} .disp-acoes{grid-column:1 / -1;justify-content:flex-start;} .disp-head{flex-direction:column;} }
+  body.somente-leitura .cfg-view #disp-novo,
+  body.somente-leitura .cfg-view .disp-acoes{display:none !important;}
   .ah-lista{margin:12px 0 0;padding-left:18px;color:var(--text-secondary);font-size:14px;line-height:1.6;}
   .ah-lista code{font-family:var(--font-mono, monospace);font-size:12.5px;background:var(--bg-hover, #F3F4F6);padding:1px 6px;border-radius:5px;}
   /* ---------- Fase 1: FAQ, Sobre a empresa, canais de SAC, módulos ---------- */
@@ -2561,9 +2581,64 @@
       <section class="view cfg-view" id="view-totem">
         <div class="page-head"><div><h1>Totem e Tablet</h1><p class="page-sub">Produto contratado, modo de atendimento e limite de dispositivos.</p></div></div>
         <div class="un-mount" id="mount-totem"></div>
-        <div class="card" style="max-width:720px;margin-top:18px;">
-          <p class="card-title">Dispositivos</p>
-          <p class="card-sub">O cadastro e o pareamento de tablets e totens chegam na próxima etapa. O limite definido acima já vale para eles.</p>
+        <div class="card" id="card-dispositivos" style="max-width:720px;margin-top:18px;">
+          <div class="disp-head">
+            <div>
+              <p class="card-title">Dispositivos</p>
+              <p class="card-sub" id="disp-contagem">—</p>
+            </div>
+            <button type="button" class="btn-primary" id="disp-novo">+ Adicionar dispositivo</button>
+          </div>
+
+          <div class="disp-form" id="disp-form">
+            <p class="disp-form-t" id="disp-form-t">Adicionar dispositivo</p>
+            <p class="card-sub" id="disp-form-ajuda" style="margin-bottom:14px;">No aparelho, abra <strong>www.mercs.com.br/totem</strong>. Ele mostra um código de 6 dígitos.</p>
+            <div class="field" id="disp-campo-codigo">
+              <label class="field-label" for="disp-codigo">Código mostrado no aparelho</label>
+              <input type="text" id="disp-codigo" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="000 000" class="disp-codigo-input">
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label class="field-label" for="disp-nome">Nome</label>
+                <input type="text" id="disp-nome" maxlength="80" placeholder="Ex.: Totem da recepção">
+              </div>
+              <div class="field">
+                <span class="field-label">Tipo</span>
+                <div class="segmented" id="disp-tipo">
+                  <button type="button" data-value="totem" class="active">Totem</button>
+                  <button type="button" data-value="tablet">Tablet</button>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="disp-local">Local</label>
+              <input type="text" id="disp-local" maxlength="120" placeholder="Ex.: Farmácia Centro, balcão 2">
+            </div>
+            <div class="field">
+              <label class="field-label" for="disp-mensagem">Mensagem na tela inicial</label>
+              <input type="text" id="disp-mensagem" maxlength="280" placeholder="Ex.: Dor de cabeça? Fale com um médico agora, sem fila.">
+              <p class="hint" style="display:block;margin-top:6px;">Aparece abaixo do nome da IA. Use algo que faça sentido para quem passa por esse local.</p>
+            </div>
+            <div class="field">
+              <label class="field-label" for="disp-modo">Modo de atendimento</label>
+              <div class="select-wrap"><select class="std" id="disp-modo">
+                <option value="">Padrão da empresa</option>
+                <option value="texto">Somente texto</option>
+                <option value="multimodal">Texto, foto e áudio</option>
+                <option value="voz">Conversa por voz</option>
+              </select></div>
+            </div>
+            <div class="faq-form-actions">
+              <button type="button" class="btn-secondary" id="disp-cancelar">Cancelar</button>
+              <button type="button" class="btn-primary" id="disp-salvar">Conectar aparelho</button>
+            </div>
+          </div>
+
+          <div class="empty-state" id="disp-vazio" style="display:none;">
+            <h3>Nenhum aparelho conectado</h3>
+            <p>Abra www.mercs.com.br/totem no tablet ou totem e use o código que aparece na tela.</p>
+          </div>
+          <div class="disp-lista" id="disp-lista"></div>
         </div>
       </section>
 
@@ -3667,7 +3742,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.25.1-un';
+const APP_VERSION='1.26.0-totem';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
@@ -5183,6 +5258,7 @@ function unRodapeModulos(sufixo){
   div.innerHTML=`<span class="sac-status" id="mod-status-${sufixo}">—</span><button type="button" class="btn-primary" id="mod-salvar-${sufixo}">Salvar</button>`;
   div.querySelector('button').addEventListener('click', async ()=>{
     await salvarModulos();
+    if(typeof carregarDispositivos==='function') carregarDispositivos();
     const origem=document.getElementById('mod-status');
     const destino=document.getElementById('mod-status-'+sufixo);
     destino.className=origem.className; destino.textContent=origem.textContent;
@@ -5314,13 +5390,182 @@ async function salvarAtendHumano(){
   st.className='sac-status ok'; st.textContent='✓ Salvo.';
 }
 
+/* ===================== DISPOSITIVOS (Totem e Tablet) =====================
+   Pareamento por código: o aparelho mostra 6 dígitos, a equipe digita aqui.
+   A função parear_dispositivo confere se é admin, se o módulo está ativo e o
+   limite. Editar, reiniciar e desativar usam o próprio registro (RLS: admin). */
+let dispCache=[], dispEditId=null, dispBound=false, dispTimer=null, dispLimite=0, dispModuloAtivo=false;
+const DISP_ONLINE_MS=2*60*1000;
+const DISP_ICONE={
+  totem:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="16" rx="2"/><path d="M10 22h4M12 18v4"/></svg>',
+  tablet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M11 16h2"/></svg>'};
+const DISP_MODO={'':'Padrão da empresa', texto:'Somente texto', multimodal:'Texto, foto e áudio', voz:'Conversa por voz'};
+
+function dispTempo(iso){
+  if(!iso) return 'nunca deu sinal';
+  const s=Math.max(0,Math.round((Date.now()-Date.parse(iso))/1000));
+  if(s<60) return 'sinal agora';
+  const m=Math.round(s/60); if(m<60) return `sinal há ${m} min`;
+  const h=Math.round(m/60); if(h<48) return `sinal há ${h} h`;
+  return 'sinal em '+new Date(iso).toLocaleDateString('pt-BR');
+}
+
+async function carregarDispositivos(){
+  const alvo=empresaAlvo(); if(!alvo) return;
+  if(!dispBound){
+    document.getElementById('disp-novo').addEventListener('click',()=>abrirDispForm(null));
+    document.getElementById('disp-cancelar').addEventListener('click',fecharDispForm);
+    document.getElementById('disp-salvar').addEventListener('click',salvarDispositivo);
+    document.querySelectorAll('#disp-tipo button').forEach(b=>b.addEventListener('click',()=>dispSetTipo(b.dataset.value)));
+    const cod=document.getElementById('disp-codigo');
+    cod.addEventListener('input',()=>{ const d=cod.value.replace(/\D/g,'').slice(0,6); cod.value=d.length>3?d.slice(0,3)+' '+d.slice(3):d; });
+    dispBound=true;
+  }
+  const [lista, mod]=await Promise.all([
+    sb.from('dispositivos').select('id,nome,tipo,local,mensagem_contexto,modo,ativo,ultimo_sinal,versao,info,comando_pendente,pareado_em,desativado_em').eq('company_id',alvo).order('ativo',{ascending:false}).order('created_at'),
+    sb.from('company_modulos').select('ativo,limite_dispositivos').eq('company_id',alvo).eq('modulo','totem').maybeSingle(),
+  ]);
+  if(lista.error){ document.getElementById('disp-contagem').textContent='Não foi possível carregar: '+lista.error.message; return; }
+  dispCache=lista.data||[];
+  dispLimite=(mod.data&&mod.data.limite_dispositivos)||0;
+  dispModuloAtivo=!!(mod.data&&mod.data.ativo);
+  renderDispositivos();
+  const pend=dispCodigoPendente();
+  if(pend && document.body.classList.contains('is-admin-user') && !document.getElementById('disp-form').classList.contains('open')){
+    abrirDispForm(null); document.getElementById('disp-codigo').value=pend.slice(0,3)+' '+pend.slice(3);
+  }
+  clearInterval(dispTimer);
+  dispTimer=setInterval(()=>{
+    const v=document.getElementById('view-totem');
+    if(!v || !v.classList.contains('active')){ clearInterval(dispTimer); return; }
+    if(!document.getElementById('disp-form').classList.contains('open')) carregarDispositivos();
+  },20000);
+}
+
+function renderDispositivos(){
+  const ativos=dispCache.filter(d=>d.ativo);
+  const online=ativos.filter(d=>d.ultimo_sinal && Date.now()-Date.parse(d.ultimo_sinal)<DISP_ONLINE_MS).length;
+  document.getElementById('disp-contagem').textContent = !dispModuloAtivo
+    ? 'O produto Totem e Tablet está desligado para esta empresa. Ligue acima para conectar aparelhos.'
+    : `${ativos.length} de ${dispLimite} aparelho${dispLimite===1?'':'s'} em uso · ${online} online agora`;
+  const btn=document.getElementById('disp-novo');
+  btn.disabled=!dispModuloAtivo || ativos.length>=dispLimite;
+  btn.title=btn.disabled ? (!dispModuloAtivo?'Ligue o produto Totem e Tablet primeiro':'Limite de aparelhos atingido') : '';
+  document.getElementById('disp-vazio').style.display=dispCache.length?'none':'block';
+  document.getElementById('disp-lista').innerHTML=dispCache.map(d=>{
+    const on=d.ativo && d.ultimo_sinal && Date.now()-Date.parse(d.ultimo_sinal)<DISP_ONLINE_MS;
+    const bat=d.info&&typeof d.info.bateria==='number' ? `<span>Bateria ${d.info.bateria}%${d.info.carregando?' ⚡':''}</span>` : '';
+    return `<div class="disp-item ${d.ativo?'':'inativo'}" data-id="${d.id}">
+      <div class="disp-ico">${DISP_ICONE[d.tipo]||DISP_ICONE.totem}</div>
+      <div>
+        <p class="disp-nome">${escapeHtml(d.nome)}</p>
+        <p class="disp-meta">
+          ${d.ativo ? `<span class="disp-online ${on?'':'off'}">${on?'Online':'Offline'}</span><span>${dispTempo(d.ultimo_sinal)}</span>` : '<span>Desativado</span>'}
+          ${d.local?`<span>${escapeHtml(d.local)}</span>`:''}
+          <span>${DISP_MODO[d.modo||'']}</span>
+          ${bat}
+          ${d.comando_pendente==='reiniciar'?'<span>Reinício pedido…</span>':''}
+        </p>
+      </div>
+      <div class="disp-acoes">${d.ativo ? `
+        <button type="button" class="ghost-action" data-acao="editar">Editar</button>
+        <button type="button" class="ghost-action" data-acao="reiniciar">Reiniciar</button>
+        <button type="button" class="ghost-action danger" data-acao="desativar">Desativar</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('#disp-lista button[data-acao]').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.closest('.disp-item').dataset.id;
+    if(b.dataset.acao==='editar') abrirDispForm(id);
+    if(b.dataset.acao==='reiniciar') reiniciarDispositivo(id);
+    if(b.dataset.acao==='desativar') desativarDispositivo(id);
+  }));
+  unAplicarLeitura();
+}
+
+function dispSetTipo(v){ document.querySelectorAll('#disp-tipo button').forEach(b=>b.classList.toggle('active',b.dataset.value===v)); }
+function dispGetTipo(){ const b=document.querySelector('#disp-tipo button.active'); return b?b.dataset.value:'totem'; }
+
+function abrirDispForm(id){
+  dispEditId=id;
+  const d=id?dispCache.find(x=>x.id===id):null;
+  document.getElementById('disp-form-t').textContent=d?'Editar dispositivo':'Adicionar dispositivo';
+  document.getElementById('disp-form-ajuda').style.display=d?'none':'block';
+  document.getElementById('disp-campo-codigo').style.display=d?'none':'block';
+  document.getElementById('disp-codigo').value='';
+  document.getElementById('disp-nome').value=d?d.nome:'';
+  document.getElementById('disp-local').value=d&&d.local?d.local:'';
+  document.getElementById('disp-mensagem').value=d&&d.mensagem_contexto?d.mensagem_contexto:'';
+  document.getElementById('disp-modo').value=d&&d.modo?d.modo:'';
+  dispSetTipo(d?d.tipo:'totem');
+  document.getElementById('disp-salvar').textContent=d?'Salvar alterações':'Conectar aparelho';
+  document.getElementById('disp-form').classList.add('open');
+  document.getElementById(d?'disp-nome':'disp-codigo').focus();
+}
+function fecharDispForm(){ dispEditId=null; document.getElementById('disp-form').classList.remove('open'); }
+
+async function salvarDispositivo(){
+  const nome=document.getElementById('disp-nome').value.trim();
+  if(!nome){ showToast('Dê um nome ao aparelho.'); return; }
+  const dados={nome, tipo:dispGetTipo(),
+    local:document.getElementById('disp-local').value.trim()||null,
+    mensagem_contexto:document.getElementById('disp-mensagem').value.trim()||null,
+    modo:document.getElementById('disp-modo').value||null};
+  const btn=document.getElementById('disp-salvar'); btn.disabled=true;
+  let error;
+  if(dispEditId){
+    ({error}=await sb.from('dispositivos').update(dados).eq('id',dispEditId));
+  }else{
+    const codigo=document.getElementById('disp-codigo').value.replace(/\D/g,'');
+    if(codigo.length!==6){ btn.disabled=false; showToast('Digite os 6 números que aparecem no aparelho.'); return; }
+    ({error}=await sb.rpc('parear_dispositivo',{p_codigo:codigo, p_company_id:empresaAlvo(), p_nome:dados.nome, p_tipo:dados.tipo,
+      p_local:dados.local, p_mensagem:dados.mensagem_contexto, p_modo:dados.modo}));
+    if(!error) dispLimparCodigoPendente();
+  }
+  btn.disabled=false;
+  if(error){ showToast(error.message||'Não foi possível salvar.'); return; }
+  showToast(dispEditId?'Dispositivo atualizado — o aparelho recebe em até 15 segundos':'Aparelho conectado — a tela dele muda em instantes');
+  fecharDispForm();
+  await carregarDispositivos();
+}
+
+async function reiniciarDispositivo(id){
+  const {error}=await sb.from('dispositivos').update({comando_pendente:'reiniciar'}).eq('id',id);
+  if(error){ showToast('Não foi possível pedir o reinício: '+error.message); return; }
+  showToast('Reinício pedido — o aparelho reinicia em até 15 segundos');
+  carregarDispositivos();
+}
+
+async function desativarDispositivo(id){
+  const d=dispCache.find(x=>x.id===id); if(!d) return;
+  if(!confirm(`Desativar "${d.nome}"?\n\nO aparelho sai do ar na hora e volta para a tela de código. Para usar de novo, será preciso conectar outra vez.`)) return;
+  const {error}=await sb.from('dispositivos').update({ativo:false}).eq('id',id);
+  if(error){ showToast('Não foi possível desativar: '+error.message); return; }
+  showToast('Aparelho desativado');
+  carregarDispositivos();
+}
+
+/* QR da tela do aparelho abre o painel com ?parear=CÓDIGO */
+function dispCodigoPendente(){ try{ return sessionStorage.getItem('mercs_parear')||null; }catch(_){ return null; } }
+function dispLimparCodigoPendente(){ try{ sessionStorage.removeItem('mercs_parear'); }catch(_){} }
+(function(){
+  try{
+    const c=new URLSearchParams(location.search).get('parear');
+    if(c && /^\d{6}$/.test(c)){
+      sessionStorage.setItem('mercs_parear',c);
+      history.replaceState(null,'',location.pathname+location.hash);
+      setTimeout(()=>showToast(`Código ${c.slice(0,3)} ${c.slice(3)} pronto. Entre no ambiente do cliente e abra Totem e Tablet.`),1500);
+    }
+  }catch(_){}
+})();
+
 function unCarregarTela(name){
   if(name==='conta-dados'){ unCarregarConta(); }
   if(name==='conta-ia'){ unCarregarConta(); syncIaPersonaUI(); }
   if(name==='conta-pagamentos'){ unCarregarConta(); syncIaPersonaUI(); }
   if(name==='conta-privacidade'){ carregarPrivacidade(); }
   if(name==='whatsapp'){ loadWhatsappCard(); carregarModulos(empresaAlvo()); carregarAtendHumano(); }
-  if(name==='totem'){ carregarModulos(empresaAlvo()); }
+  if(name==='totem'){ carregarModulos(empresaAlvo()); carregarDispositivos(); }
   setTimeout(()=>unAplicarLeitura(), 0);
 }
 

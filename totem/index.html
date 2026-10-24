@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#F6F7F9">
+<meta name="robots" content="noindex">
+<title>Mercs · Totem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+  :root{
+    --bg:#F6F7F9; --card:#FFFFFF; --ink:#15171C; --ink-2:#4B5160; --ink-3:#8A90A0;
+    --accent:#4F46E5; --accent-dark:#3A33B0; --accent-soft:#EEECFE; --line:#E6E8EE;
+    --ok:#16A34A; --warn:#B45309; --warn-bg:#FEF3C7;
+    --r:28px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overflow:hidden;touch-action:manipulation;}
+  .tela{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+    padding:max(32px,env(safe-area-inset-top)) 32px max(32px,env(safe-area-inset-bottom));text-align:center;}
+  .tela.ativa{display:flex;animation:entra .35s ease-out both;}
+  @keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* carregando */
+  .giro{width:44px;height:44px;border-radius:50%;border:4px solid var(--accent-soft);border-top-color:var(--accent);animation:gira 1s linear infinite;}
+  @keyframes gira{to{transform:rotate(360deg)}}
+
+  /* pareamento */
+  .par-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(28px,5vmin,56px);
+    width:min(92vw,760px);box-shadow:0 30px 80px -40px rgba(21,23,28,.25);}
+  .marca{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--ink-2);margin-bottom:clamp(18px,3vmin,32px);}
+  .marca i{width:12px;height:12px;border-radius:4px;background:var(--accent);display:inline-block;}
+  .par-titulo{font-size:clamp(24px,4.2vmin,40px);font-weight:800;letter-spacing:-.02em;line-height:1.15;}
+  .par-sub{color:var(--ink-2);font-size:clamp(15px,2.3vmin,20px);margin-top:10px;line-height:1.5;}
+  .codigo{display:flex;justify-content:center;gap:clamp(6px,1.4vmin,14px);margin:clamp(24px,4.5vmin,44px) 0 8px;font-variant-numeric:tabular-nums;}
+  .codigo span{width:clamp(48px,10vmin,96px);height:clamp(64px,13vmin,124px);display:grid;place-items:center;
+    font-size:clamp(36px,8vmin,80px);font-weight:800;background:var(--accent-soft);color:var(--accent-dark);border-radius:clamp(12px,2vmin,20px);}
+  .codigo span:nth-child(3){margin-right:clamp(10px,2.4vmin,24px);}
+  .expira{color:var(--ink-3);font-size:14px;min-height:20px;}
+  .par-baixo{display:flex;gap:clamp(18px,3vmin,32px);align-items:center;justify-content:center;margin-top:clamp(20px,4vmin,40px);
+    padding-top:clamp(20px,4vmin,36px);border-top:1px solid var(--line);text-align:left;}
+  .qr{width:clamp(120px,20vmin,180px);height:clamp(120px,20vmin,180px);flex-shrink:0;border-radius:16px;background:#fff;padding:8px;border:1px solid var(--line);}
+  .qr img,.qr svg{width:100%;height:100%;display:block;}
+  .passos{list-style:none;counter-reset:p;display:grid;gap:10px;font-size:clamp(14px,2vmin,17px);color:var(--ink-2);line-height:1.45;}
+  .passos li{counter-increment:p;display:flex;gap:10px;}
+  .passos li::before{content:counter(p);flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;
+    font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:1px;}
+  .passos b{color:var(--ink);font-weight:600;}
+  @media (max-aspect-ratio:3/4){ .par-baixo{flex-direction:column;text-align:left;} }
+
+  /* boas-vindas */
+  #tela-inicio{justify-content:space-between;}
+  .ini-topo{width:100%;display:flex;justify-content:space-between;align-items:center;color:var(--ink-3);font-size:15px;}
+  .ini-meio{display:flex;flex-direction:column;align-items:center;gap:clamp(18px,3.5vmin,34px);max-width:900px;}
+  .avatar{width:clamp(120px,24vmin,220px);height:clamp(120px,24vmin,220px);border-radius:50%;background:var(--accent);color:#fff;
+    display:grid;place-items:center;font-size:clamp(40px,8vmin,76px);font-weight:800;position:relative;overflow:visible;}
+  .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+  .avatar::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:3px solid var(--accent);opacity:.35;animation:pulsa 2.4s ease-out infinite;}
+  @keyframes pulsa{0%{transform:scale(.92);opacity:.5}100%{transform:scale(1.18);opacity:0}}
+  .ola{font-size:clamp(30px,6vmin,64px);font-weight:800;letter-spacing:-.025em;line-height:1.08;}
+  .contexto{font-size:clamp(20px,3.6vmin,36px);color:var(--ink-2);line-height:1.35;max-width:20ch;}
+  .contexto:empty{display:none;}
+  .btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:700;border-radius:999px;
+    background:var(--accent);color:#fff;font-size:clamp(20px,3.4vmin,32px);padding:clamp(18px,3vmin,28px) clamp(36px,7vmin,72px);
+    box-shadow:0 18px 40px -18px rgba(79,70,229,.7);transition:transform .12s ease;}
+  .btn:active{transform:scale(.97);background:var(--accent-dark);}
+  .ini-rodape{width:100%;display:flex;justify-content:space-between;align-items:center;color:var(--ink-3);font-size:14px;}
+  .ponto{display:inline-flex;align-items:center;gap:8px;}
+  .ponto::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--ok);}
+  .ponto.off::before{background:var(--warn);}
+
+  /* mensagens simples */
+  .aviso-icone{width:84px;height:84px;border-radius:24px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);margin-bottom:24px;}
+  .aviso-icone svg{width:40px;height:40px;}
+  .aviso-t{font-size:clamp(26px,4.6vmin,44px);font-weight:800;letter-spacing:-.02em;}
+  .aviso-s{font-size:clamp(16px,2.6vmin,22px);color:var(--ink-2);margin-top:12px;max-width:28ch;line-height:1.45;}
+
+  /* faixa de conexão */
+  .faixa{position:fixed;left:50%;top:max(16px,env(safe-area-inset-top));transform:translate(-50%,-250%);transition:transform .3s ease;
+    background:var(--warn-bg);color:var(--warn);font-weight:600;font-size:15px;padding:10px 18px;border-radius:999px;z-index:10;}
+  .faixa.on{transform:translate(-50%,0);}
+</style>
+</head>
+<body>
+
+<section class="tela ativa" id="tela-carregando" aria-live="polite">
+  <div class="giro" role="img" aria-label="Carregando"></div>
+</section>
+
+<section class="tela" id="tela-parear">
+  <div class="par-card">
+    <div class="marca"><i></i>Mercs</div>
+    <h1 class="par-titulo">Este aparelho ainda não está conectado</h1>
+    <p class="par-sub">Peça para a equipe Mercs cadastrar este código no painel.</p>
+    <div class="codigo" id="codigo" aria-label="Código de pareamento"></div>
+    <p class="expira" id="expira"></p>
+    <div class="par-baixo">
+      <div class="qr" id="qr" aria-hidden="true"></div>
+      <ol class="passos">
+        <li><span>Abra o painel Mercs e entre no <b>ambiente do cliente</b>.</span></li>
+        <li><span>Vá em <b>Totem e Tablet → Adicionar dispositivo</b>.</span></li>
+        <li><span>Digite o código acima ou leia o QR com o celular. Esta tela muda sozinha quando terminar.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="tela" id="tela-inicio">
+  <div class="ini-topo"><span id="ini-empresa"></span><span id="ini-relogio"></span></div>
+  <div class="ini-meio">
+    <div class="avatar" id="avatar">IA</div>
+    <h1 class="ola" id="ola">Olá!</h1>
+    <p class="contexto" id="contexto"></p>
+    <button class="btn" id="btn-comecar" type="button">Toque para começar</button>
+  </div>
+  <div class="ini-rodape"><span id="ini-aparelho"></span><span class="ponto" id="ini-status">Conectado</span></div>
+</section>
+
+<section class="tela" id="tela-em-breve">
+  <div class="aviso-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg></div>
+  <h1 class="aviso-t">Quase pronto</h1>
+  <p class="aviso-s">O atendimento neste aparelho está sendo configurado. Em breve você poderá conversar aqui.</p>
+</section>
+
+<section class="tela" id="tela-indisponivel">
+  <div class="aviso-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+  <h1 class="aviso-t">Atendimento indisponível</h1>
+  <p class="aviso-s" id="indisp-sub">Este ponto está temporariamente fora do ar. Volte em instantes.</p>
+</section>
+
+<div class="faixa" id="faixa" role="status">Sem conexão. Tentando de novo…</div>
+
+<script>
+/* Mercs · página do totem/tablet.
+   Sem login: o aparelho se identifica pela chave que recebeu no pareamento.
+   A chave fica só neste navegador; desativar o aparelho no painel a invalida. */
+(() => {
+  const VERSAO = "totem-1.0.0";
+  const FN = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/totem";
+  const PAINEL = "https://www.mercs.com.br/acesso-novo/";
+  const CHAVE = "mercs_totem_chave";
+  const INATIVIDADE_MS = 60000;
+
+  const $ = (id) => document.getElementById(id);
+  let memoria = null;                       // se o navegador bloquear o armazenamento
+  const ler = () => { try { return localStorage.getItem(CHAVE); } catch (_) { return memoria; } };
+  const gravar = (v) => { memoria = v; try { v ? localStorage.setItem(CHAVE, v) : localStorage.removeItem(CHAVE); } catch (_) {} };
+
+  let telaAtual = "carregando", cfg = null, timerSinal = null, timerPar = null, timerExpira = null, timerVolta = null, falhas = 0;
+
+  function mostrar(nome){
+    if (telaAtual === nome) return;
+    document.querySelectorAll(".tela").forEach(t => t.classList.toggle("ativa", t.id === "tela-" + nome));
+    telaAtual = nome;
+  }
+  function faixa(on){ $("faixa").classList.toggle("on", !!on); }
+
+  async function chamar(corpo){
+    const r = await fetch(FN, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(corpo), cache:"no-store" });
+    let dados = {}; try { dados = await r.json(); } catch (_) {}
+    return { status: r.status, dados };
+  }
+
+  async function infoAparelho(){
+    const info = { agente: navigator.userAgent, tela: `${screen.width}x${screen.height}`, idioma: navigator.language };
+    try { if (navigator.getBattery) { const b = await navigator.getBattery(); info.bateria = Math.round(b.level*100); info.carregando = b.charging; } } catch (_) {}
+    return info;
+  }
+
+  /* ---------------- pareamento ---------------- */
+  async function iniciarPareamento(){
+    clearTimeout(timerSinal); clearInterval(timerPar); clearInterval(timerExpira);
+    let resp;
+    try { resp = await chamar({ acao:"iniciar", info: await infoAparelho() }); }
+    catch (_) { faixa(true); setTimeout(iniciarPareamento, 5000); return; }
+    faixa(false);
+    if (resp.status !== 200 || !resp.dados.codigo) { setTimeout(iniciarPareamento, 15000); return; }
+    const { codigo, segredo, expira_em } = resp.dados;
+
+    $("codigo").innerHTML = [...codigo].map(d => `<span>${d}</span>`).join("");
+    $("codigo").setAttribute("aria-label", "Código de pareamento " + codigo.split("").join(" "));
+    try {
+      const qr = qrcode(0, "M"); qr.addData(PAINEL + "?parear=" + codigo); qr.make();
+      $("qr").innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+    } catch (_) { $("qr").style.display = "none"; }
+    mostrar("parear");
+
+    const fim = Date.parse(expira_em);
+    const tique = () => {
+      const s = Math.max(0, Math.round((fim - Date.now())/1000));
+      $("expira").textContent = s > 0 ? `O código vale por mais ${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}` : "Gerando um novo código…";
+      if (s <= 0) { clearInterval(timerExpira); clearInterval(timerPar); iniciarPareamento(); }
+    };
+    tique(); timerExpira = setInterval(tique, 1000);
+
+    timerPar = setInterval(async () => {
+      let r; try { r = await chamar({ acao:"aguardar", codigo, segredo }); faixa(false); } catch (_) { faixa(true); return; }
+      if (r.dados.status === "pareado" && r.dados.token) {
+        clearInterval(timerPar); clearInterval(timerExpira);
+        gravar(r.dados.token);
+        mostrar("carregando");
+        sinal();
+      } else if (r.dados.status === "expirado") {
+        clearInterval(timerPar); clearInterval(timerExpira); iniciarPareamento();
+      }
+    }, 3000);
+  }
+
+  /* ---------------- sinal e configuração ---------------- */
+  async function sinal(){
+    clearTimeout(timerSinal);
+    const token = ler();
+    if (!token) return iniciarPareamento();
+    let r;
+    try { r = await chamar({ acao:"sinal", token, versao: VERSAO, info: await infoAparelho() }); }
+    catch (_) {
+      falhas++; faixa(true); atualizarStatus(false);
+      if (telaAtual === "carregando") mostrar("indisponivel");
+      timerSinal = setTimeout(sinal, Math.min(30000, 3000 * falhas)); return;
+    }
+    if (r.status === 401) { gravar(null); faixa(false); return iniciarPareamento(); }
+    if (r.status !== 200) { falhas++; faixa(true); timerSinal = setTimeout(sinal, 10000); return; }
+    falhas = 0; faixa(false); atualizarStatus(true);
+
+    if (r.dados.comando === "reiniciar") { location.reload(); return; }
+    aplicar(r.dados);
+    timerSinal = setTimeout(sinal, (r.dados.proximo_sinal_s || 15) * 1000);
+  }
+
+  function aplicar(c){
+    cfg = c;
+    if (!c.disponivel) {
+      $("indisp-sub").textContent = "Este ponto está temporariamente fora do ar. Volte em instantes.";
+      if (telaAtual !== "em-breve") mostrar("indisponivel");
+      return;
+    }
+    const nomeIa = (c.empresa.ia_nome || "Assistente").trim();
+    $("ola").textContent = `Olá! Eu sou ${artigo(nomeIa)} ${nomeIa}.`;
+    $("contexto").textContent = c.dispositivo.mensagem || "Posso te ajudar com informações, planos e atendimento.";
+    $("ini-empresa").textContent = c.empresa.nome || "";
+    $("ini-aparelho").textContent = [c.dispositivo.nome, c.dispositivo.local].filter(Boolean).join(" · ");
+    const av = $("avatar");
+    if (c.empresa.ia_foto) { if (!av.querySelector("img") || av.querySelector("img").src !== c.empresa.ia_foto) av.innerHTML = `<img src="${c.empresa.ia_foto}" alt="">`; }
+    else av.textContent = nomeIa.slice(0, 2).toUpperCase();
+    if (telaAtual === "carregando" || telaAtual === "indisponivel" || telaAtual === "parear") mostrar("inicio");
+  }
+  function artigo(nome){ return /a$/i.test(nome) ? "a" : (/o$/i.test(nome) ? "o" : ""); }
+  function atualizarStatus(ok){ const s = $("ini-status"); s.textContent = ok ? "Conectado" : "Sem conexão"; s.classList.toggle("off", !ok); }
+
+  /* ---------------- interação ---------------- */
+  $("btn-comecar").addEventListener("click", () => {
+    entrarTelaCheia();
+    mostrar("em-breve");
+    clearTimeout(timerVolta);
+    timerVolta = setTimeout(() => { if (cfg) mostrar(cfg.disponivel ? "inicio" : "indisponivel"); }, 8000);
+  });
+
+  // Volta para a tela inicial depois de um tempo sem toque (privacidade entre pessoas).
+  let ultimoToque = Date.now();
+  ["pointerdown","keydown"].forEach(ev => document.addEventListener(ev, () => { ultimoToque = Date.now(); }, { passive:true }));
+  setInterval(() => {
+    if (telaAtual === "em-breve" && Date.now() - ultimoToque > INATIVIDADE_MS) mostrar("inicio");
+  }, 5000);
+
+  function entrarTelaCheia(){
+    const el = document.documentElement;
+    if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().catch(() => {});
+  }
+  // Tela sempre acesa enquanto a página estiver aberta.
+  let trava = null;
+  async function manterAcesa(){ try { if ("wakeLock" in navigator) trava = await navigator.wakeLock.request("screen"); } catch (_) {} }
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { manterAcesa(); sinal(); } });
+  manterAcesa();
+
+  // Modo quiosque: sem menu de contexto, sem zoom por gesto.
+  document.addEventListener("contextmenu", e => e.preventDefault());
+  document.addEventListener("gesturestart", e => e.preventDefault());
+
+  const relogio = () => { $("ini-relogio").textContent = new Date().toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" }); };
+  relogio(); setInterval(relogio, 20000);
+
+  window.addEventListener("online", () => sinal());
+  sinal();
+})();
+</script>
+</body>
+</html>
