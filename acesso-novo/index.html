@@ -117,6 +117,9 @@
   .client-logo-plus{position:absolute;bottom:-5px;right:-5px;width:15px;height:15px;border-radius:50%;
     background:var(--accent);color:#fff;font-size:11px;line-height:1;display:flex;align-items:center;
     justify-content:center;font-weight:700;border:2px solid #fff;}
+  .client-logo-placeholder.tem-logo{border:none;background:transparent;padding:0;cursor:default;}
+  .client-logo-placeholder.tem-logo:hover{background:transparent;}
+  .client-logo-img{height:40px;max-width:200px;object-fit:contain;display:block;}
   .client-logo-placeholder span{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--text-tertiary);
     text-transform:uppercase;}
 
@@ -712,6 +715,17 @@
   .ori-passos{white-space:pre-wrap;color:var(--text-secondary);font-size:14px;line-height:1.5;margin:6px 0 0;max-height:7.5em;overflow:hidden;}
   body.somente-leitura .cfg-view #ori-nova,
   body.somente-leitura .cfg-view .fn-item{pointer-events:none;}
+  .fn-item.fn-sub{margin-left:30px;}
+  /* "Executa ações" congelado (24/10): depende de integrar com o sistema de cada cliente. */
+  .fn-item.fn-sub{display:none;}
+  #card-logo{margin-top:16px;}
+  .logo-linha{display:flex;gap:20px;align-items:center;flex-wrap:wrap;}
+  .logo-preview{width:220px;height:110px;border:1px dashed var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:#fff;padding:12px;}
+  .logo-preview img{max-width:100%;max-height:100%;}
+  .logo-preview span{color:var(--text-secondary);font-size:13px;}
+  .logo-acoes{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  body.somente-leitura .logo-acoes button{display:none;}
+  .fn-item.fn-sub.off{opacity:.45;}
   body.somente-leitura .cfg-view #ori-nova{display:none !important;}
   .ah-lista{margin:12px 0 0;padding-left:18px;color:var(--text-secondary);font-size:14px;line-height:1.6;}
   .ah-lista code{font-family:var(--font-mono, monospace);font-size:12.5px;background:var(--bg-hover, #F3F4F6);padding:1px 6px;border-radius:5px;}
@@ -2704,6 +2718,19 @@
       <section class="view cfg-view" id="view-conta-dados">
         <div class="page-head"><div><h1>Dados da empresa</h1><p class="page-sub">Cadastro da conta e acesso de teste.</p></div></div>
         <div class="un-mount" id="mount-conta-dados"></div>
+        <section class="card" id="card-logo">
+          <h2 class="card-title" style="margin:0 0 4px;">Logo</h2>
+          <p class="card-sub" style="margin:0 0 14px;">Aparece no totem e no tablet. Use o arquivo SVG da marca (até 300 KB).</p>
+          <div class="logo-linha">
+            <div class="logo-preview" id="logo-preview"><span>Sem logo</span></div>
+            <div class="logo-acoes cfg-edita">
+              <input type="file" id="logo-arquivo" accept=".svg,image/svg+xml" hidden>
+              <button type="button" class="btn-primary" id="logo-enviar">Enviar SVG</button>
+              <button type="button" class="btn-secondary" id="logo-remover">Remover</button>
+              <span class="sac-status" id="logo-status">—</span>
+            </div>
+          </div>
+        </section>
       </section>
 
       <section class="view cfg-view" id="view-conta-ia">
@@ -3224,17 +3251,23 @@
     <!-- ABA 3: IA -->
     <!-- FASE 1: módulos contratados -->
     <div class="admin-tab-content" id="admin-tab-modulos">
-      <p class="card-sub" style="margin-bottom:16px;">Escolha os produtos que esta empresa contratou. Por enquanto a configuração fica registrada; o atendimento passa a seguir estes modos nas próximas fases.</p>
+      <p class="card-sub" style="margin-bottom:16px;">Escolha os canais que esta empresa contratou e, em cada um, a forma (texto ou voz) e o tipo: venda ou atendimento.</p>
       <div class="mod-card" id="mod-card-whatsapp">
         <div class="settings-row">
           <div class="settings-row-left"><div class="settings-row-text"><p class="s-title">IA para WhatsApp</p><p class="s-desc">Atendimento e vendas pelo número conectado</p></div></div>
           <label class="toggle-switch"><input type="checkbox" id="mod-whatsapp-ativo"><span class="toggle-slider"></span></label>
         </div>
         <div class="mod-opts">
-          <span class="field-label">Modo</span>
+          <span class="field-label">Forma</span>
           <div class="segmented" id="mod-whatsapp-modo">
             <button type="button" data-value="texto">Somente texto</button>
             <button type="button" data-value="multimodal">Texto, foto e áudio</button>
+          </div>
+          <span class="field-label" style="margin-top:16px;display:block;">Tipo</span>
+          <div class="fn-lista" id="tipo-whatsapp">
+            <label class="fn-item"><input type="radio" name="tipo-whatsapp" value="venda"><span><b>Venda</b><small>Apresenta os produtos e planos, tira dúvidas e encerra com o link de compra.</small></span></label>
+            <label class="fn-item"><input type="radio" name="tipo-whatsapp" value="atendimento"><span><b>Atendimento</b><small>Tira dúvidas e orienta com o FAQ, as Orientações, o SAC e os documentos. Não vende nem envia link de compra.</small></span></label>
+            <label class="fn-item fn-sub" id="acoes-whatsapp-item"><input type="checkbox" id="acoes-whatsapp" disabled><span><b>Também executa ações</b><small>Ex.: agendar, abrir chamado, pedir segunda via. Em preparação: o cadastro de ações ainda não está disponível.</small></span></label>
           </div>
         </div>
       </div>
@@ -3244,17 +3277,17 @@
           <label class="toggle-switch"><input type="checkbox" id="mod-totem-ativo"><span class="toggle-slider"></span></label>
         </div>
         <div class="mod-opts">
-          <span class="field-label">Modo</span>
+          <span class="field-label">Forma</span>
           <div class="segmented" id="mod-totem-modo">
             <button type="button" data-value="texto">Somente texto</button>
             <button type="button" data-value="multimodal">Texto, foto e áudio</button>
             <button type="button" data-value="voz">Conversa por voz</button>
           </div>
-          <span class="field-label" style="margin-top:16px;display:block;">Funções</span>
-          <div class="fn-lista">
-            <label class="fn-item"><input type="checkbox" id="fn-vendas"><span><b>Vendas</b><small>Apresenta os produtos e planos cadastrados e mostra o QR para comprar no celular.</small></span></label>
-            <label class="fn-item"><input type="checkbox" id="fn-orientacoes"><span><b>Dúvidas e orientações</b><small>Responde com o FAQ, as Orientações, o SAC e os documentos da empresa.</small></span></label>
-            <label class="fn-item"><input type="checkbox" id="fn-servicos"><span><b>Serviços públicos</b><small>Lê o portal da prefeitura, orienta e abre solicitações. Em integração: ainda não responde no totem.</small></span></label>
+          <span class="field-label" style="margin-top:16px;display:block;">Tipo</span>
+          <div class="fn-lista" id="tipo-totem">
+            <label class="fn-item"><input type="radio" name="tipo-totem" value="venda"><span><b>Venda</b><small>Apresenta os produtos e planos, tira dúvidas e encerra com o link de compra (no totem, vira um QR na tela).</small></span></label>
+            <label class="fn-item"><input type="radio" name="tipo-totem" value="atendimento"><span><b>Atendimento</b><small>Tira dúvidas e orienta com o FAQ, as Orientações, o SAC e os documentos. Não vende nem envia link de compra.</small></span></label>
+            <label class="fn-item fn-sub" id="acoes-totem-item"><input type="checkbox" id="acoes-totem" disabled><span><b>Também executa ações</b><small>Ex.: agendar, abrir chamado, pedir segunda via. Em preparação: o cadastro de ações ainda não está disponível.</small></span></label>
           </div>
           <div class="field" style="margin-top:14px;margin-bottom:0;">
             <label class="field-label" for="mod-totem-limite">Limite de dispositivos</label>
@@ -3667,6 +3700,7 @@ async function onAuthReady(session){
   document.body.classList.add('authed');
   document.body.classList.toggle('is-admin-user', !!profile.is_admin);
   document.body.classList.toggle('somente-leitura', !profile.is_admin);
+  carregarLogoCabecalho().catch(()=>{});
 
   /* O wizard de recebimento vem primeiro e cada etapa e isolada: antes, uma
      excecao em qualquer carregamento (produtos, base de conhecimento, status
@@ -3807,7 +3841,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.27.0-totem';
+const APP_VERSION='1.28.0-tipo';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
@@ -4066,6 +4100,7 @@ function switchView(name){
   if(name==='orientacoes'){ carregarOrientacoes(); }
   unCarregarTela(name);
   if(name==='perfil'){ carregarPerfil(); }
+  if(name==='conta-dados'){ carregarLogo(); }
   iaDiagUpdateVisibility(name);
 }
 document.getElementById('ver-todos-atend').addEventListener('click',()=>switchView('atendimentos'));
@@ -4351,7 +4386,7 @@ document.getElementById('notif-filter-status').addEventListener('change',renderN
 document.getElementById('notif-filter-tipo').addEventListener('change',renderNotifPage);
 
 document.getElementById('client-logo-placeholder').addEventListener('click',()=>{
-  showToast('Em breve: envie aqui a logo da sua empresa');
+  if(currentProfile && currentProfile.is_admin) switchView('conta-dados');
 });
 
 /* ===================== fluxo de pagamento (simulado) ===================== */
@@ -6015,12 +6050,123 @@ async function carregarModulos(companyId){
   modSetModo('mod-totem-modo', tt.modo||'texto');
   document.getElementById('mod-totem-limite').value=tt.limite_dispositivos||0;
   modConfigs={whatsapp:(wa.config||{}), totem:(tt.config||{})};
-  const fn=Object.assign({vendas:true, orientacoes:true, servicos_publicos:false}, (tt.config&&tt.config.funcoes)||{});
-  document.getElementById('fn-vendas').checked=!!fn.vendas;
-  document.getElementById('fn-orientacoes').checked=!!fn.orientacoes;
-  document.getElementById('fn-servicos').checked=!!fn.servicos_publicos;
+  tipoPreencher('whatsapp', wa.config); tipoPreencher('totem', tt.config);
   modSyncCards();
   f1Status('mod-status','—');
+}
+
+/* ===================== Logo do cliente (SVG) =====================
+   Guardada como texto em companies.logo_svg. O banco recusa SVG com script,
+   eventos (onload=…) ou foreignObject; aqui limpamos antes de enviar. O totem
+   mostra a logo como imagem (<img>), então nada dentro dela é executado. */
+function logoLimpar(txt){
+  const doc=new DOMParser().parseFromString(txt,'image/svg+xml');
+  const svg=doc.documentElement;
+  if(!svg || svg.nodeName.toLowerCase()!=='svg' || doc.querySelector('parsererror')) return null;
+  svg.querySelectorAll('script, foreignObject').forEach(n=>n.remove());
+  svg.querySelectorAll('*').forEach(el=>{
+    [...el.attributes].forEach(a=>{
+      const n=a.name.toLowerCase(), v=a.value.trim().toLowerCase();
+      if(n.startsWith('on')) el.removeAttribute(a.name);
+      if((n==='href'||n==='xlink:href') && !(v.startsWith('#')||v.startsWith('data:image/'))) el.removeAttribute(a.name);
+    });
+  });
+  [...svg.attributes].forEach(a=>{ if(a.name.toLowerCase().startsWith('on')) svg.removeAttribute(a.name); });
+  if(!svg.getAttribute('viewBox') && svg.getAttribute('width') && svg.getAttribute('height')){
+    const w=parseFloat(svg.getAttribute('width')), h=parseFloat(svg.getAttribute('height'));
+    if(w>0&&h>0) svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  }
+  return new XMLSerializer().serializeToString(svg);
+}
+/* Cabeçalho: mostra a logo do cliente no lugar do "LOGO DO CLIENTE". */
+let logoCabecalhoOriginal=null;
+function logoCabecalho(svg){
+  const ph=document.getElementById('client-logo-placeholder');
+  if(!ph) return;
+  if(logoCabecalhoOriginal===null) logoCabecalhoOriginal=ph.innerHTML;
+  ph.classList.toggle('tem-logo', !!svg);
+  if(!svg){ ph.innerHTML=logoCabecalhoOriginal; ph.title=(currentProfile&&currentProfile.is_admin)?'Enviar a logo em Dados da empresa':''; return; }
+  ph.innerHTML='';
+  const img=new Image(); img.alt='Logo'; img.className='client-logo-img';
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  ph.appendChild(img); ph.title='';
+}
+async function carregarLogoCabecalho(){
+  const id=empresaAlvo();
+  if(!id){ logoCabecalho(null); return; }
+  const {data}=await sb.from('companies').select('logo_svg').eq('id',id).maybeSingle();
+  if(empresaAlvo()===id) logoCabecalho(data && data.logo_svg);
+}
+function logoMostrar(svg){
+  logoCabecalho(svg);
+  const box=document.getElementById('logo-preview');
+  box.innerHTML='';
+  if(!svg){ box.innerHTML='<span>Sem logo</span>'; return; }
+  const img=new Image(); img.alt='Logo';
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  box.appendChild(img);
+}
+let logoLigado=false;
+async function carregarLogo(){
+  const id=empresaAlvo(); if(!id) return;
+  if(!logoLigado){
+    logoLigado=true;
+    const arq=document.getElementById('logo-arquivo');
+    document.getElementById('logo-enviar').addEventListener('click',()=>arq.click());
+    arq.addEventListener('change',async()=>{
+      const f=arq.files&&arq.files[0]; arq.value='';
+      if(!f) return;
+      if(f.size>300000){ showToast('O arquivo passa de 300 KB. Exporte o SVG otimizado e tente de novo.'); return; }
+      const limpo=logoLimpar(await f.text());
+      if(!limpo){ showToast('Este arquivo não é um SVG válido.'); return; }
+      await salvarLogo(limpo);
+    });
+    document.getElementById('logo-remover').addEventListener('click',()=>salvarLogo(null));
+  }
+  f1Status('logo-status','—');
+  const {data,error}=await sb.from('companies').select('logo_svg').eq('id',id).single();
+  if(error){ f1Status('logo-status','Não foi possível carregar.','err'); return; }
+  logoMostrar(data && data.logo_svg);
+}
+async function salvarLogo(svg){
+  const id=empresaAlvo(); if(!id) return;
+  f1Status('logo-status','Salvando…');
+  const {error}=await sb.from('companies').update({logo_svg:svg}).eq('id',id);
+  if(error){ f1Status('logo-status','Não salvou.','err'); showToast('Não foi possível salvar a logo: '+error.message); return; }
+  logoMostrar(svg);
+  f1Status('logo-status', svg?'✓ Logo salva. Os totens atualizam em até 15 segundos.':'✓ Logo removida.','ok');
+}
+
+function tipoDe(cfg){
+  cfg=cfg||{};
+  if(cfg.tipo==='venda'||cfg.tipo==='atendimento') return cfg.tipo;
+  return (cfg.funcoes && cfg.funcoes.vendas===false) ? 'atendimento' : 'venda';
+}
+function tipoPreencher(canal, cfg){
+  const t=tipoDe(cfg);
+  document.querySelectorAll(`input[name="tipo-${canal}"]`).forEach(r=>{ r.checked=(r.value===t); });
+  document.getElementById(`acoes-${canal}`).checked=!!(cfg&&cfg.acoes) && t==='atendimento';
+  tipoSync(canal);
+  if(!tipoPreencher.ligado){
+    tipoPreencher.ligado=true;
+    ['whatsapp','totem'].forEach(c=>document.querySelectorAll(`input[name="tipo-${c}"]`).forEach(r=>r.addEventListener('change',()=>tipoSync(c))));
+  }
+}
+function tipoSync(canal){
+  const at=tipoLer(canal)==='atendimento';
+  document.getElementById(`acoes-${canal}-item`).classList.toggle('off', !at);
+  if(!at) document.getElementById(`acoes-${canal}`).checked=false;
+}
+function tipoLer(canal){
+  const r=document.querySelector(`input[name="tipo-${canal}"]:checked`);
+  return r ? r.value : 'venda';
+}
+function tipoConfig(canal){
+  const cfg=Object.assign({}, modConfigs[canal]||{});
+  delete cfg.funcoes;
+  cfg.tipo=tipoLer(canal);
+  cfg.acoes=cfg.tipo==='atendimento' && document.getElementById(`acoes-${canal}`).checked;
+  return cfg;
 }
 
 async function salvarModulos(){
@@ -6028,16 +6174,10 @@ async function salvarModulos(){
   const limite=Math.max(0, parseInt(document.getElementById('mod-totem-limite').value,10)||0);
   const linhas=[
     {company_id:modCompanyId, modulo:'whatsapp', ativo:document.getElementById('mod-whatsapp-ativo').checked, modo:modGetModo('mod-whatsapp-modo'), limite_dispositivos:0,
-      config:(modConfigs.whatsapp||{})},
+      config:tipoConfig('whatsapp')},
     {company_id:modCompanyId, modulo:'totem', ativo:document.getElementById('mod-totem-ativo').checked, modo:modGetModo('mod-totem-modo'), limite_dispositivos:limite,
-      config:Object.assign({}, modConfigs.totem||{}, {funcoes:{
-        vendas:document.getElementById('fn-vendas').checked,
-        orientacoes:document.getElementById('fn-orientacoes').checked,
-        servicos_publicos:document.getElementById('fn-servicos').checked}})},
+      config:tipoConfig('totem')},
   ];
-  if(linhas[1].ativo && !linhas[1].config.funcoes.vendas && !linhas[1].config.funcoes.orientacoes && !linhas[1].config.funcoes.servicos_publicos){
-    showToast('Ligue pelo menos uma função do totem.'); return;
-  }
   const btn=document.getElementById('mod-salvar');
   btn.disabled=true;
   const {error}=await sb.from('company_modulos').upsert(linhas,{onConflict:'company_id,modulo'});
@@ -6126,6 +6266,7 @@ async function loadVendas(){
 
 async function recarregarDadosDoAmbiente(){
   sacCarregado=false;
+  carregarLogoCabecalho().catch(()=>{});
   await refreshOperacao();
   await Promise.all([
     syncAtendimentoStatus().catch(()=>{}),

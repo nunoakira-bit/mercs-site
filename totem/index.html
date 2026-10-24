@@ -55,6 +55,10 @@
 
   /* boas-vindas */
   #tela-inicio{justify-content:space-between;}
+  .ini-marca{display:flex;align-items:center;min-height:56px;}
+  .logo-cli{height:clamp(44px,7vmin,72px);max-width:min(46vw,360px);object-fit:contain;object-position:left center;}
+  .cv-logo{height:36px;max-width:160px;object-fit:contain;margin-left:auto;}
+  .cv-logo + .cv-fim{margin-left:12px;}
   .ini-topo{width:100%;display:flex;justify-content:space-between;align-items:center;color:var(--ink-3);font-size:15px;}
   .ini-meio{display:flex;flex-direction:column;align-items:center;gap:clamp(18px,3.5vmin,34px);max-width:900px;}
   .avatar{width:clamp(120px,24vmin,220px);height:clamp(120px,24vmin,220px);border-radius:50%;background:var(--accent);color:#fff;
@@ -168,7 +172,7 @@
 </section>
 
 <section class="tela" id="tela-inicio">
-  <div class="ini-topo"><span id="ini-empresa"></span><span id="ini-relogio"></span></div>
+  <div class="ini-topo"><span class="ini-marca"><img class="logo-cli" id="ini-logo" alt="" hidden><span id="ini-empresa"></span></span><span id="ini-relogio"></span></div>
   <div class="ini-meio">
     <div class="avatar" id="avatar">IA</div>
     <h1 class="ola" id="ola">Olá!</h1>
@@ -182,6 +186,7 @@
   <div class="cv-topo">
     <div class="cv-av" id="cv-av">IA</div>
     <div><div class="cv-nome" id="cv-nome">Assistente</div><div class="cv-sub">Assistente virtual · responde na hora</div></div>
+    <img class="cv-logo" id="cv-logo" alt="" hidden>
     <button class="cv-fim" id="cv-fim" type="button">Encerrar</button>
   </div>
   <div class="cv-msgs" id="cv-msgs" aria-live="polite"></div>
@@ -228,7 +233,7 @@
    Sem login: o aparelho se identifica pela chave que recebeu no pareamento.
    A chave fica só neste navegador; desativar o aparelho no painel a invalida. */
 (() => {
-  const VERSAO = "totem-1.1.0";
+  const VERSAO = "totem-1.2.0";
   const FN = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/totem";
   const PAINEL = "https://www.mercs.com.br/acesso-novo/";
   const CHAVE = "mercs_totem_chave";
@@ -329,13 +334,45 @@
     }
     const nomeIa = (c.empresa.ia_nome || "Assistente").trim();
     $("ola").textContent = `Olá! Eu sou ${artigo(nomeIa)} ${nomeIa}.`;
-    $("contexto").textContent = c.dispositivo.mensagem || "Posso te ajudar com informações, planos e atendimento.";
+    $("contexto").textContent = c.dispositivo.mensagem || (c.tipo === "atendimento"
+      ? "Posso tirar suas dúvidas e te orientar."
+      : "Posso te ajudar com informações, planos e atendimento.");
     $("ini-empresa").textContent = c.empresa.nome || "";
+    atualizarLogo(c.empresa.logo_versao || null, c.empresa.nome || "");
     $("ini-aparelho").textContent = [c.dispositivo.nome, c.dispositivo.local].filter(Boolean).join(" · ");
     const av = $("avatar");
     if (c.empresa.ia_foto) { if (!av.querySelector("img") || av.querySelector("img").src !== c.empresa.ia_foto) av.innerHTML = `<img src="${c.empresa.ia_foto}" alt="">`; }
     else av.textContent = nomeIa.slice(0, 2).toUpperCase();
     if (telaAtual === "carregando" || telaAtual === "indisponivel" || telaAtual === "parear") mostrar("inicio");
+  }
+  /* Logo do cliente: o sinal traz só a versão; o SVG vem por "logo" quando muda
+     e fica guardado no aparelho. Mostrado como <img>, nada nele é executado. */
+  const CHAVE_LOGO = "mercs_totem_logo";
+  let logoAtual = null;
+  function mostrarLogo(svg, nome){
+    const url = svg ? "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg) : null;
+    for (const id of ["ini-logo", "cv-logo"]) {
+      const img = $(id);
+      if (url) { if (img.getAttribute("src") !== url) img.src = url; img.alt = nome; img.hidden = false; }
+      else { img.removeAttribute("src"); img.hidden = true; }
+    }
+    $("ini-empresa").hidden = !!url;
+  }
+  async function atualizarLogo(versao, nome){
+    if (logoAtual === null) {
+      try { logoAtual = JSON.parse(localStorage.getItem(CHAVE_LOGO) || "null") || { versao: null, svg: null }; } catch (_) { logoAtual = { versao: null, svg: null }; }
+    }
+    if (!versao) { logoAtual = { versao: null, svg: null }; try { localStorage.removeItem(CHAVE_LOGO); } catch (_) {} mostrarLogo(null, nome); return; }
+    if (logoAtual.versao === versao && logoAtual.svg) { mostrarLogo(logoAtual.svg, nome); return; }
+    mostrarLogo(logoAtual.svg, nome);
+    try {
+      const r = await chamar({ acao: "logo", token: ler() });
+      if (r.status === 200 && r.dados && r.dados.svg) {
+        logoAtual = { versao: r.dados.versao, svg: r.dados.svg };
+        try { localStorage.setItem(CHAVE_LOGO, JSON.stringify(logoAtual)); } catch (_) {}
+        mostrarLogo(logoAtual.svg, nome);
+      }
+    } catch (_) { /* tenta no próximo sinal */ }
   }
   function artigo(nome){ return /a$/i.test(nome) ? "a" : (/o$/i.test(nome) ? "o" : ""); }
   function atualizarStatus(ok){ const s = $("ini-status"); s.textContent = ok ? "Conectado" : "Sem conexão"; s.classList.toggle("off", !ok); }
