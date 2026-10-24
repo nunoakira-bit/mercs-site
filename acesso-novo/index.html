@@ -704,6 +704,15 @@
   @media (max-width:720px){ .disp-item{grid-template-columns:40px 1fr;} .disp-acoes{grid-column:1 / -1;justify-content:flex-start;} .disp-head{flex-direction:column;} }
   body.somente-leitura .cfg-view #disp-novo,
   body.somente-leitura .cfg-view .disp-acoes{display:none !important;}
+  .fn-lista{display:grid;gap:8px;margin-top:8px;}
+  .fn-item{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;}
+  .fn-item input{width:18px;height:18px;margin-top:2px;accent-color:var(--accent);flex-shrink:0;}
+  .fn-item b{display:block;font-weight:600;font-size:14px;}
+  .fn-item small{display:block;color:var(--text-secondary);font-size:13px;line-height:1.45;margin-top:2px;}
+  .ori-passos{white-space:pre-wrap;color:var(--text-secondary);font-size:14px;line-height:1.5;margin:6px 0 0;max-height:7.5em;overflow:hidden;}
+  body.somente-leitura .cfg-view #ori-nova,
+  body.somente-leitura .cfg-view .fn-item{pointer-events:none;}
+  body.somente-leitura .cfg-view #ori-nova{display:none !important;}
   .ah-lista{margin:12px 0 0;padding-left:18px;color:var(--text-secondary);font-size:14px;line-height:1.6;}
   .ah-lista code{font-family:var(--font-mono, monospace);font-size:12.5px;background:var(--bg-hover, #F3F4F6);padding:1px 6px;border-radius:5px;}
   /* ---------- Fase 1: FAQ, Sobre a empresa, canais de SAC, módulos ---------- */
@@ -1627,6 +1636,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 015 .9c0 1.7-2.5 2.3-2.5 3.9"/><circle cx="12" cy="17" r="0.7" fill="currentColor" stroke="none"/></svg>
         <span class="nav-label">FAQ</span>
       </div>
+      <div class="nav-item nav-company-item" data-view="orientacoes" title="Orientações">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="3" stroke-linecap="round"/></svg>
+        <span class="nav-label">Orientações</span>
+      </div>
       <div class="nav-item nav-company-item" data-view="sac" title="SAC">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8A8.5 8.5 0 0112.5 20a8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 014 11.5 8.5 8.5 0 018.7 4a8.4 8.4 0 013.8-.9h.5A8.48 8.48 0 0121 11z"/><path d="M8.5 11h7M8.5 14h4"/></svg>
         <span class="nav-label">SAC</span>
@@ -2460,6 +2473,52 @@
       </section>
 
       <!-- FASE 1: FAQ -->
+      <section class="view cfg-view" id="view-orientacoes">
+        <div class="page-head">
+          <div>
+            <h1>Orientações</h1>
+            <p class="page-sub">Procedimentos passo a passo que a IA explica: como agendar, o que levar, onde ir. Valem no WhatsApp e no totem.</p>
+          </div>
+          <button type="button" class="btn-primary" id="ori-nova">+ Nova orientação</button>
+        </div>
+        <div class="card">
+          <div class="faq-form" id="ori-form">
+            <div class="field">
+              <label class="field-label" for="ori-titulo">Título</label>
+              <input type="text" id="ori-titulo" maxlength="160" placeholder="Ex.: Como agendar uma consulta com especialista">
+            </div>
+            <div class="field">
+              <label class="field-label" for="ori-quando">Quando usar (opcional)</label>
+              <input type="text" id="ori-quando" maxlength="600" placeholder="Ex.: quando a pessoa pergunta sobre cardiologista, dermatologista ou outra especialidade">
+            </div>
+            <div class="field">
+              <label class="field-label" for="ori-passos">Passo a passo</label>
+              <textarea id="ori-passos" maxlength="6000" style="min-height:150px;" placeholder="1. Abra o app Lume e entre com seu CPF.&#10;2. Toque em Especialidades.&#10;3. Escolha a especialidade e o horário."></textarea>
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label class="field-label" for="ori-docs">Documentos e o que levar (opcional)</label>
+                <textarea id="ori-docs" maxlength="2000" style="min-height:90px;" placeholder="Ex.: documento com foto, cartão do plano"></textarea>
+              </div>
+              <div class="field">
+                <label class="field-label" for="ori-onde">Onde, horário e contato (opcional)</label>
+                <textarea id="ori-onde" maxlength="1000" style="min-height:90px;" placeholder="Ex.: pelo app, 24h · dúvidas no WhatsApp (41) 9..."></textarea>
+              </div>
+            </div>
+            <div class="faq-form-actions">
+              <button type="button" class="btn-secondary" id="ori-cancelar">Cancelar</button>
+              <button type="button" class="btn-primary" id="ori-salvar">Salvar orientação</button>
+            </div>
+          </div>
+          <div class="empty-state" id="ori-vazio" style="display:none;">
+            <h3>Nenhuma orientação cadastrada</h3>
+            <p>Cadastre os procedimentos que as pessoas mais perguntam. A IA explica passo a passo, do jeito que está aqui.</p>
+          </div>
+          <div class="faq-list" id="ori-lista"></div>
+          <div class="sac-footer"><span class="sac-status" id="ori-status">—</span><span></span></div>
+        </div>
+      </section>
+
       <section class="view cfg-view" id="view-faq">
         <div class="page-head">
           <div>
@@ -3191,6 +3250,12 @@
             <button type="button" data-value="multimodal">Texto, foto e áudio</button>
             <button type="button" data-value="voz">Conversa por voz</button>
           </div>
+          <span class="field-label" style="margin-top:16px;display:block;">Funções</span>
+          <div class="fn-lista">
+            <label class="fn-item"><input type="checkbox" id="fn-vendas"><span><b>Vendas</b><small>Apresenta os produtos e planos cadastrados e mostra o QR para comprar no celular.</small></span></label>
+            <label class="fn-item"><input type="checkbox" id="fn-orientacoes"><span><b>Dúvidas e orientações</b><small>Responde com o FAQ, as Orientações, o SAC e os documentos da empresa.</small></span></label>
+            <label class="fn-item"><input type="checkbox" id="fn-servicos"><span><b>Serviços públicos</b><small>Lê o portal da prefeitura, orienta e abre solicitações. Em integração: ainda não responde no totem.</small></span></label>
+          </div>
           <div class="field" style="margin-top:14px;margin-bottom:0;">
             <label class="field-label" for="mod-totem-limite">Limite de dispositivos</label>
             <input type="text" id="mod-totem-limite" inputmode="numeric" maxlength="5" value="0">
@@ -3742,7 +3807,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.26.0-totem';
+const APP_VERSION='1.27.0-totem';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
@@ -3998,6 +4063,7 @@ function switchView(name){
   }
   if(name==='sac'){ carregarSac(); carregarSacCanais(); }
   if(name==='faq'){ carregarFaq(); }
+  if(name==='orientacoes'){ carregarOrientacoes(); }
   unCarregarTela(name);
   if(name==='perfil'){ carregarPerfil(); }
   iaDiagUpdateVisibility(name);
@@ -5559,6 +5625,108 @@ function dispLimparCodigoPendente(){ try{ sessionStorage.removeItem('mercs_parea
   }catch(_){}
 })();
 
+/* ===================== ORIENTAÇÕES =====================
+   Procedimentos passo a passo. Mesma mecânica do FAQ: salvar reindexa a base
+   (indexar-base, tipo orientacoes) e a IA passa a usar no WhatsApp e no totem. */
+let oriCache=[], oriEditId=null, oriBound=false;
+async function carregarOrientacoes(){
+  const alvo=empresaAlvo(); if(!alvo) return;
+  if(!oriBound){
+    document.getElementById('ori-nova').addEventListener('click',()=>abrirOriForm(null));
+    document.getElementById('ori-cancelar').addEventListener('click',fecharOriForm);
+    document.getElementById('ori-salvar').addEventListener('click',salvarOrientacao);
+    oriBound=true;
+  }
+  fecharOriForm();
+  f1Status('ori-status','Carregando…');
+  const {data,error}=await sb.from('orientacoes').select('*').eq('company_id',alvo).order('ordem').order('created_at');
+  if(error){ f1Status('ori-status','Não foi possível carregar: '+error.message,'err'); return; }
+  oriCache=data||[];
+  renderOrientacoes();
+  const ativas=oriCache.filter(o=>o.ativo).length;
+  f1Status('ori-status', oriCache.length ? `${ativas} orientaç${ativas===1?'ão ativa':'ões ativas'} — a IA usa estes passos.` : 'Nada cadastrado ainda.');
+}
+function renderOrientacoes(){
+  document.getElementById('ori-vazio').style.display=oriCache.length?'none':'block';
+  const lista=document.getElementById('ori-lista');
+  lista.innerHTML=oriCache.map(o=>`
+    <div class="faq-item ${o.ativo?'':'inativa'}" data-id="${o.id}">
+      <div class="faq-item-head">
+        <p class="faq-q">${escapeHtml(o.titulo)}</p>
+        <div class="faq-actions">
+          <button type="button" class="ghost-action" data-acao="editar">Editar</button>
+          <button type="button" class="ghost-action" data-acao="toggle">${o.ativo?'Desativar':'Ativar'}</button>
+          <button type="button" class="ghost-action danger" data-acao="excluir">Excluir</button>
+        </div>
+      </div>
+      ${o.quando_usar?`<p class="faq-a" style="margin-top:4px;">Quando usar: ${escapeHtml(o.quando_usar)}</p>`:''}
+      <p class="ori-passos">${escapeHtml(o.passos)}</p>
+      <div class="faq-meta">
+        ${o.documentos?'<span class="faq-tag">Documentos</span>':''}
+        ${o.onde?'<span class="faq-tag">Onde e contato</span>':''}
+        ${o.ativo?'':'<span class="faq-tag">Desativada</span>'}
+      </div>
+    </div>`).join('');
+  lista.querySelectorAll('button[data-acao]').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.closest('.faq-item').dataset.id;
+    if(b.dataset.acao==='editar') abrirOriForm(id);
+    if(b.dataset.acao==='toggle') alternarOrientacao(id);
+    if(b.dataset.acao==='excluir') excluirOrientacao(id);
+  }));
+  unAplicarLeitura();
+}
+function abrirOriForm(id){
+  oriEditId=id;
+  const o=id?oriCache.find(x=>x.id===id):null;
+  document.getElementById('ori-titulo').value=o?o.titulo:'';
+  document.getElementById('ori-quando').value=o&&o.quando_usar?o.quando_usar:'';
+  document.getElementById('ori-passos').value=o?o.passos:'';
+  document.getElementById('ori-docs').value=o&&o.documentos?o.documentos:'';
+  document.getElementById('ori-onde').value=o&&o.onde?o.onde:'';
+  document.getElementById('ori-salvar').textContent=o?'Salvar alterações':'Salvar orientação';
+  document.getElementById('ori-form').classList.add('open');
+  document.getElementById('ori-titulo').focus();
+}
+function fecharOriForm(){ oriEditId=null; document.getElementById('ori-form').classList.remove('open'); }
+async function oriReindexar(){
+  f1Status('ori-status','Atualizando a IA…');
+  const r=await f1Indexar('orientacoes');
+  if(!r.ok){ f1Status('ori-status','Salvo, mas a IA ainda não recebeu.','err'); showToast(r.msg); return false; }
+  return true;
+}
+async function salvarOrientacao(){
+  const titulo=document.getElementById('ori-titulo').value.trim();
+  const passos=document.getElementById('ori-passos').value.trim();
+  if(titulo.length<3){ showToast('Dê um título à orientação.'); return; }
+  if(!passos){ showToast('Escreva o passo a passo.'); return; }
+  const row={company_id:empresaAlvo(), titulo, passos,
+    quando_usar:document.getElementById('ori-quando').value.trim()||null,
+    documentos:document.getElementById('ori-docs').value.trim()||null,
+    onde:document.getElementById('ori-onde').value.trim()||null};
+  const btn=document.getElementById('ori-salvar'); btn.disabled=true;
+  const {error}=oriEditId ? await sb.from('orientacoes').update(row).eq('id',oriEditId)
+                          : await sb.from('orientacoes').insert({...row, ordem:oriCache.length});
+  btn.disabled=false;
+  if(error){ showToast('Não foi possível salvar: '+error.message); return; }
+  const ok=await oriReindexar();
+  await carregarOrientacoes();
+  if(ok) showToast('Orientação salva — a IA já usa estes passos');
+}
+async function alternarOrientacao(id){
+  const o=oriCache.find(x=>x.id===id); if(!o) return;
+  const {error}=await sb.from('orientacoes').update({ativo:!o.ativo}).eq('id',id);
+  if(error){ showToast('Não foi possível alterar: '+error.message); return; }
+  await oriReindexar(); await carregarOrientacoes();
+}
+async function excluirOrientacao(id){
+  const o=oriCache.find(x=>x.id===id);
+  if(!o || !confirm(`Excluir a orientação "${o.titulo}"?`)) return;
+  const {error}=await sb.from('orientacoes').delete().eq('id',id);
+  if(error){ showToast('Não foi possível excluir: '+error.message); return; }
+  await oriReindexar(); await carregarOrientacoes();
+  showToast('Orientação excluída');
+}
+
 function unCarregarTela(name){
   if(name==='conta-dados'){ unCarregarConta(); }
   if(name==='conta-ia'){ unCarregarConta(); syncIaPersonaUI(); }
@@ -5810,7 +5978,7 @@ async function salvarSacCanais(){
 }
 
 /* ---------- Módulos (Administração → detalhes da empresa → Módulos) ---------- */
-let modCompanyId=null, modBound=false;
+let modCompanyId=null, modBound=false, modConfigs={};
 
 function modSetModo(segId, valor){
   document.querySelectorAll('#'+segId+' button').forEach(b=>b.classList.toggle('active', b.dataset.value===valor));
@@ -5836,7 +6004,7 @@ async function carregarModulos(companyId){
     modBound=true;
   }
   f1Status('mod-status','Carregando…');
-  const {data,error}=await sb.from('company_modulos').select('modulo, ativo, modo, limite_dispositivos').eq('company_id',companyId);
+  const {data,error}=await sb.from('company_modulos').select('modulo, ativo, modo, limite_dispositivos, config').eq('company_id',companyId);
   if(error){ f1Status('mod-status','Não foi possível carregar: '+error.message,'err'); return; }
   const por=Object.fromEntries((data||[]).map(r=>[r.modulo,r]));
   const wa=por.whatsapp||{ativo:true, modo:'texto'};
@@ -5846,6 +6014,11 @@ async function carregarModulos(companyId){
   document.getElementById('mod-totem-ativo').checked=!!tt.ativo;
   modSetModo('mod-totem-modo', tt.modo||'texto');
   document.getElementById('mod-totem-limite').value=tt.limite_dispositivos||0;
+  modConfigs={whatsapp:(wa.config||{}), totem:(tt.config||{})};
+  const fn=Object.assign({vendas:true, orientacoes:true, servicos_publicos:false}, (tt.config&&tt.config.funcoes)||{});
+  document.getElementById('fn-vendas').checked=!!fn.vendas;
+  document.getElementById('fn-orientacoes').checked=!!fn.orientacoes;
+  document.getElementById('fn-servicos').checked=!!fn.servicos_publicos;
   modSyncCards();
   f1Status('mod-status','—');
 }
@@ -5854,14 +6027,23 @@ async function salvarModulos(){
   if(!modCompanyId) return;
   const limite=Math.max(0, parseInt(document.getElementById('mod-totem-limite').value,10)||0);
   const linhas=[
-    {company_id:modCompanyId, modulo:'whatsapp', ativo:document.getElementById('mod-whatsapp-ativo').checked, modo:modGetModo('mod-whatsapp-modo'), limite_dispositivos:0},
-    {company_id:modCompanyId, modulo:'totem', ativo:document.getElementById('mod-totem-ativo').checked, modo:modGetModo('mod-totem-modo'), limite_dispositivos:limite},
+    {company_id:modCompanyId, modulo:'whatsapp', ativo:document.getElementById('mod-whatsapp-ativo').checked, modo:modGetModo('mod-whatsapp-modo'), limite_dispositivos:0,
+      config:(modConfigs.whatsapp||{})},
+    {company_id:modCompanyId, modulo:'totem', ativo:document.getElementById('mod-totem-ativo').checked, modo:modGetModo('mod-totem-modo'), limite_dispositivos:limite,
+      config:Object.assign({}, modConfigs.totem||{}, {funcoes:{
+        vendas:document.getElementById('fn-vendas').checked,
+        orientacoes:document.getElementById('fn-orientacoes').checked,
+        servicos_publicos:document.getElementById('fn-servicos').checked}})},
   ];
+  if(linhas[1].ativo && !linhas[1].config.funcoes.vendas && !linhas[1].config.funcoes.orientacoes && !linhas[1].config.funcoes.servicos_publicos){
+    showToast('Ligue pelo menos uma função do totem.'); return;
+  }
   const btn=document.getElementById('mod-salvar');
   btn.disabled=true;
   const {error}=await sb.from('company_modulos').upsert(linhas,{onConflict:'company_id,modulo'});
   btn.disabled=false;
   if(error){ f1Status('mod-status','Não salvou.','err'); showToast('Não foi possível salvar: '+error.message); return; }
+  modConfigs={whatsapp:linhas[0].config, totem:linhas[1].config};
   f1Status('mod-status','✓ Módulos salvos.','ok');
 }
 

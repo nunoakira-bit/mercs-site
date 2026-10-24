@@ -80,6 +80,63 @@
   .aviso-t{font-size:clamp(26px,4.6vmin,44px);font-weight:800;letter-spacing:-.02em;}
   .aviso-s{font-size:clamp(16px,2.6vmin,22px);color:var(--ink-2);margin-top:12px;max-width:28ch;line-height:1.45;}
 
+  /* conversa */
+  #tela-conversa{padding:0;justify-content:flex-start;align-items:stretch;text-align:left;height:100dvh;}
+  .cv-topo{display:flex;align-items:center;gap:14px;padding:max(18px,env(safe-area-inset-top)) clamp(18px,3vmin,32px) 14px;
+    background:var(--card);border-bottom:1px solid var(--line);}
+  .cv-av{width:clamp(44px,6vmin,60px);height:clamp(44px,6vmin,60px);border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;
+    font-weight:800;font-size:clamp(16px,2.2vmin,22px);flex-shrink:0;overflow:hidden;}
+  .cv-av img{width:100%;height:100%;object-fit:cover;}
+  .cv-nome{font-weight:700;font-size:clamp(18px,2.4vmin,24px);line-height:1.2;}
+  .cv-sub{color:var(--ink-3);font-size:clamp(13px,1.7vmin,16px);}
+  .cv-fim{margin-left:auto;appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink-2);font:inherit;font-weight:600;
+    font-size:clamp(15px,2vmin,19px);padding:12px 20px;border-radius:999px;cursor:pointer;}
+  .cv-fim:active{background:var(--bg);}
+  .cv-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:clamp(18px,3vmin,32px);display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth;}
+  .bolha{max-width:min(82%,780px);padding:clamp(14px,2vmin,20px) clamp(16px,2.4vmin,24px);border-radius:24px;font-size:clamp(18px,2.5vmin,26px);
+    line-height:1.45;white-space:pre-wrap;word-wrap:break-word;animation:entra .25s ease-out both;}
+  .bolha.ia{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:8px;}
+  .bolha.eu{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:8px;}
+  .bolha.sis{align-self:center;background:var(--warn-bg);color:var(--warn);font-size:clamp(15px,2vmin,19px);border-radius:16px;}
+  .bolha.alerta{border:2px solid #DC2626;background:#FEF2F2;color:#7F1D1D;font-weight:600;}
+  .digitando{align-self:flex-start;display:flex;gap:6px;padding:18px 22px;background:var(--card);border:1px solid var(--line);border-radius:24px;border-bottom-left-radius:8px;}
+  .digitando i{width:9px;height:9px;border-radius:50%;background:var(--ink-3);animation:pula 1.2s infinite ease-in-out;}
+  .digitando i:nth-child(2){animation-delay:.15s}.digitando i:nth-child(3){animation-delay:.3s}
+  @keyframes pula{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-6px);opacity:1}}
+  .qr-card{align-self:flex-start;display:flex;gap:18px;align-items:center;background:var(--card);border:2px solid var(--accent-soft);border-radius:24px;
+    padding:16px 22px 16px 16px;max-width:min(92%,640px);animation:entra .25s ease-out both;}
+  .qr-card .qr-img{width:clamp(140px,22vmin,220px);height:clamp(140px,22vmin,220px);flex-shrink:0;background:#fff;padding:6px;border-radius:12px;}
+  .qr-card .qr-img svg{width:100%;height:100%;display:block;}
+  .qr-card b{display:block;font-size:clamp(17px,2.3vmin,23px);margin-bottom:6px;}
+  .qr-card span{color:var(--ink-2);font-size:clamp(15px,2vmin,19px);line-height:1.4;}
+  .cv-sug{display:flex;gap:10px;flex-wrap:wrap;padding:0 clamp(18px,3vmin,32px) 12px;}
+  .chip{appearance:none;border:1.5px solid var(--accent-soft);background:var(--card);color:var(--accent-dark);font:inherit;font-weight:600;
+    font-size:clamp(15px,2.1vmin,20px);padding:12px 18px;border-radius:999px;cursor:pointer;text-align:left;}
+  .chip:active{background:var(--accent-soft);}
+  .chip.pessoa{border-color:var(--line);color:var(--ink-2);}
+  .cv-entrada{display:flex;gap:12px;align-items:flex-end;padding:12px clamp(18px,3vmin,32px) max(18px,env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--line);}
+  .cv-entrada textarea{flex:1;resize:none;border:1.5px solid var(--line);border-radius:22px;padding:14px 18px;font:inherit;font-size:clamp(18px,2.4vmin,24px);
+    max-height:30vh;min-height:58px;line-height:1.35;outline:none;-webkit-user-select:text;user-select:text;background:var(--bg);}
+  .cv-entrada textarea:focus{border-color:var(--accent);background:#fff;}
+  .cv-enviar{width:62px;height:62px;flex-shrink:0;border-radius:50%;border:0;background:var(--accent);color:#fff;display:grid;place-items:center;cursor:pointer;}
+  .cv-enviar:disabled{opacity:.4;}
+  .cv-enviar svg{width:26px;height:26px;}
+  /* folhas: atendimento humano e "ainda está aí?" */
+  .folha-fundo{position:fixed;inset:0;background:rgba(21,23,28,.45);display:none;align-items:flex-end;justify-content:center;z-index:20;}
+  .folha-fundo.on{display:flex;animation:entra .2s ease-out both;}
+  .folha{background:var(--card);width:min(100%,820px);border-radius:28px 28px 0 0;padding:clamp(24px,4vmin,40px);max-height:85vh;overflow-y:auto;}
+  .folha.centro{border-radius:28px;margin:auto;text-align:center;width:min(92%,560px);}
+  .folha h2{font-size:clamp(22px,3.2vmin,32px);font-weight:800;letter-spacing:-.02em;margin-bottom:8px;}
+  .folha p{color:var(--ink-2);font-size:clamp(16px,2.1vmin,20px);line-height:1.45;}
+  .canal{display:flex;gap:16px;align-items:center;border:1px solid var(--line);border-radius:20px;padding:14px;margin-top:14px;}
+  .canal .qr-img{width:clamp(110px,15vmin,150px);height:clamp(110px,15vmin,150px);flex-shrink:0;}
+  .canal .qr-img svg{width:100%;height:100%;display:block;}
+  .canal b{display:block;font-size:clamp(17px,2.2vmin,21px);}
+  .canal span{color:var(--ink-2);font-size:clamp(15px,1.9vmin,18px);}
+  .folha-acoes{display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap;}
+  .btn.sec{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:none;}
+  .contagem{font-size:clamp(44px,8vmin,72px);font-weight:800;color:var(--accent);margin:10px 0;}
+
   /* faixa de conexão */
   .faixa{position:fixed;left:50%;top:max(16px,env(safe-area-inset-top));transform:translate(-50%,-250%);transition:transform .3s ease;
     background:var(--warn-bg);color:var(--warn);font-weight:600;font-size:15px;padding:10px 18px;border-radius:999px;z-index:10;}
@@ -121,11 +178,42 @@
   <div class="ini-rodape"><span id="ini-aparelho"></span><span class="ponto" id="ini-status">Conectado</span></div>
 </section>
 
-<section class="tela" id="tela-em-breve">
-  <div class="aviso-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg></div>
-  <h1 class="aviso-t">Quase pronto</h1>
-  <p class="aviso-s">O atendimento neste aparelho está sendo configurado. Em breve você poderá conversar aqui.</p>
+<section class="tela" id="tela-conversa">
+  <div class="cv-topo">
+    <div class="cv-av" id="cv-av">IA</div>
+    <div><div class="cv-nome" id="cv-nome">Assistente</div><div class="cv-sub">Assistente virtual · responde na hora</div></div>
+    <button class="cv-fim" id="cv-fim" type="button">Encerrar</button>
+  </div>
+  <div class="cv-msgs" id="cv-msgs" aria-live="polite"></div>
+  <div class="cv-sug" id="cv-sug"></div>
+  <form class="cv-entrada" id="cv-form" autocomplete="off">
+    <textarea id="cv-texto" rows="1" maxlength="600" placeholder="Escreva sua pergunta…" aria-label="Sua mensagem"></textarea>
+    <button class="cv-enviar" id="cv-enviar" type="submit" aria-label="Enviar" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  </form>
 </section>
+
+<div class="folha-fundo" id="folha-pessoa" role="dialog" aria-modal="true" aria-labelledby="pessoa-t">
+  <div class="folha">
+    <h2 id="pessoa-t">Falar com uma pessoa</h2>
+    <p id="pessoa-sub">Aponte a câmera do seu celular para um dos códigos e continue com a nossa equipe.</p>
+    <div id="pessoa-canais"></div>
+    <div class="folha-acoes"><button class="btn sec" type="button" id="pessoa-fechar">Voltar para a conversa</button></div>
+  </div>
+</div>
+
+<div class="folha-fundo" id="folha-ainda" role="dialog" aria-modal="true" aria-labelledby="ainda-t">
+  <div class="folha centro">
+    <h2 id="ainda-t">Ainda está aí?</h2>
+    <p>Por privacidade, a conversa será apagada da tela em</p>
+    <div class="contagem" id="ainda-seg">15</div>
+    <div class="folha-acoes">
+      <button class="btn" type="button" id="ainda-sim">Continuar</button>
+      <button class="btn sec" type="button" id="ainda-nao">Encerrar</button>
+    </div>
+  </div>
+</div>
 
 <section class="tela" id="tela-indisponivel">
   <div class="aviso-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
@@ -140,7 +228,7 @@
    Sem login: o aparelho se identifica pela chave que recebeu no pareamento.
    A chave fica só neste navegador; desativar o aparelho no painel a invalida. */
 (() => {
-  const VERSAO = "totem-1.0.0";
+  const VERSAO = "totem-1.1.0";
   const FN = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/totem";
   const PAINEL = "https://www.mercs.com.br/acesso-novo/";
   const CHAVE = "mercs_totem_chave";
@@ -236,7 +324,7 @@
     cfg = c;
     if (!c.disponivel) {
       $("indisp-sub").textContent = "Este ponto está temporariamente fora do ar. Volte em instantes.";
-      if (telaAtual !== "em-breve") mostrar("indisponivel");
+      fecharFolhas(); conversaId = null; mostrar("indisponivel");
       return;
     }
     const nomeIa = (c.empresa.ia_nome || "Assistente").trim();
@@ -253,19 +341,136 @@
   function atualizarStatus(ok){ const s = $("ini-status"); s.textContent = ok ? "Conectado" : "Sem conexão"; s.classList.toggle("off", !ok); }
 
   /* ---------------- interação ---------------- */
-  $("btn-comecar").addEventListener("click", () => {
-    entrarTelaCheia();
-    mostrar("em-breve");
-    clearTimeout(timerVolta);
-    timerVolta = setTimeout(() => { if (cfg) mostrar(cfg.disponivel ? "inicio" : "indisponivel"); }, 8000);
-  });
+  /* ---------------- conversa ---------------- */
+  const AVISO_SEG = 15;
+  let conversaId = null, enviando = false, avisoTimer = null, avisoRestante = 0;
 
-  // Volta para a tela inicial depois de um tempo sem toque (privacidade entre pessoas).
+  function qrSvg(url){
+    try { const q = qrcode(0, "M"); q.addData(url); q.make(); return q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); }
+    catch (_) { return ""; }
+  }
+  function rolar(){ const m = $("cv-msgs"); requestAnimationFrame(() => { m.scrollTop = m.scrollHeight; }); }
+  function bolha(texto, quem, extra){
+    const b = document.createElement("div");
+    b.className = "bolha " + quem + (extra ? " " + extra : "");
+    b.textContent = texto;
+    $("cv-msgs").appendChild(b); rolar(); return b;
+  }
+  function cartaoQr(q){
+    const c = document.createElement("div");
+    c.className = "qr-card";
+    c.innerHTML = `<div class="qr-img">${qrSvg(q.url)}</div><div><b></b><span>Aponte a câmera do seu celular para este código e continue por lá.</span></div>`;
+    c.querySelector("b").textContent = q.rotulo || "Continuar no celular";
+    $("cv-msgs").appendChild(c); rolar();
+  }
+  function digitando(on){
+    let d = $("cv-digitando");
+    if (on && !d) { d = document.createElement("div"); d.id = "cv-digitando"; d.className = "digitando"; d.innerHTML = "<i></i><i></i><i></i>"; $("cv-msgs").appendChild(d); rolar(); }
+    if (!on && d) d.remove();
+  }
+  function montarSugestoes(){
+    const box = $("cv-sug"); box.innerHTML = "";
+    (cfg && cfg.sugestoes || []).slice(0, 4).forEach(t => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = t;
+      b.addEventListener("click", () => enviar(t)); box.appendChild(b);
+    });
+    const p = document.createElement("button"); p.type = "button"; p.className = "chip pessoa"; p.textContent = "Falar com uma pessoa";
+    p.addEventListener("click", abrirPessoa); box.appendChild(p);
+  }
+
+  function abrirConversa(){
+    if (!cfg || !cfg.disponivel) return;
+    entrarTelaCheia();
+    conversaId = null;
+    $("cv-msgs").innerHTML = "";
+    const nomeIa = (cfg.empresa.ia_nome || "Assistente").trim();
+    $("cv-nome").textContent = nomeIa;
+    const av = $("cv-av");
+    if (cfg.empresa.ia_foto) av.innerHTML = `<img src="${cfg.empresa.ia_foto}" alt="">`; else av.textContent = nomeIa.slice(0, 2).toUpperCase();
+    bolha(`Olá! Eu sou ${artigo(nomeIa)} ${nomeIa}, assistente virtual${cfg.empresa.nome ? " da " + cfg.empresa.nome : ""}. Como posso ajudar? Você pode escrever ou tocar numa das sugestões abaixo.`, "ia");
+    montarSugestoes();
+    $("cv-sug").style.display = "flex";
+    $("cv-texto").value = ""; $("cv-enviar").disabled = true;
+    mostrar("conversa");
+  }
+
+  async function enviar(textoBruto){
+    const texto = String(textoBruto || "").trim();
+    if (!texto || enviando) return;
+    enviando = true; $("cv-enviar").disabled = true;
+    $("cv-texto").value = ""; ajustarAltura();
+    bolha(texto, "eu");
+    digitando(true);
+    let r;
+    try { r = await chamar({ acao:"mensagem", token: ler(), conversa_id: conversaId, texto }); faixa(false); }
+    catch (_) { r = null; faixa(true); }
+    digitando(false);
+    enviando = false; $("cv-enviar").disabled = !$("cv-texto").value.trim();
+    if (!r) { bolha("Sem conexão no momento. Tente de novo em instantes.", "sis"); return; }
+    if (r.status === 401) { gravar(null); return iniciarPareamento(); }
+    if (r.status !== 200 || !r.dados.ok) { bolha(r.dados.mensagem || "Não consegui responder agora. Tente de novo em instantes.", "sis"); return; }
+    conversaId = r.dados.conversa_id || conversaId;
+    bolha(r.dados.resposta || "…", "ia", r.dados.alerta ? "alerta" : "");
+    (r.dados.qrs || []).forEach(cartaoQr);
+  }
+
+  async function encerrarConversa(){
+    fecharFolhas();
+    const id = conversaId; conversaId = null;
+    $("cv-msgs").innerHTML = ""; $("cv-texto").value = "";
+    if (id) { try { await chamar({ acao:"encerrar", token: ler(), conversa_id: id }); } catch (_) {} }
+    if (cfg) mostrar(cfg.disponivel ? "inicio" : "indisponivel");
+  }
+
+  function abrirPessoa(){
+    const h = (cfg && cfg.atendimento_humano) || { canais: [] };
+    const box = $("pessoa-canais"); box.innerHTML = "";
+    if (!h.canais.length) {
+      $("pessoa-sub").textContent = "Procure um atendente aqui no local. Ele vai te ajudar.";
+    } else {
+      $("pessoa-sub").textContent = "Aponte a câmera do seu celular para um dos códigos e continue com a nossa equipe." + (h.horario ? ` Horário: ${h.horario}.` : "");
+      h.canais.forEach(c => {
+        const el = document.createElement("div"); el.className = "canal";
+        el.innerHTML = (c.link ? `<div class="qr-img">${qrSvg(c.link)}</div>` : "") + "<div><b></b><span></span></div>";
+        el.querySelector("b").textContent = c.rotulo;
+        el.querySelector("span").textContent = [c.valor, c.horario].filter(Boolean).join(" · ");
+        box.appendChild(el);
+      });
+    }
+    $("folha-pessoa").classList.add("on");
+  }
+  function fecharFolhas(){ ["folha-pessoa","folha-ainda"].forEach(id => $(id).classList.remove("on")); clearInterval(avisoTimer); }
+
+  function ajustarAltura(){ const t = $("cv-texto"); t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, window.innerHeight * 0.3) + "px"; }
+  $("cv-texto").addEventListener("input", () => { ajustarAltura(); $("cv-enviar").disabled = enviando || !$("cv-texto").value.trim(); });
+  $("cv-texto").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); enviar($("cv-texto").value); } });
+  $("cv-form").addEventListener("submit", e => { e.preventDefault(); enviar($("cv-texto").value); });
+  $("cv-fim").addEventListener("click", encerrarConversa);
+  $("pessoa-fechar").addEventListener("click", fecharFolhas);
+  $("folha-pessoa").addEventListener("click", e => { if (e.target.id === "folha-pessoa") fecharFolhas(); });
+  $("ainda-sim").addEventListener("click", () => { fecharFolhas(); ultimoToque = Date.now(); });
+  $("ainda-nao").addEventListener("click", encerrarConversa);
+  $("btn-comecar").addEventListener("click", abrirConversa);
+
+  // Inatividade: pergunta "Ainda está aí?" e encerra para o próximo da fila não ver a conversa.
   let ultimoToque = Date.now();
-  ["pointerdown","keydown"].forEach(ev => document.addEventListener(ev, () => { ultimoToque = Date.now(); }, { passive:true }));
+  ["pointerdown","keydown","input"].forEach(ev => document.addEventListener(ev, () => {
+    ultimoToque = Date.now();
+    if ($("folha-ainda").classList.contains("on") && ev !== "pointerdown") fecharFolhas();
+  }, { passive:true }));
   setInterval(() => {
-    if (telaAtual === "em-breve" && Date.now() - ultimoToque > INATIVIDADE_MS) mostrar("inicio");
-  }, 5000);
+    if (telaAtual !== "conversa" || enviando || $("folha-ainda").classList.contains("on")) return;
+    if (Date.now() - ultimoToque > INATIVIDADE_MS) {
+      avisoRestante = AVISO_SEG; $("ainda-seg").textContent = avisoRestante;
+      $("folha-pessoa").classList.remove("on");
+      $("folha-ainda").classList.add("on");
+      clearInterval(avisoTimer);
+      avisoTimer = setInterval(() => {
+        avisoRestante--; $("ainda-seg").textContent = Math.max(0, avisoRestante);
+        if (avisoRestante <= 0) { clearInterval(avisoTimer); encerrarConversa(); }
+      }, 1000);
+    }
+  }, 2000);
 
   function entrarTelaCheia(){
     const el = document.documentElement;
