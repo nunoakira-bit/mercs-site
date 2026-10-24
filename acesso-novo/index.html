@@ -684,6 +684,8 @@
   body.somente-leitura .cfg-view .toggle-switch,
   body.somente-leitura .cfg-view .segmented{pointer-events:none;opacity:.75;}
 
+  .ah-lista{margin:12px 0 0;padding-left:18px;color:var(--text-secondary);font-size:14px;line-height:1.6;}
+  .ah-lista code{font-family:var(--font-mono, monospace);font-size:12.5px;background:var(--bg-hover, #F3F4F6);padding:1px 6px;border-radius:5px;}
   /* ---------- Fase 1: FAQ, Sobre a empresa, canais de SAC, módulos ---------- */
   .f1-beta{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-dark);background:var(--accent-bg, #EAF6DD);border-radius:999px;padding:3px 9px;margin-left:8px;vertical-align:middle;}
   .faq-list{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
@@ -2528,6 +2530,32 @@
       <section class="view cfg-view" id="view-whatsapp">
         <div class="page-head"><div><h1>WhatsApp</h1><p class="page-sub">Produto contratado, modo de atendimento e conexão do número.</p></div></div>
         <div class="un-mount" id="mount-whatsapp"></div>
+        <div class="card" id="card-atend-humano" style="max-width:720px;margin-top:18px;">
+          <p class="card-title">Atendimento humano</p>
+          <p class="card-sub">Quando alguém da equipe responde pelo celular, a IA pausa só naquela conversa. O cliente não vê nenhum comando.</p>
+          <ul class="ah-lista">
+            <li><strong>Para assumir:</strong> é só responder o cliente normalmente.</li>
+            <li><strong>Para devolver na hora:</strong> encerre com uma frase de passagem, como <em id="ah-exemplo">“Vou te deixar com a nossa assistente para continuar 😊”</em>.</li>
+            <li><strong>Sem fazer nada:</strong> a conversa volta para a IA depois do tempo abaixo sem mensagem da equipe.</li>
+            <li><strong>Ligar ou desligar a IA para todos:</strong> envie <code>/desligarmercs</code> ou <code>/ligarmercs</code> na conversa “Você” do WhatsApp, ou use o botão no topo do painel.</li>
+          </ul>
+          <div class="row-2" style="margin-top:14px;">
+            <div class="field">
+              <label class="field-label" for="ah-minutos">Volta para a IA depois de (minutos)</label>
+              <input type="text" id="ah-minutos" inputmode="numeric" maxlength="4" placeholder="15">
+              <p class="hint" style="display:block;margin-top:6px;">Deixe em branco para só voltar pela frase ou pelo painel.</p>
+            </div>
+            <div class="field">
+              <label class="field-label" for="ah-frase">Frase de passagem extra (opcional)</label>
+              <input type="text" id="ah-frase" maxlength="200" placeholder="Ex.: qualquer dúvida é só chamar a Sofia">
+              <p class="hint" style="display:block;margin-top:6px;">As frases padrão, como “vou te deixar com a [nome da IA]”, continuam valendo.</p>
+            </div>
+          </div>
+          <div class="sac-footer">
+            <span class="sac-status" id="ah-status">—</span>
+            <button type="button" class="btn-primary" id="ah-salvar">Salvar</button>
+          </div>
+        </div>
       </section>
 
       <section class="view cfg-view" id="view-totem">
@@ -3639,7 +3667,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.25.0-un';
+const APP_VERSION='1.25.1-un';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
@@ -5260,12 +5288,38 @@ async function unCarregarConta(){
   unAplicarLeitura();
 }
 
+/* Atendimento humano: tempo de volta e frase de passagem (tela WhatsApp). */
+let ahBound=false;
+async function carregarAtendHumano(){
+  const id=empresaAlvo(); if(!id) return;
+  if(!ahBound){ document.getElementById('ah-salvar').addEventListener('click',salvarAtendHumano); ahBound=true; }
+  const st=document.getElementById('ah-status'); st.className='sac-status'; st.textContent='Carregando…';
+  const {data,error}=await sb.from('companies').select('ia_nome, retorno_ia_min, frase_retorno_ia').eq('id',id).single();
+  if(error){ st.className='sac-status err'; st.textContent='Não foi possível carregar.'; return; }
+  document.getElementById('ah-minutos').value=data.retorno_ia_min ?? '';
+  document.getElementById('ah-frase').value=data.frase_retorno_ia||'';
+  const nome=(data.ia_nome||'').trim();
+  document.getElementById('ah-exemplo').textContent=`“Vou te deixar com ${nome?'a '+nome+', nossa assistente,':'a nossa assistente'} para continuar 😊”`;
+  st.textContent='—';
+  unAplicarLeitura();
+}
+async function salvarAtendHumano(){
+  const bruto=document.getElementById('ah-minutos').value.trim();
+  const min=bruto==='' ? null : parseInt(bruto,10);
+  if(min!==null && (!Number.isFinite(min) || min<1 || min>1440)){ showToast('Use um tempo entre 1 e 1440 minutos, ou deixe em branco.'); return; }
+  const frase=document.getElementById('ah-frase').value.trim()||null;
+  const st=document.getElementById('ah-status');
+  const {error}=await sb.from('companies').update({retorno_ia_min:min, frase_retorno_ia:frase}).eq('id',empresaAlvo());
+  if(error){ st.className='sac-status err'; st.textContent='Não salvou.'; showToast('Não foi possível salvar: '+error.message); return; }
+  st.className='sac-status ok'; st.textContent='✓ Salvo.';
+}
+
 function unCarregarTela(name){
   if(name==='conta-dados'){ unCarregarConta(); }
   if(name==='conta-ia'){ unCarregarConta(); syncIaPersonaUI(); }
   if(name==='conta-pagamentos'){ unCarregarConta(); syncIaPersonaUI(); }
   if(name==='conta-privacidade'){ carregarPrivacidade(); }
-  if(name==='whatsapp'){ loadWhatsappCard(); carregarModulos(empresaAlvo()); }
+  if(name==='whatsapp'){ loadWhatsappCard(); carregarModulos(empresaAlvo()); carregarAtendHumano(); }
   if(name==='totem'){ carregarModulos(empresaAlvo()); }
   setTimeout(()=>unAplicarLeitura(), 0);
 }
