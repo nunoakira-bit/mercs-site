@@ -268,7 +268,7 @@
    ============================================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 
-const VERSAO = "totem-2.1.2";
+const VERSAO = "totem-2.2.0";
 const BASE = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/";
 const FN = BASE + "totem", FN_VOZ = BASE + "totem-voz";
 const GENAI = "https://cdn.jsdelivr.net/npm/@google/genai@2.28.0/+esm";
@@ -635,6 +635,7 @@ class Voz {
   interromper(){ this.fontes.forEach((s) => { try { s.stop(); } catch (_) {} }); this.fontes.clear(); this.playhead = 0; this.saida = 0; }
   mensagem(m){
     if (m.sessionResumptionUpdate?.resumable && m.sessionResumptionUpdate.newHandle) this.handle = m.sessionResumptionUpdate.newHandle;
+    if (m.usageMetadata) this.on.uso?.(m.usageMetadata);
     const sc = m.serverContent;
     if (sc?.interrupted) { this.interromper(); this.on.interrompido?.(); }
     if (sc?.outputTranscription?.text) this.on.ela?.(sc.outputTranscription.text);
@@ -944,7 +945,7 @@ async function iniciarVoz(){
     aviso((g && g.dados && g.dados.mensagem) || "A voz não está disponível agora. Você pode digitar.");
     soltarMic(); estado(""); return false;
   }
-  E.conversaId = g.dados.conversa_id; E.inicioVoz = Date.now();
+  E.conversaId = g.dados.conversa_id; E.inicioVoz = Date.now(); E.uso = { texto_in:0, audio_in:0, texto_out:0, audio_out:0 };
   const v = new Voz({
     ela: (t) => { E.pensando = false; if (E.bufVoce.trim()) fecharVoce(); E.bufEla += t; E.ultimo = Date.now(); definirTexto(E.bufEla.trim()); estado(""); },
     voce: (t) => { if (!t) return; E.bufVoce += t; E.pensando = true; E.ultimo = Date.now(); definirVoce(E.bufVoce.trim(), true); },
@@ -961,6 +962,7 @@ async function iniciarVoz(){
     saindo: () => reviver(),
     fechou: () => reviver(),
     erro: () => {},
+    uso: (u) => somarUso(u),
   });
   v.silenciar(E.mudo);
   try {
@@ -968,7 +970,7 @@ async function iniciarVoz(){
     await Promise.race([v.conectar(g.dados), new Promise((_, rej) => setTimeout(() => rej(new Error("tempo")), 10000))]);
   } catch (_) {
     v.parar(); soltarMic();
-    apiVoz({ acao:"fim", token: ler(), conversa_id: E.conversaId, segundos: 0 }).catch(() => {});
+    apiVoz({ acao:"fim", token: ler(), conversa_id: E.conversaId, segundos: 0, uso: E.uso }).catch(() => {});
     E.conversaId = null;
     aviso("A voz não conectou. Você pode digitar."); estado(""); return false;
   }
@@ -981,6 +983,20 @@ async function iniciarVoz(){
   E.pensando = true;
   v.enviar("__inicio__");
   return true;
+}
+/* Uso real do Gemini Live: um usageMetadata por turno, já com o contexto inteiro
+   que foi cobrado naquele turno. A soma dos turnos é o que a Google cobra. */
+function somarUso(u){
+  if (!E.uso || !u) return;
+  const det = (lista, total, padrao) => {
+    const r = { TEXT:0, AUDIO:0 };
+    if (Array.isArray(lista) && lista.length) for (const d of lista) r[d.modality === "AUDIO" ? "AUDIO" : "TEXT"] += Number(d.tokenCount) || 0;
+    else r[padrao] += Number(total) || 0;
+    return r;
+  };
+  const ent = det(u.promptTokensDetails, u.promptTokenCount, "TEXT"), sai = det(u.responseTokensDetails, u.responseTokenCount, "AUDIO");
+  E.uso.texto_in += ent.TEXT; E.uso.audio_in += ent.AUDIO; E.uso.texto_out += sai.TEXT; E.uso.audio_out += sai.AUDIO;
+  window.__uso = E.uso;
 }
 function fecharVoce(){
   const t = E.bufVoce.trim(); E.bufVoce = "";
@@ -1033,12 +1049,12 @@ async function encerrar(avisar){
   if (E.encerrando) return;
   E.encerrando = true; fecharDialogo();
   const id = E.conversaId, eraVoz = E.modo === "voz";
-  const seg = E.inicioVoz ? Math.round((Date.now() - E.inicioVoz) / 1000) : 0;
+  const seg = E.inicioVoz ? Math.round((Date.now() - E.inicioVoz) / 1000) : 0, uso = E.uso; E.uso = null;
   if (E.voz) { E.voz.parar(); E.voz = null; }
   soltarMic();
   E.conversaId = null; E.bufEla = ""; E.bufVoce = ""; E.pensando = false; E.inicioVoz = 0; E.fimPendente = false;
   if (avisar && id) {
-    if (eraVoz) apiVoz({ acao:"fim", token: ler(), conversa_id: id, segundos: seg }).catch(() => {});
+    if (eraVoz) apiVoz({ acao:"fim", token: ler(), conversa_id: id, segundos: seg, uso }).catch(() => {});
     else api({ acao:"encerrar", token: ler(), conversa_id: id }).catch(() => {});
   }
   E.fase = "inicio"; E.desde = Date.now(); E.modo = "texto";

@@ -632,6 +632,26 @@
      de um cliente (macro-view) ele passa a ver o menu da empresa. Nao ha
      toggle de contexto: a visibilidade e consequencia de onde voce esta. */
   /* PAGAMENTO EM BREVE (v1): item Recebimento vira "Pagamentos · em breve". */
+  .pag-legado{margin-top:18px;border-top:1px solid var(--border);padding-top:14px;}
+  .pag-legado>summary{cursor:pointer;font-size:14px;font-weight:500;color:var(--text-secondary);list-style:revert;}
+  .pag-legado .toggle-switch{opacity:.5;pointer-events:none;}
+  .pag-pill-ativo{background:#E8F7EE;color:#137A43;white-space:nowrap;flex-shrink:0;}
+  /* Custos do cliente: só para o admin, dentro do ambiente do cliente */
+  .nav-item.nav-company-admin{display:none !important;}
+  body.is-admin-user.macro-view .nav-item.nav-company-admin{display:flex !important;}
+  .cc-filtros{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin-bottom:20px;}
+  .cc-filtros label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--text-tertiary);}
+  .cc-filtros input[type=date]{height:36px;border:1px solid var(--border);border-radius:9px;padding:0 10px;font:inherit;font-size:14px;color:var(--text-primary);background:var(--bg-card);}
+  .cc-chip{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--border);background:var(--bg-card);font:inherit;font-size:13px;color:var(--text-secondary);cursor:pointer;}
+  .cc-chip.on{background:var(--accent-soft);color:var(--accent-dark);border-color:transparent;font-weight:500;}
+  .cc-canais{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:22px;}
+  .cc-canal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 20px;box-shadow:var(--shadow-card);}
+  .cc-canal h3{font-size:14px;font-weight:600;margin:0 0 4px;}
+  .cc-canal .cc-num{font-family:var(--font-mono);font-size:22px;font-weight:700;margin:6px 0 2px;}
+  .cc-canal .cc-sub{font-size:12px;color:var(--text-tertiary);}
+  .cc-canal ul{margin:12px 0 0;padding:12px 0 0 16px;border-top:1px solid var(--border);font-size:12.5px;color:var(--text-secondary);display:grid;gap:6px;}
+  .cc-badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;background:var(--amber-bg);color:var(--amber);margin-left:6px;}
+  @media (max-width:640px){ .cc-filtros label{flex:1 1 140px;} }
   .nav-item.em-breve{cursor:default;position:relative;}
   .nav-item.em-breve:hover{background:transparent;}
   .nav-item.em-breve .nav-label{color:var(--text-tertiary);}
@@ -1703,6 +1723,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 13a8 8 0 0116 0v4a2 2 0 01-2 2h-1v-7h3"/><path d="M4 17v-4h3v7H5a2 2 0 01-2-2z" /><path d="M9 21h4"/></svg>
         <span class="nav-label">Chamados</span>
       </div>
+      <div class="nav-item nav-company-item nav-company-admin" data-view="custos-cliente" title="Custos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        <span class="nav-label">Custos</span>
+      </div>
       <div class="nav-group-label nav-admin-item">Administração</div>
       <div class="nav-item nav-admin-item" data-view="usuarios" title="Clientes">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/></svg>
@@ -2748,7 +2772,7 @@
       </section>
 
       <section class="view cfg-view" id="view-conta-pagamentos">
-        <div class="page-head"><div><h1>Pagamentos</h1><p class="page-sub">Formas de pagamento, cobrança pelo chat e comissão.</p></div></div>
+        <div class="page-head"><div><h1>Pagamentos</h1><p class="page-sub">Como os clientes pagam o que a IA vende.</p></div></div>
         <div class="un-mount" id="mount-conta-pagamentos"></div>
       </section>
 
@@ -2923,6 +2947,35 @@
           </div>
         </div>
         <!-- /PRIVACIDADE (LGPD) -->
+      </section>
+
+      <!-- ===================== CUSTOS DO CLIENTE (somente admin, dentro do ambiente) ===================== -->
+      <section class="view" id="view-custos-cliente">
+        <div class="page-head">
+          <div>
+            <h1>Custos</h1>
+            <p class="subtitle">Quanto este cliente custa em IA, por conversa e por canal. Visível só para a equipe Mercs.</p>
+          </div>
+        </div>
+        <div class="cc-filtros">
+          <button type="button" class="cc-chip" data-p="mes">Este mês</button>
+          <button type="button" class="cc-chip" data-p="mes-ant">Mês passado</button>
+          <button type="button" class="cc-chip" data-p="7">7 dias</button>
+          <button type="button" class="cc-chip" data-p="30">30 dias</button>
+          <label>De<input type="date" id="cc-de"></label>
+          <label>Até<input type="date" id="cc-ate"></label>
+        </div>
+        <div class="kpi-grid" id="cc-kpis"></div>
+        <div class="cc-canais" id="cc-canais"></div>
+        <section class="card" style="margin-bottom:18px;">
+          <p class="card-title">Conversas no período</p>
+          <p class="card-sub">Mais recentes primeiro. O custo considera tudo o que a IA processou na conversa, inclusive respostas refeitas.</p>
+          <table class="data-table" style="margin-top:6px;">
+            <thead><tr><th>Início</th><th>Canal</th><th>Quem</th><th>Mensagens</th><th>Custo</th></tr></thead>
+            <tbody id="cc-body"></tbody>
+          </table>
+          <p class="drawer-note" id="cc-nota" style="margin-top:10px;"></p>
+        </section>
       </section>
 
       <!-- ===================== ADMINISTRAÇÃO (somente admin) ===================== -->
@@ -3190,31 +3243,39 @@
 
     <!-- ABA 2: pagamento -->
     <div class="admin-tab-content" id="admin-tab-pagamento">
-      <p class="card-sub" style="margin-bottom:16px;">Escolha quais formas de pagamento a IA pode oferecer aos clientes desta empresa.</p>
+      <p class="card-sub" style="margin-bottom:16px;">Como os clientes desta empresa pagam o que a IA vende.</p>
+      <div class="settings-row pag-link">
+        <div class="settings-row-left">
+          <div class="settings-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.7-1.7"/></svg></div>
+          <div class="settings-row-text"><p class="s-title">Link de compra da empresa</p><p class="s-desc">Cada produto ou plano usa o link de compra da própria empresa. No WhatsApp a IA envia o link; no totem, mostra um QR. A Mercs não cobra porcentagem.</p><p class="s-desc" id="pag-link-status" style="margin-top:4px;"></p></div>
+        </div>
+        <span class="status-pill pag-pill-ativo">Em uso</span>
+      </div>
+      <details class="pag-legado">
+        <summary>Cobrança pela Mercs (Pix, cartão e boleto com comissão) <span class="cell-muted">· desligada, em preparação</span></summary>
+        <p class="hint" style="margin:10px 0 6px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8.2" r="0.6" fill="currentColor"/></svg>Esta forma não está ativa para nenhuma empresa. Nenhuma venda passa pela Mercs e nenhuma comissão é retida. Os ajustes abaixo voltam a valer quando ela for ligada.</p>
       <div class="settings-row">
         <div class="settings-row-left">
           <div class="settings-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 4 12l8 10 8-10z"/></svg></div>
           <div class="settings-row-text"><p class="s-title">Pix</p><p class="s-desc">Aprovação em segundos</p></div>
         </div>
-        <label class="toggle-switch"><input type="checkbox" id="admin-pay-toggle-pix" data-method="pix"><span class="toggle-slider"></span></label>
+        <label class="toggle-switch"><input type="checkbox" id="admin-pay-toggle-pix" data-method="pix" disabled><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-row">
         <div class="settings-row-left">
           <div class="settings-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
           <div class="settings-row-text"><p class="s-title">Cartão de crédito</p><p class="s-desc">Aprovação imediata</p></div>
         </div>
-        <label class="toggle-switch"><input type="checkbox" id="admin-pay-toggle-cartao" data-method="cartao" checked><span class="toggle-slider"></span></label>
+        <label class="toggle-switch"><input type="checkbox" id="admin-pay-toggle-cartao" data-method="cartao" disabled><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-row">
         <div class="settings-row-left">
           <div class="settings-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4.5" y="5" width="1.6" height="14"/><rect x="8" y="5" width="1" height="14"/><rect x="10.5" y="5" width="2.6" height="14"/><rect x="15.5" y="5" width="1" height="14"/><rect x="18" y="5" width="1.6" height="14"/></svg></div>
           <div class="settings-row-text"><p class="s-title">Boleto bancário</p><p class="s-desc">Confirmação em até 2 dias úteis</p></div>
         </div>
-        <label class="toggle-switch"><input type="checkbox" id="admin-pay-toggle-boleto" data-method="boleto"><span class="toggle-slider"></span></label>
+        <label class="toggle-switch"><input type="checkbox" id="admin-pay-toggle-boleto" data-method="boleto" disabled><span class="toggle-slider"></span></label>
       </div>
-      <p class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8.2" r="0.6" fill="currentColor"/></svg>Deixe pelo menos uma forma ativa. Com mais de uma, o cliente escolhe na hora de pagar.</p>
-
-      <div class="field" style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+<div class="field" style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
           <span class="field-label" style="margin-bottom:0;">Recebimento via Asaas (split)</span>
           <span class="status-pill" id="admin-asaas-status-pill">—</span>
@@ -3255,6 +3316,7 @@
 
         <p class="hint" style="margin-top:14px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8.2" r="0.6" fill="currentColor"/></svg>Processado por Asaas Gestão Financeira Instituição de Pagamento S.A., autorizada pelo Banco Central.</p>
       </div>
+      </details>
     </div>
 
     <!-- ABA 3: IA -->
@@ -3851,7 +3913,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.29.1-voz';
+const APP_VERSION='1.30.0-custos';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
@@ -3907,7 +3969,7 @@ function aplicarPagamentoEmBreve(){
   nav.appendChild(badge);
   const tip=document.createElement('div');
   tip.className='nav-tip';
-  tip.textContent='Pagamentos integrados chegam em breve. Por enquanto, quando o agente fecha uma venda você recebe um aviso para dar o encaminhamento.';
+  tip.textContent='Cobrança integrada chega em breve. Hoje a IA fecha a venda com o link de compra da sua empresa, sem comissão.';
   document.body.appendChild(tip); /* fixed no body: não é cortado pelo overflow da sidebar */
   const posiciona=()=>{
     const r=nav.getBoundingClientRect();
@@ -4095,6 +4157,7 @@ function switchView(name){
   if(name==='configuracoes'){ syncIaPersonaUI(); loadWhatsappCard(); carregarPrivacidade(); }
   if(name==='usuarios'){ refreshAdminClientList(); }
   if(name==='custos'){ refreshAdminCustos(); }
+  if(name==='custos-cliente'){ carregarCustosCliente(); }
   if(name==='historico'){ refreshHistoricoClientes(); }
   if(name==='saude'){ refreshAgente(); }
   if(name==='agente'){ refreshSkills(); }
@@ -4728,6 +4791,91 @@ async function refreshAdminCustos(){
   }
 }
 
+
+/* ===================== Custos do cliente (admin) =====================
+   Fonte: llm_uso (cada chamada de IA, com custo em micro-US$) agrupado por
+   conversa pela RPC custos_cliente. A voz do totem grava o uso real que o
+   Gemini Live devolve; conversas de voz antigas têm só a estimativa por tempo. */
+const CC_CANAIS={
+  whatsapp:{nome:'WhatsApp', itens:[
+    'IA de texto: cada resposta lê a instrução, o catálogo, a base e o histórico da conversa.',
+    'Respostas refeitas pela checagem de preço contam de novo.',
+    'Busca na base (Voyage): frações de centavo, não entra na soma.',
+    'Mensagens do WhatsApp: conexão própria, sem custo por mensagem.']},
+  'totem-texto':{nome:'Totem · texto', itens:[
+    'IA de texto: cada resposta lê a instrução, a base e o histórico da conversa.',
+    'Busca na base (Voyage): frações de centavo, não entra na soma.']},
+  'totem-voz':{nome:'Totem · voz', itens:[
+    'Instrução e base reenviadas a cada fala (texto, US$ 0,75 por milhão de tokens).',
+    'Áudio do cliente: cerca de US$ 0,005 por minuto, cobrado de novo a cada fala.',
+    'Voz da IA: cerca de US$ 0,018 por minuto.',
+    'Quanto mais longa a conversa, mais caro cada turno fica.']},
+  simulador:{nome:'Simulador do painel', itens:['Testes feitos no painel. Não são atendimentos de clientes.']},
+  outros:{nome:'Sem conversa', itens:['Chamadas de IA fora de uma conversa (por exemplo, testes de configuração).']},
+};
+function ccChave(l){ if(l.canal==='totem') return l.voz?'totem-voz':'totem-texto'; return CC_CANAIS[l.canal]?l.canal:'outros'; }
+function ccBrl(micro){ const v=(Number(micro)||0)/1e6*USD_BRL; if(!v) return 'R$ 0,00'; if(v<0.001) return 'R$ <0,001'; const d=v<0.1?3:2; return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function ccUsd(micro){ const v=(Number(micro)||0)/1e6; if(!v) return 'US$ 0'; if(v<0.0001) return 'US$ <0,0001'; return 'US$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:v<0.1?4:2,maximumFractionDigits:v<0.1?4:2}); }
+function ccIso(d){ const z=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate()); }
+function ccPreset(p){
+  const hoje=new Date(); let de, ate=new Date(hoje);
+  if(p==='mes') de=new Date(hoje.getFullYear(),hoje.getMonth(),1);
+  else if(p==='mes-ant'){ de=new Date(hoje.getFullYear(),hoje.getMonth()-1,1); ate=new Date(hoje.getFullYear(),hoje.getMonth(),0); }
+  else { de=new Date(hoje); de.setDate(de.getDate()-(Number(p)-1)); }
+  document.getElementById('cc-de').value=ccIso(de); document.getElementById('cc-ate').value=ccIso(ate);
+  document.querySelectorAll('.cc-chip').forEach(c=>c.classList.toggle('on', c.dataset.p===p));
+  carregarCustosCliente();
+}
+document.querySelectorAll('.cc-chip').forEach(c=>c.addEventListener('click',()=>ccPreset(c.dataset.p)));
+['cc-de','cc-ate'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{ document.querySelectorAll('.cc-chip').forEach(c=>c.classList.remove('on')); carregarCustosCliente(); }));
+
+let ccSeq=0;
+async function carregarCustosCliente(){
+  const deEl=document.getElementById('cc-de'), ateEl=document.getElementById('cc-ate');
+  if(!deEl.value||!ateEl.value){ return ccPreset('mes'); }
+  const body=document.getElementById('cc-body'), nota=document.getElementById('cc-nota');
+  if(!viewingCompanyId){ body.innerHTML='<tr><td colspan="5" class="cell-muted" style="text-align:center;padding:16px 0;">Abra o ambiente de um cliente para ver os custos.</td></tr>'; return; }
+  const seq=++ccSeq;
+  body.innerHTML='<tr><td colspan="5" class="cell-muted" style="text-align:center;padding:16px 0;">Carregando…</td></tr>';
+  const de=new Date(deEl.value+'T00:00:00'), ate=new Date(ateEl.value+'T00:00:00'); ate.setDate(ate.getDate()+1);
+  const {data, error}=await sb.rpc('custos_cliente',{p_company_id:viewingCompanyId, p_de:de.toISOString(), p_ate:ate.toISOString()});
+  if(seq!==ccSeq) return;
+  if(error){ body.innerHTML='<tr><td colspan="5" class="cell-muted" style="text-align:center;padding:16px 0;">Erro ao carregar os custos.</td></tr>'; return; }
+  const linhas=data||[];
+  const reais=linhas.filter(l=>l.canal!=='simulador'&&l.canal!=='outros');
+  const total=linhas.reduce((a,l)=>a+Number(l.custo_micro_usd||0),0);
+  const totalReais=reais.reduce((a,l)=>a+Number(l.custo_micro_usd||0),0);
+  const dias=Math.max(1,Math.round((ate-de)/864e5));
+  document.getElementById('cc-kpis').innerHTML=[
+    ['Custo no período', ccBrl(total), ccUsd(total)+' · '+linhas.length+' conversa(s)'],
+    ['Conversas com clientes', String(reais.length), 'sem contar o simulador'],
+    ['Custo médio por conversa', reais.length?ccBrl(totalReais/reais.length):'—', reais.length?ccUsd(totalReais/reais.length):'sem conversas'],
+    ['Média por dia', ccBrl(total/dias), dias+' dia(s) no período'],
+  ].map(([a,b,c])=>`<div class="kpi-card"><p class="kpi-label">${a}</p><p class="kpi-value">${b}</p><p class="kpi-sub">${escapeHtml(c)}</p></div>`).join('');
+  const grupos={};
+  linhas.forEach(l=>{ const k=ccChave(l); (grupos[k]=grupos[k]||[]).push(l); });
+  const ordem=['whatsapp','totem-texto','totem-voz','simulador','outros'];
+  document.getElementById('cc-canais').innerHTML=ordem.filter(k=>grupos[k]||k==='whatsapp'||k==='totem-texto'||k==='totem-voz').map(k=>{
+    const g=grupos[k]||[], c=g.reduce((a,l)=>a+Number(l.custo_micro_usd||0),0), info=CC_CANAIS[k];
+    const media=g.length?c/g.length:0, maior=g.reduce((a,l)=>Math.max(a,Number(l.custo_micro_usd||0)),0);
+    let extra='';
+    if(k==='totem-voz'&&g.length){ const seg=g.reduce((a,l)=>a+Number(l.voz_segundos||0),0); if(seg) extra=` · ${ccBrl(c/(seg/60))} por minuto`; if(g.some(l=>l.voz_estimada)) extra+='<span class="cc-badge" title="Conversas de voz anteriores à medição real usam estimativa por tempo">tem estimativa</span>'; }
+    return `<div class="cc-canal"><h3>${info.nome}</h3>
+      <p class="cc-num">${g.length?ccBrl(media):'—'}</p>
+      <p class="cc-sub">por conversa${g.length?` · ${g.length} conversa(s) · total ${ccBrl(c)} · maior ${ccBrl(maior)}`:' · nenhuma no período'}${extra}</p>
+      <ul>${info.itens.map(t=>`<li>${escapeHtml(t)}</li>`).join('')}</ul></div>`;
+  }).join('');
+  if(!linhas.length){ body.innerHTML='<tr><td colspan="5" class="cell-muted" style="text-align:center;padding:16px 0;">Nenhum custo registrado no período.</td></tr>'; }
+  else body.innerHTML=linhas.slice(0,300).map(l=>{
+    const k=ccChave(l), quando=l.iniciada_em?new Date(l.iniciada_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+    const dur=(k==='totem-voz'&&Number(l.voz_segundos))?` · ${Math.round(l.voz_segundos/60*10)/10} min`:'';
+    const est=l.voz_estimada?'<span class="cc-badge">estimado</span>':'';
+    const reg=Number(l.regeneracoes)?` <span class="cell-muted" title="Respostas refeitas">(+${l.regeneracoes} refeitas)</span>`:'';
+    return `<tr><td data-label="Início">${quando}</td><td data-label="Canal">${CC_CANAIS[k].nome}${dur}</td><td data-label="Quem">${escapeHtml(l.quem||'—')}</td><td class="cell-mono" data-label="Mensagens">${l.mensagens||0}${reg}</td><td class="cell-mono" data-label="Custo">${ccBrl(l.custo_micro_usd)} <span class="cell-muted">${ccUsd(l.custo_micro_usd)}</span>${est}</td></tr>`;
+  }).join('');
+  nota.textContent=`Valores em reais convertidos a R$ ${USD_BRL.toFixed(2).replace('.',',')} por dólar, só para referência; a IA é cobrada em dólar na chave cadastrada em Inteligência artificial. Fora desta conta ficam os custos fixos do mês (servidor do WhatsApp, banco de dados e site).${linhas.length>300?' Mostrando as 300 conversas mais recentes.':''}`;
+}
+
 async function refreshAdminClientList(){
   const {data, error}=await sb.from('companies')
     .select('id, name, created_at, ativo, atendimento_ativo, llm_api_key_last4, profiles(id,nome,email,is_admin), products!products_company_id_fkey(count)')
@@ -5032,11 +5180,11 @@ async function openAdminDrawer(companyId){
   // buscar dados completos (pagamento + persona) que não vieram na lista resumida
   const {data:full}=await sb.from('companies').select('payment_methods, atendimento_ativo, agente_ativo, llm_provider, ia_nome, ia_foto, ia_sexo, ia_tom, asaas_wallet_id, asaas_account_status, asaas_commission_type, asaas_commission_percentage, asaas_commission_fixed_cents').eq('id', companyId).single();
   const pm=(full&&full.payment_methods)||{pix:true,cartao:true,boleto:true};
-  document.getElementById('admin-pay-toggle-pix').checked=false;
-  document.getElementById('admin-pay-toggle-cartao').checked=pm.cartao!==false;
-  document.getElementById('admin-pay-toggle-boleto').checked=false;
+  // Cobrança pela Mercs desligada: nenhuma forma está em uso, mesmo que esteja guardada.
+  ['pix','cartao','boleto'].forEach(k=>{ document.getElementById('admin-pay-toggle-'+k).checked=PAGAMENTO_ATIVO && pm[k]===true; });
 
   renderAsaasSection(full||{});
+  carregarStatusLinks(companyId);
 
   document.getElementById('admin-atendimento-toggle').checked=full ? full.atendimento_ativo!==false : true;
   const agToggle=document.getElementById('admin-agente-toggle');
@@ -5136,6 +5284,19 @@ document.querySelectorAll('#admin-tab-pagamento .toggle-switch input[data-method
     showToast('Meios de pagamento atualizados');
   });
 });
+
+/* Quantos produtos ativos têm link de compra: sem link, a IA não tem como fechar a venda. */
+async function carregarStatusLinks(companyId){
+  const el=document.getElementById('pag-link-status'); if(!el) return;
+  el.textContent='';
+  const {data, error}=await sb.from('products').select('nome, link_compra').eq('company_id', companyId).eq('ativo', true);
+  if(error||!data) return;
+  const sem=data.filter(p=>!p.link_compra);
+  if(!data.length){ el.textContent='Nenhum produto ativo cadastrado.'; return; }
+  el.innerHTML = sem.length
+    ? `<span style="color:#B45309;">${data.length-sem.length} de ${data.length} produtos com link. Sem link: ${sem.map(p=>escapeHtml(p.nome)).join(', ')}.</span>`
+    : `Todos os ${data.length} produtos ativos têm link de compra.`;
+}
 
 let adminAsaasCommType='percentual';
 
@@ -5394,8 +5555,10 @@ function unMontar(){
   if(cardPersona) m('conta-ia').appendChild(cardPersona);
 
   // Pagamentos ← aba Pagamento + Cobrança pelo chat
-  m('conta-pagamentos').appendChild(unCard('Formas de pagamento e comissão', unFilhos('admin-tab-pagamento')));
-  if(cardCobranca) m('conta-pagamentos').appendChild(cardCobranca);
+  m('conta-pagamentos').appendChild(unCard('Formas de pagamento', unFilhos('admin-tab-pagamento')));
+  // Cobrança pelo chat é do fluxo Asaas, hoje desligado: fica dentro do bloco recolhido.
+  const legado=m('conta-pagamentos').querySelector('.pag-legado');
+  if(cardCobranca){ if(legado){ cardCobranca.style.maxWidth='none'; legado.appendChild(cardCobranca); } else m('conta-pagamentos').appendChild(cardCobranca); }
 
   // Privacidade
   const lgpd=document.getElementById('card-lgpd');
