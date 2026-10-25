@@ -225,7 +225,6 @@
       <p class="ia" id="ia" aria-live="polite"></p>
     </div>
     <div class="rolagem" id="rolagem"><div class="coluna" id="cartoes"></div></div>
-    <div class="sugestoes" id="sugestoes"></div>
     <form class="compositor" id="compositor" autocomplete="off">
       <button type="button" class="mic" id="bt-mic" aria-pressed="false" aria-label="Falar" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
@@ -269,7 +268,7 @@
    ============================================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 
-const VERSAO = "totem-2.0.3";
+const VERSAO = "totem-2.1.1";
 const BASE = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/";
 const FN = BASE + "totem", FN_VOZ = BASE + "totem-voz";
 const GENAI = "https://cdn.jsdelivr.net/npm/@google/genai@2.28.0/+esm";
@@ -476,6 +475,16 @@ class Particulas {
   toque(e){ this.ptr.x = (e.clientX / innerWidth * 2 - 1) * this.hW; this.ptr.y = (1 - e.clientY / innerHeight * 2) * this.hH; this.ptr.on = true; }
   layout(){
     const retrato = this.hW < this.hH;
+    // A logo ocupa o espaço livre entre o topo e o texto de boas-vindas (medido na tela),
+    // para nunca ficar por cima do texto, em qualquer tamanho de aparelho.
+    const f = this.fonte.faixaLogo && this.fonte.faixaLogo();
+    if (f && f[1] - f[0] > 40) {
+      const paraMundo = (py) => (1 - 2 * py / innerHeight) * this.hH;
+      const yTopo = paraMundo(f[0]), yBase = paraMundo(f[1]);
+      const alturaMax = (yTopo - yBase) * .72;
+      const s = Math.max(.05, Math.min(alturaMax, this.hH * .5, (this.hW * 1.6) / this.aspecto));
+      return { logoY: (yTopo + yBase) / 2, logoS: s, orbY: this.hH * .62, orbR: Math.min(.42, this.hW * .3) };
+    }
     return { logoY: this.hH * (retrato ? .26 : .3), logoS: Math.min(this.hH * (retrato ? .3 : .44), (this.hW * 1.5) / this.aspecto),
       orbY: this.hH * .62, orbR: Math.min(.42, this.hW * .3) };
   }
@@ -675,6 +684,15 @@ function visual(){
 }
 particulas.visual = visual;
 particulas.foco = () => E.fase;
+let faixaCache = null, faixaEm = 0;
+particulas.faixaLogo = () => {
+  if (Date.now() - faixaEm < 500) return faixaCache;          // mede no máximo 2x por segundo
+  faixaEm = Date.now();
+  const topo = document.querySelector(".topo"), ola = $("ola");
+  if (!topo || !ola || E.fase !== "inicio" || !ola.offsetParent) return faixaCache;
+  faixaCache = [topo.getBoundingClientRect().bottom + 8, ola.getBoundingClientRect().top - 12];
+  return faixaCache;
+};
 particulas.niveis = () => ({ mic: E.voz?.nivel || 0, out: E.voz?.saida || 0 });
 
 let campo = null;
@@ -774,7 +792,6 @@ function aplicar(c){
 function montarChips(box, lista, acao, pessoa){
   box.innerHTML = "";
   lista.slice(0, 4).forEach((t) => { const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = t; b.addEventListener("click", () => acao(t)); box.appendChild(b); });
-  if (pessoa) { const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = "Falar com uma pessoa"; b.addEventListener("click", cartaoPessoa); box.appendChild(b); }
 }
 
 /* logo do cliente: o sinal traz a versão; o SVG vem por "logo" e fica guardado */
@@ -821,22 +838,6 @@ function cartaoQr(q){
   c.querySelector("b").textContent = q.rotulo || "Continuar no celular";
   $("cartoes").appendChild(c); rolar(); E.sucessoAte = Date.now() + 1600;
 }
-function cartaoPessoa(){
-  const h = (E.cfg && E.cfg.atendimento_humano) || { canais: [] };
-  const c = document.createElement("div"); c.className = "cartao lista";
-  const t = document.createElement("div");
-  t.innerHTML = "<b>Falar com uma pessoa</b><span></span>";
-  t.querySelector("span").textContent = h.canais.length ? "Aponte a câmera do celular para um dos códigos e continue com a nossa equipe." + (h.horario ? ` Horário: ${h.horario}.` : "") : "Procure um atendente aqui no local. Ele vai te ajudar.";
-  c.appendChild(t);
-  h.canais.forEach((k) => {
-    const el = document.createElement("div"); el.className = "canal";
-    el.innerHTML = (k.link ? `<div class="qr-img">${qrSvg(k.link)}</div>` : "") + "<div><b></b><span></span></div>";
-    el.querySelector("b").textContent = k.rotulo; el.querySelector("span").textContent = [k.valor, k.horario].filter(Boolean).join(" · ");
-    c.appendChild(el);
-  });
-  $("cartoes").appendChild(c); rolar();
-  return h.canais.map((k) => k.rotulo);
-}
 
 function entrarTelaCheia(){ const el = document.documentElement; if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().catch(() => {}); }
 function destravarAudio(){
@@ -858,7 +859,6 @@ async function comecar(modo, semente){
   document.body.classList.add("em-conversa");
   $("inicio").hidden = true; $("conversa").hidden = false; $("bt-fim").hidden = false;
   $("cartoes").innerHTML = ""; definirVoce(""); aviso(null);
-  montarChips($("sugestoes"), E.cfg.sugestoes || [], (t) => falar(t), true);
   $("entrada").value = ""; $("bt-enviar").disabled = true;
   definirTexto(saudacao(true));
   if (modo === "voz" && vozDisponivel()) {
@@ -881,7 +881,7 @@ async function falar(texto){
   texto = String(texto || "").trim().slice(0, 600);
   if (!texto || E.fase !== "conversa") return;
   E.ultimo = Date.now();
-  definirVoce(texto); $("sugestoes").innerHTML = "";
+  definirVoce(texto);
   if (E.modo === "voz" && E.voz?.ativo) {
     pensando(true);
     registrarCliente(texto);
@@ -998,7 +998,6 @@ function micUi(on){ $("bt-mic").classList.toggle("on", on); $("bt-mic").setAttri
 async function executar(call){
   const nome = call.name, args = call.args || {};
   E.ultimo = Date.now();
-  if (nome === "mostrar_atendimento_humano") { const canais = cartaoPessoa(); return { ok:true, canais_na_tela: canais }; }
   if (nome === "encerrar_atendimento") { if (E.voz?.falando) E.fimPendente = true; else setTimeout(() => encerrar(true), 2500); return { ok:true }; }
   E.pensando = true;
   try {
