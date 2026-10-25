@@ -269,7 +269,7 @@
    ============================================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 
-const VERSAO = "totem-2.0.0";
+const VERSAO = "totem-2.0.1";
 const BASE = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/";
 const FN = BASE + "totem", FN_VOZ = BASE + "totem-voz";
 const GENAI = "https://cdn.jsdelivr.net/npm/@google/genai@2.28.0/+esm";
@@ -882,17 +882,39 @@ async function falar(texto){
 }
 
 /* ============================================================== voz */
+let erroMic = "";
 async function pegarMic(){
   if (E.stream?.active) return E.stream;
-  try { E.stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount:1, echoCancellation:true, noiseSuppression:true, autoGainControl:true } }); return E.stream; }
-  catch (_) { return null; }
+  erroMic = "";
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { erroMic = "sem_suporte"; return null; }
+  const pedir = (audio) => navigator.mediaDevices.getUserMedia({ audio });
+  try { E.stream = await pedir({ echoCancellation:true, noiseSuppression:true, autoGainControl:true }); return E.stream; }
+  catch (e) {
+    erroMic = (e && e.name) || "erro";
+    if (erroMic === "OverconstrainedError" || erroMic === "TypeError") {   // alguns aparelhos recusam as opções: tenta o básico
+      try { E.stream = await pedir(true); erroMic = ""; return E.stream; } catch (e2) { erroMic = (e2 && e2.name) || "erro"; }
+    }
+    console.warn("microfone:", erroMic, e && e.message);
+    return null;
+  }
+}
+function avisoMic(){
+  const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const app = /FBAN|FBAV|Instagram|WhatsApp|Line\/|GSA\//i.test(navigator.userAgent);
+  if (erroMic === "sem_suporte" || app) return "Este navegador não libera o microfone. Abra www.mercs.com.br/totem direto no " + (ios ? "Safari" : "Chrome") + ". Você também pode digitar.";
+  if (erroMic === "NotAllowedError" || erroMic === "SecurityError")
+    return ios ? "O microfone está bloqueado para este site. No Safari, toque em \u201caA\u201d na barra de endereço → Ajustes do Site → Microfone → Permitir, e toque em Falar de novo. Ou em Ajustes do iPhone → Apps → Safari → Microfone."
+               : "O microfone está bloqueado para este site. Toque no cadeado da barra de endereço, permita o microfone e toque em Falar de novo.";
+  if (erroMic === "NotFoundError") return "Não encontrei um microfone neste aparelho. Você pode digitar.";
+  if (erroMic === "NotReadableError" || erroMic === "AbortError") return "O microfone está sendo usado por outro app. Feche o outro app e toque em Falar de novo.";
+  return "Não consegui acessar o microfone (" + erroMic + "). Você pode digitar.";
 }
 function soltarMic(){ try { E.stream?.getTracks().forEach((t) => t.stop()); } catch (_) {} E.stream = null; }
 
 async function iniciarVoz(){
   estado("Conectando…"); $("modo").hidden = false; $("modo").textContent = "Conectando…"; $("modo").classList.remove("vivo");
   const stream = await pegarMic();
-  if (!stream) { aviso("Não consegui acessar o microfone. Você pode digitar."); estado(""); return false; }
+  if (!stream) { aviso(avisoMic(), 15000); estado(""); return false; }
   let g;
   try { g = await apiVoz({ acao:"token", token: ler() }, 20000); } catch (_) { g = null; }
   if (!g || g.status !== 200 || !g.dados.token) {
@@ -1032,7 +1054,7 @@ $("bt-mic").addEventListener("click", async () => {
   destravarAudio();
   if (E.modo === "voz" && E.voz) {
     if (E.voz.micAberto) { E.voz.fecharMic(); micUi(false); }
-    else { const s = await pegarMic(); if (s) { await E.voz.abrirMic(s).catch(() => {}); micUi(true); } else aviso("Não consegui acessar o microfone."); }
+    else { const s = await pegarMic(); if (s) { await E.voz.abrirMic(s).catch(() => {}); micUi(true); } else aviso(avisoMic(), 15000); }
     return;
   }
   if (vozDisponivel() && E.fase === "conversa") { const ok = await iniciarVoz(); if (!ok) modoTexto(); }
