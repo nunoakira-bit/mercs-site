@@ -268,7 +268,7 @@
    ============================================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 
-const VERSAO = "totem-2.2.0";
+const VERSAO = "totem-2.2.1";
 const BASE = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/";
 const FN = BASE + "totem", FN_VOZ = BASE + "totem-voz";
 const GENAI = "https://cdn.jsdelivr.net/npm/@google/genai@2.28.0/+esm";
@@ -996,7 +996,7 @@ function somarUso(u){
   };
   const ent = det(u.promptTokensDetails, u.promptTokenCount, "TEXT"), sai = det(u.responseTokensDetails, u.responseTokenCount, "AUDIO");
   E.uso.texto_in += ent.TEXT; E.uso.audio_in += ent.AUDIO; E.uso.texto_out += sai.TEXT; E.uso.audio_out += sai.AUDIO;
-  window.__uso = E.uso;
+  window.__uso = E.uso; (window.__usoTurnos = window.__usoTurnos || []).push(u);
 }
 function fecharVoce(){
   const t = E.bufVoce.trim(); E.bufVoce = "";
