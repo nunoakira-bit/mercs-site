@@ -269,7 +269,7 @@
    ============================================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 
-const VERSAO = "totem-2.0.2";
+const VERSAO = "totem-2.0.3";
 const BASE = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/";
 const FN = BASE + "totem", FN_VOZ = BASE + "totem-voz";
 const GENAI = "https://cdn.jsdelivr.net/npm/@google/genai@2.28.0/+esm";
@@ -279,8 +279,17 @@ const INATIVIDADE_MS = 60000, AVISO_SEG = 15, LOGO_APOS_MS = 5000;
 
 const $ = (id) => document.getElementById(id);
 let memoria = null;
-const ler = () => { try { return localStorage.getItem(CHAVE); } catch (_) { return memoria; } };
-const gravar = (v) => { memoria = v; try { v ? localStorage.setItem(CHAVE, v) : localStorage.removeItem(CHAVE); } catch (_) {} };
+/* A chave do aparelho fica em dois lugares: no armazenamento da página e num cookie.
+   No iPhone, se o navegador recarregar a página logo depois do pareamento (falta de
+   memória), o armazenamento pode não ter sido gravado ainda; o cookie é. */
+const lerCookie = () => { try { const m = document.cookie.match(new RegExp("(?:^|; )" + CHAVE + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : null; } catch (_) { return null; } };
+const gravarCookie = (v) => { try { document.cookie = v ? `${CHAVE}=${encodeURIComponent(v)}; Max-Age=157680000; Path=/totem; Secure; SameSite=Strict` : `${CHAVE}=; Max-Age=0; Path=/totem; Secure; SameSite=Strict`; } catch (_) {} };
+const ler = () => {
+  let v = null; try { v = localStorage.getItem(CHAVE); } catch (_) {}
+  if (!v) { v = lerCookie(); if (v) { try { localStorage.setItem(CHAVE, v); } catch (_) {} } }
+  return v || memoria;
+};
+const gravar = (v) => { memoria = v; try { v ? localStorage.setItem(CHAVE, v) : localStorage.removeItem(CHAVE); } catch (_) {} gravarCookie(v); };
 
 async function chamar(url, corpo, ms = 30000){
   const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms);
@@ -404,9 +413,10 @@ const FRAG = `
 class Particulas {
   constructor(canvas, fonte){
     this.fonte = fonte;
-    const pequeno = Math.min(innerWidth, innerHeight) < 600;
+    const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const pequeno = Math.min(innerWidth, innerHeight) < 600 || ios;   // iPhone: menos partículas = menos memória
     const nucleos = navigator.hardwareConcurrency || 4;
-    this.N = pequeno ? 900 : nucleos <= 4 ? 1200 : 1700;
+    this.N = ios && Math.min(innerWidth, innerHeight) < 600 ? 650 : pequeno ? 900 : nucleos <= 4 ? 1200 : 1700;
     this.ativos = this.N;
     this.reduzido = matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.r = new THREE.WebGLRenderer({ canvas, antialias:false, alpha:true, powerPreference:"high-performance" });
@@ -575,17 +585,26 @@ class Voz {
   }
   async abrirMic(stream){
     if (this.node) return;
+    // Contexto na taxa nativa do aparelho (no iPhone, forçar 16 kHz é instável) e conversão
+    // para 16 kHz aqui, por média de amostras.
     const AC = window.AudioContext || window.webkitAudioContext;
-    this.inCtx = new AC({ sampleRate: IN_RATE });
+    this.inCtx = new AC();
     if (this.inCtx.state === "suspended") await this.inCtx.resume();
+    const razao = this.inCtx.sampleRate / IN_RATE;
     const src = this.inCtx.createMediaStreamSource(stream);
     const node = this.inCtx.createScriptProcessor(4096, 1, 1);
     node.onaudioprocess = (e) => {
       if (!this.ativo || !this.sessao) return;
       if (this.fontes.size > 0) { this.nivel = 0; return; } // meio-duplex: o alto-falante do totem não interrompe ela
-      const f = e.inputBuffer.getChannelData(0); let soma = 0; const pcm = new Int16Array(f.length);
-      for (let i = 0; i < f.length; i++) { const s = Math.max(-1, Math.min(1, f[i])); soma += s * s; pcm[i] = s < 0 ? s * 0x8000 : s * 0x7fff; }
-      this.nivel = Math.min(Math.sqrt(soma / f.length) * 5.5, 1.6);
+      const f = e.inputBuffer.getChannelData(0);
+      const n = Math.floor(f.length / razao); const pcm = new Int16Array(n); let soma = 0;
+      for (let i = 0; i < n; i++) {
+        const a0 = Math.floor(i * razao), a1 = Math.min(f.length, Math.floor((i + 1) * razao)); let v = 0;
+        for (let j = a0; j < a1; j++) v += f[j];
+        const s = Math.max(-1, Math.min(1, v / Math.max(1, a1 - a0)));
+        soma += s * s; pcm[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+      }
+      this.nivel = Math.min(Math.sqrt(soma / Math.max(1, n)) * 5.5, 1.6);
       try { this.sessao.sendRealtimeInput({ audio: { data: b64(pcm.buffer), mimeType: `audio/pcm;rate=${IN_RATE}` } }); } catch (_) {}
     };
     src.connect(node); node.connect(this.inCtx.destination); this.node = node;
