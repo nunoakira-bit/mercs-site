@@ -269,7 +269,7 @@
    ============================================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 
-const VERSAO = "totem-2.0.1";
+const VERSAO = "totem-2.0.2";
 const BASE = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/";
 const FN = BASE + "totem", FN_VOZ = BASE + "totem-voz";
 const GENAI = "https://cdn.jsdelivr.net/npm/@google/genai@2.28.0/+esm";
@@ -822,7 +822,9 @@ function cartaoPessoa(){
 function entrarTelaCheia(){ const el = document.documentElement; if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().catch(() => {}); }
 function destravarAudio(){
   try {
-    if (navigator.audioSession) navigator.audioSession.type = "playback";
+    // iPhone: "playback" impede o microfone (InvalidStateError). Para conversar por voz a sessão
+    // de áudio precisa gravar e tocar ao mesmo tempo.
+    if (navigator.audioSession) navigator.audioSession.type = vozDisponivel() ? "play-and-record" : "playback";
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!E.outCtx || E.outCtx.state === "closed") E.outCtx = new AC({ sampleRate: OUT_RATE });
     if (E.outCtx.state === "suspended") E.outCtx.resume();
@@ -887,11 +889,13 @@ async function pegarMic(){
   if (E.stream?.active) return E.stream;
   erroMic = "";
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { erroMic = "sem_suporte"; return null; }
+  try { if (navigator.audioSession) navigator.audioSession.type = "play-and-record"; } catch (_) {}
   const pedir = (audio) => navigator.mediaDevices.getUserMedia({ audio });
   try { E.stream = await pedir({ echoCancellation:true, noiseSuppression:true, autoGainControl:true }); return E.stream; }
   catch (e) {
     erroMic = (e && e.name) || "erro";
-    if (erroMic === "OverconstrainedError" || erroMic === "TypeError") {   // alguns aparelhos recusam as opções: tenta o básico
+    if (erroMic === "InvalidStateError") { try { if (navigator.audioSession) navigator.audioSession.type = "auto"; } catch (_) {} }
+    if (erroMic === "OverconstrainedError" || erroMic === "TypeError" || erroMic === "InvalidStateError") {   // tenta o básico
       try { E.stream = await pedir(true); erroMic = ""; return E.stream; } catch (e2) { erroMic = (e2 && e2.name) || "erro"; }
     }
     console.warn("microfone:", erroMic, e && e.message);
