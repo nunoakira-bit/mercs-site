@@ -3851,7 +3851,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.29.0-voz';
+const APP_VERSION='1.29.1-voz';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
@@ -5405,7 +5405,7 @@ function unMontar(){
   const modWa=document.getElementById('mod-card-whatsapp');
   const modTt=document.getElementById('mod-card-totem');
   const rodapeOriginal=document.querySelector('#admin-tab-modulos .sac-footer');
-  const nota='Os modos ficam registrados agora e passam a valer no atendimento nas próximas etapas.';
+  const nota='A forma e o tipo passam a valer na hora, em todos os aparelhos e conversas novas.';
   if(modWa){
     const card=unCard('Produto contratado', [unNota(nota), modWa, rodapeOriginal]);
     m('whatsapp').appendChild(card);
@@ -5581,7 +5581,8 @@ function renderDispositivos(){
       <div class="disp-acoes">${d.ativo ? `
         <button type="button" class="ghost-action" data-acao="editar">Editar</button>
         <button type="button" class="ghost-action" data-acao="reiniciar">Reiniciar</button>
-        <button type="button" class="ghost-action danger" data-acao="desativar">Desativar</button>` : ''}
+        <button type="button" class="ghost-action danger" data-acao="desativar">Desativar</button>` : `
+        <button type="button" class="ghost-action danger" data-acao="excluir">Excluir</button>`}
       </div>
     </div>`;
   }).join('');
@@ -5590,7 +5591,18 @@ function renderDispositivos(){
     if(b.dataset.acao==='editar') abrirDispForm(id);
     if(b.dataset.acao==='reiniciar') reiniciarDispositivo(id);
     if(b.dataset.acao==='desativar') desativarDispositivo(id);
+    if(b.dataset.acao==='excluir') excluirDispositivos([id]);
   }));
+  const inativos=dispCache.filter(d=>!d.ativo);
+  let limpar=document.getElementById('disp-limpar');
+  if(!limpar){
+    limpar=document.createElement('button'); limpar.type='button'; limpar.id='disp-limpar'; limpar.className='ghost-action danger';
+    limpar.style.marginTop='12px';
+    limpar.addEventListener('click',()=>excluirDispositivos(dispCache.filter(d=>!d.ativo).map(d=>d.id)));
+    document.getElementById('disp-lista').after(limpar);
+  }
+  limpar.textContent=`Excluir os ${inativos.length} aparelhos desativados`;
+  limpar.style.display=inativos.length>1?'':'none';
   unAplicarLeitura();
 }
 
@@ -5653,6 +5665,19 @@ async function desativarDispositivo(id){
   const {error}=await sb.from('dispositivos').update({ativo:false}).eq('id',id);
   if(error){ showToast('Não foi possível desativar: '+error.message); return; }
   showToast('Aparelho desativado');
+  carregarDispositivos();
+}
+
+/* Excluir só aparelhos já desativados (o banco também exige isso). As conversas
+   feitas por eles continuam no histórico. */
+async function excluirDispositivos(ids){
+  const alvos=dispCache.filter(d=>ids.includes(d.id) && !d.ativo);
+  if(!alvos.length) return;
+  const txt=alvos.length===1 ? `Excluir "${alvos[0].nome}"?` : `Excluir ${alvos.length} aparelhos desativados?`;
+  if(!confirm(txt+'\n\nEle sai da lista de vez. As conversas feitas nele continuam nos Atendimentos.')) return;
+  const {error}=await sb.from('dispositivos').delete().in('id',alvos.map(d=>d.id)).eq('ativo',false);
+  if(error){ showToast('Não foi possível excluir: '+error.message); return; }
+  showToast(alvos.length===1?'Aparelho excluído':'Aparelhos excluídos');
   carregarDispositivos();
 }
 
