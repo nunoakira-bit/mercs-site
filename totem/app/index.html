@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B0B0C">
+<title>Mercs Totem · App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0B0B0C;--bg-2:#131315;--fg:#F4F1EC;--fg-2:rgba(244,241,236,.72);--fg-3:rgba(244,241,236,.5);--line:rgba(244,241,236,.14);--brand:#7FC93F;color-scheme:dark;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--fg);font-family:"Inter Tight",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  main{max-width:720px;margin:0 auto;padding:max(32px,env(safe-area-inset-top)) 16px 64px;}
+  .marca{display:inline-flex;align-items:center;gap:10px;font-weight:600;color:var(--fg-2);font-size:15px;}
+  .marca i{width:10px;height:10px;border-radius:3px;background:var(--brand);}
+  h1{font-size:clamp(30px,6vw,44px);font-weight:500;letter-spacing:-.02em;line-height:1.1;margin:18px 0 10px;}
+  .sub{color:var(--fg-2);font-size:18px;}
+  .baixar{display:inline-flex;align-items:center;gap:12px;margin:28px 0 8px;padding:18px 28px;border-radius:999px;background:var(--brand);color:#0B0B0C;font-weight:600;font-size:19px;text-decoration:none;}
+  .nota{color:var(--fg-3);font-size:14px;}
+  section{margin-top:40px;}
+  h2{font-size:22px;font-weight:500;letter-spacing:-.01em;margin-bottom:12px;}
+  ol{padding-left:22px;display:grid;gap:10px;color:var(--fg-2);}
+  ol b{color:var(--fg);font-weight:600;}
+  .caixa{background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-top:14px;color:var(--fg-2);}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:14px;background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px;color:var(--fg);word-break:break-all;}
+  pre{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto;margin:10px 0;}
+  pre code{background:none;padding:0;}
+</style>
+</head>
+<body>
+<main>
+  <span class="marca"><i></i>Mercs</span>
+  <h1>App do totem para tablet Android</h1>
+  <p class="sub">Abre o atendimento em tela cheia, deixa a tela sempre ligada e não deixa o cliente sair para o resto do tablet.</p>
+  <a class="baixar" href="mercs-totem.apk" download>Baixar o app (APK)</a>
+  <p class="nota">Android 10 ou mais novo · versão 1.0.0</p>
+
+  <section>
+    <h2>Instalar</h2>
+    <ol>
+      <li>No tablet, toque em <b>Baixar o app</b> e abra o arquivo. Se o Android pedir, permita <b>instalar apps desta fonte</b>.</li>
+      <li>Abra o <b>Mercs Totem</b> e permita o <b>microfone</b>.</li>
+      <li>Aparece um código de 6 números. No painel da Mercs, entre no ambiente do cliente, vá em <b>Totem e Tablet → Adicionar dispositivo</b> e digite o código.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Travar o tablet no atendimento</h2>
+    <ol>
+      <li>Toque <b>5 vezes rápido</b> no canto superior esquerdo da tela. Na primeira vez, crie o <b>PIN do operador</b>.</li>
+      <li>Escolha <b>Fixar tela</b>. O Android confirma, e o tablet fica preso no atendimento.</li>
+      <li>Para liberar: 5 toques no canto, PIN e <b>Liberar tela</b>.</li>
+    </ol>
+    <div class="caixa">Dica: em <b>Configurações → Segurança → Fixar app</b>, ligue <b>Pedir PIN para liberar</b>. Assim, ninguém desfaz a fixação pelos botões do Android.</div>
+  </section>
+
+  <section>
+    <h2>Modo quiosque completo (recomendado em local público)</h2>
+    <p class="sub" style="font-size:16px;">O app abre sozinho quando o tablet liga, sem barra, sem botão início e sem notificações. É feito uma vez, com o tablet zerado (sem conta Google) e ligado num computador com as ferramentas do Android (adb).</p>
+    <pre><code>adb install mercs-totem.apk
+adb shell dpm set-device-owner br.com.mercs.totem/.AdminReceiver</code></pre>
+    <p class="nota">Para desfazer: 5 toques no canto, PIN e <b>Desligar o modo quiosque completo</b>.</p>
+  </section>
+</main>
+</body>
+</html>

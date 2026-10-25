@@ -716,6 +716,9 @@
   body.somente-leitura .cfg-view #ori-nova,
   body.somente-leitura .cfg-view .fn-item{pointer-events:none;}
   .fn-item.fn-sub{margin-left:30px;}
+  .disp-ajuda{margin-top:18px;padding:14px 16px;border:1px dashed var(--border);border-radius:var(--radius-sm);display:grid;gap:4px;font-size:13.5px;color:var(--text-secondary);line-height:1.5;}
+  .disp-ajuda b{color:var(--text-primary,#15171C);font-weight:600;font-size:14px;}
+  .voz-nota{margin-top:10px;font-size:13px;color:var(--text-secondary);line-height:1.45;}
   /* "Executa ações" congelado (24/10): depende de integrar com o sistema de cada cliente. */
   .fn-item.fn-sub{display:none;}
   #card-logo{margin-top:16px;}
@@ -2709,9 +2712,15 @@
 
           <div class="empty-state" id="disp-vazio" style="display:none;">
             <h3>Nenhum aparelho conectado</h3>
-            <p>Abra www.mercs.com.br/totem no tablet ou totem e use o código que aparece na tela.</p>
+            <p>Instale o app Mercs Totem no tablet (ou abra www.mercs.com.br/totem no navegador) e use o código que aparece na tela.</p>
           </div>
           <div class="disp-lista" id="disp-lista"></div>
+          <div class="disp-ajuda">
+            <b>App para tablet Android</b>
+            <span>Tela cheia, tela sempre ligada e o cliente não sai do atendimento. No tablet, abra
+            <a href="https://www.mercs.com.br/totem/app/" target="_blank" rel="noopener">mercs.com.br/totem/app</a> e instale.
+            Menu do operador: 5 toques rápidos no canto superior esquerdo.</span>
+          </div>
         </div>
       </section>
 
@@ -3283,6 +3292,7 @@
             <button type="button" data-value="multimodal">Texto, foto e áudio</button>
             <button type="button" data-value="voz">Conversa por voz</button>
           </div>
+          <p class="voz-nota">Conversa por voz usa o Gemini Live: precisa que a IA desta empresa esteja no Gemini (em Inteligência artificial). Sem isso, o totem atende digitando.</p>
           <span class="field-label" style="margin-top:16px;display:block;">Tipo</span>
           <div class="fn-lista" id="tipo-totem">
             <label class="fn-item"><input type="radio" name="tipo-totem" value="venda"><span><b>Venda</b><small>Apresenta os produtos e planos, tira dúvidas e encerra com o link de compra (no totem, vira um QR na tela).</small></span></label>
@@ -3841,7 +3851,7 @@ document.getElementById('ia-status-toggle').addEventListener('click', async ()=>
 });
 
 
-const APP_VERSION='1.28.0-tipo';
+const APP_VERSION='1.29.0-voz';
 /* v1: pagamentos "em breve". Espelha a flag PAGAMENTO_ATIVO do negotiate;
    com false, o onboarding de recebimento é pulado e o item de menu vira
    "Pagamentos · em breve" (desabilitado). Vira true junto com a correção do Asaas. */
