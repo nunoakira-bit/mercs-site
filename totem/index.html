@@ -268,7 +268,7 @@
    ============================================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 
-const VERSAO = "totem-2.2.1";
+const VERSAO = "totem-2.2.2";
 const BASE = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/";
 const FN = BASE + "totem", FN_VOZ = BASE + "totem-voz";
 const GENAI = "https://cdn.jsdelivr.net/npm/@google/genai@2.28.0/+esm";
@@ -604,7 +604,10 @@ class Voz {
     const node = this.inCtx.createScriptProcessor(4096, 1, 1);
     node.onaudioprocess = (e) => {
       if (!this.ativo || !this.sessao) return;
-      if (this.fontes.size > 0) { this.nivel = 0; return; } // meio-duplex: o alto-falante do totem não interrompe ela
+      // meio-duplex: o alto-falante do totem não interrompe ela. Depois que ela cala, o microfone
+      // ainda espera a "cauda" (latência de saída do aparelho + eco da sala); sem isso o fim da
+      // frase dela voltava como fala da pessoa ("hoje", "melhor", "favor?" — tablet, 08/11).
+      if (this.fontes.size > 0 || performance.now() < (this.mudoAte || 0)) { this.nivel = 0; return; }
       const f = e.inputBuffer.getChannelData(0);
       const n = Math.floor(f.length / razao); const pcm = new Int16Array(n); let soma = 0;
       for (let i = 0; i < n; i++) {
@@ -630,7 +633,14 @@ class Voz {
     const n = this.outCtx.createBufferSource(); n.buffer = buf; n.connect(this.ganho);
     const agora = this.outCtx.currentTime; if (this.playhead < agora + .02) this.playhead = agora + .15;
     n.start(this.playhead); this.playhead += buf.duration; this.fontes.add(n);
-    n.onended = () => { this.fontes.delete(n); if (!this.fontes.size) { this.saida = 0; this.on.calou?.(); } };
+    n.onended = () => {
+      this.fontes.delete(n);
+      if (!this.fontes.size) {
+        const lat = (this.outCtx.outputLatency || this.outCtx.baseLatency || 0) * 1000;
+        this.mudoAte = performance.now() + 700 + Math.min(lat, 500);
+        this.saida = 0; this.on.calou?.();
+      }
+    };
   }
   interromper(){ this.fontes.forEach((s) => { try { s.stop(); } catch (_) {} }); this.fontes.clear(); this.playhead = 0; this.saida = 0; }
   mensagem(m){
