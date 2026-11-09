@@ -282,7 +282,7 @@
    ============================================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 
-const VERSAO = "totem-2.3.0";
+const VERSAO = "totem-2.3.1";
 const BASE = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/";
 const FN = BASE + "totem", FN_VOZ = BASE + "totem-voz";
 const GENAI = "https://cdn.jsdelivr.net/npm/@google/genai@2.28.0/+esm";
@@ -817,13 +817,30 @@ async function infoAparelho(){
 
 /* ============================================================== pareamento */
 let tSinal = null, tPar = null, tExp = null;
-async function iniciarPareamento(){
+/* O código em andamento fica guardado no aparelho. No celular, trocar de app
+   (para mandar o print pelo WhatsApp) faz o navegador recarregar a página; sem
+   isto, cada volta gerava um código novo e o anterior deixava de valer. */
+const CHAVE_PAR = "mercs_totem_pareamento";
+function parGuardado(){
+  try {
+    const p = JSON.parse(localStorage.getItem(CHAVE_PAR) || "null");
+    if (p && p.codigo && p.segredo && Date.parse(p.expira_em) - Date.now() > 30000) return p;
+  } catch (_) {}
+  return null;
+}
+function guardarPar(p){ try { p ? localStorage.setItem(CHAVE_PAR, JSON.stringify(p)) : localStorage.removeItem(CHAVE_PAR); } catch (_) {} }
+async function iniciarPareamento(novo){
   clearTimeout(tSinal); clearInterval(tPar); clearInterval(tExp);
-  let r;
-  try { r = await api({ acao:"iniciar", info: await infoAparelho() }); } catch (_) { faixa(true); setTimeout(iniciarPareamento, 5000); return; }
-  faixa(false);
-  if (r.status !== 200 || !r.dados.codigo) { setTimeout(iniciarPareamento, 15000); return; }
-  const { codigo, segredo, expira_em } = r.dados;
+  let par = novo ? null : parGuardado();
+  if (!par) {
+    let r;
+    try { r = await api({ acao:"iniciar", info: await infoAparelho() }); } catch (_) { faixa(true); setTimeout(iniciarPareamento, 5000); return; }
+    faixa(false);
+    if (r.status !== 200 || !r.dados.codigo) { setTimeout(iniciarPareamento, 15000); return; }
+    par = { codigo: r.dados.codigo, segredo: r.dados.segredo, expira_em: r.dados.expira_em };
+    guardarPar(par);
+  }
+  const { codigo, segredo, expira_em } = par;
   $("codigo").innerHTML = [...codigo].map((d) => `<span>${d}</span>`).join("");
   $("codigo").setAttribute("aria-label", "Código de pareamento " + codigo.split("").join(" "));
   $("qr").innerHTML = qrSvg(PAINEL + "?parear=" + codigo);
@@ -832,13 +849,13 @@ async function iniciarPareamento(){
   const tique = () => {
     const s = Math.max(0, Math.round((fim - Date.now()) / 1000));
     $("expira").textContent = s > 0 ? `O código vale por mais ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` : "Gerando um novo código…";
-    if (s <= 0) { clearInterval(tExp); clearInterval(tPar); iniciarPareamento(); }
+    if (s <= 0) { clearInterval(tExp); clearInterval(tPar); guardarPar(null); iniciarPareamento(true); }
   };
   tique(); tExp = setInterval(tique, 1000);
   tPar = setInterval(async () => {
     let x; try { x = await api({ acao:"aguardar", codigo, segredo }); faixa(false); } catch (_) { faixa(true); return; }
-    if (x.dados.status === "pareado" && x.dados.token) { clearInterval(tPar); clearInterval(tExp); gravar(x.dados.token); mostrar("carregando"); sinal(); }
-    else if (x.dados.status === "expirado") { clearInterval(tPar); clearInterval(tExp); iniciarPareamento(); }
+    if (x.dados.status === "pareado" && x.dados.token) { clearInterval(tPar); clearInterval(tExp); guardarPar(null); gravar(x.dados.token); mostrar("carregando"); sinal(); }
+    else if (x.dados.status === "expirado") { clearInterval(tPar); clearInterval(tExp); guardarPar(null); iniciarPareamento(true); }
   }, 3000);
 }
 
