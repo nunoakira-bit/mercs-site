@@ -1201,6 +1201,8 @@
 .wa-meta-box label{display:flex;gap:8px;align-items:flex-start;margin-top:10px;cursor:pointer;}
 .wa-meta-box input[type=checkbox]{margin-top:3px;accent-color:var(--accent);}
 .wa-provedor-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-dark,#3730A3);font-size:11.5px;font-weight:600;vertical-align:middle;}
+.bk-opcao{display:flex;gap:8px;align-items:center;margin-top:14px;font-size:13px;color:var(--text-primary);cursor:pointer;}
+.bk-opcao input{accent-color:var(--accent);}
 .wa-privacy{margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--accent-soft);font-size:13px;line-height:1.55;color:var(--text-primary);}
 
   /* ===================== RECEBIMENTO (BaaS/Asaas) ===================== */
@@ -2951,13 +2953,13 @@
           <div class="field lgpd-field" style="margin-bottom:0;">
             <label class="field-label" for="lgpd-retencao">Guardar conversas por</label>
             <select class="std" id="lgpd-retencao" style="height:40px;font-size:13px;">
-              <option value="90">3 meses</option>
-              <option value="180">6 meses</option>
-              <option value="365">1 ano</option>
+              <option value="">Sem prazo — guardar sempre (recomendado)</option>
               <option value="730">2 anos</option>
-              <option value="">Sem prazo (não recomendado)</option>
+              <option value="365">1 ano</option>
+              <option value="180">6 meses</option>
+              <option value="90">3 meses</option>
             </select>
-            <p class="hint" style="margin:6px 0 0;">Depois desse prazo sem atividade, o texto das mensagens, o nome e o telefone do cliente são apagados. Valores e datas das vendas continuam nos relatórios.</p>
+            <p class="hint" style="margin:6px 0 0;">Guardar o histórico completo protege sua empresa se um atendimento for questionado depois. Se escolher um prazo, ao fim dele (sem atividade na conversa) o texto das mensagens, os arquivos, o nome e o telefone do cliente são apagados.</p>
           </div>
 
           <div class="lgpd-acoes">
@@ -2979,6 +2981,18 @@
           </div>
         </div>
         <!-- /PRIVACIDADE (LGPD) -->
+
+        <!-- BACKUP DAS CONVERSAS — v1.31 -->
+        <div class="card" id="card-backup" style="max-width:640px;margin-top:18px;">
+          <p class="card-title">Backup das conversas</p>
+          <p class="card-sub">Baixe para o seu computador uma cópia de todas as conversas, com data e hora de cada mensagem e os áudios, fotos e arquivos trocados. Guarde em local seguro: serve como prova se algum atendimento for questionado.</p>
+          <label class="bk-opcao"><input type="checkbox" id="bk-midias" checked> Incluir áudios, fotos e arquivos (o download fica maior)</label>
+          <div class="lgpd-acoes">
+            <button type="button" class="btn-primary" id="bk-baixar">Baixar backup</button>
+            <span class="lgpd-status" id="bk-status" role="status" aria-live="polite"></span>
+          </div>
+          <p class="hint" style="margin:10px 0 0;">O arquivo .zip traz uma página para cada conversa (abre no navegador e pode ser impressa em PDF), uma planilha com todas as mensagens e uma lista de verificação (SHA-256) que comprova que os arquivos não foram alterados.</p>
+        </div>
       </section>
 
       <!-- ===================== CUSTOS DO CLIENTE (somente admin, dentro do ambiente) ===================== -->
@@ -4103,6 +4117,153 @@ async function apagarTitular(){
   refreshOperacao().catch(()=>{});
 }
 /* /PRIVACIDADE (LGPD) */
+
+/* ===== BACKUP DAS CONVERSAS (v1.31) =====
+   Monta no próprio navegador um .zip com todas as conversas da empresa:
+   uma página por conversa, planilha CSV, os arquivos de mídia originais e um
+   manifesto SHA-256 de cada arquivo. Nada passa por servidor intermediário. */
+let bkZipPronto=null;
+function bkCarregarZip(){
+  if(window.JSZip) return Promise.resolve();
+  if(bkZipPronto) return bkZipPronto;
+  bkZipPronto=new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    s.onload=()=>resolve(); s.onerror=()=>{ bkZipPronto=null; reject(new Error('jszip')); };
+    document.head.appendChild(s);
+  });
+  return bkZipPronto;
+}
+async function bkTodas(montar){
+  const out=[]; const passo=1000;
+  for(let i=0;;i+=passo){
+    const {data,error}=await montar().range(i,i+passo-1);
+    if(error) throw error;
+    out.push(...(data||[]));
+    if(!data || data.length<passo) break;
+  }
+  return out;
+}
+const bkFmt=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+function bkData(iso){ return iso ? bkFmt.format(new Date(iso)) : ''; }
+function bkSlug(t){ return String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40); }
+function bkCsv(v){ const t=String(v??''); return /[";\n\r]/.test(t) ? '"'+t.replace(/"/g,'""')+'"' : t; }
+async function bkSha256(buf){
+  const h=await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function bkAutor(role, conv, iaNome){
+  if(role==='cliente') return 'Cliente'+(conv.cliente_nome?' ('+conv.cliente_nome+')':'');
+  if(role==='ia') return 'IA'+(iaNome?' ('+iaNome+')':'');
+  return 'Equipe';
+}
+const BK_CSS='body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:820px;margin:24px auto;padding:0 16px;color:#1a1a2e;background:#fff}h1{font-size:20px;margin:0 0 4px}.meta{color:#555;font-size:13px;line-height:1.6;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:12px}.m{margin:10px 0;padding:10px 12px;border-radius:10px;border:1px solid #e3e3ea;page-break-inside:avoid}.m.cliente{background:#f6f6f9}.m.ia{background:#eef0ff}.m.humano{background:#eafaf0}.q{font-size:12px;color:#555;margin-bottom:4px}.q b{color:#1a1a2e}.t{white-space:pre-wrap;font-size:14px;line-height:1.5}.arq{font-size:12px;color:#555;margin-top:6px;word-break:break-all}img.p{max-width:320px;max-height:320px;display:block;margin-top:6px;border-radius:6px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid #e3e3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f6f6f9}@media print{a{color:inherit}}';
+
+async function baixarBackupConversas(){
+  const alvo=empresaAlvo(); if(!alvo) return;
+  const btn=document.getElementById('bk-baixar');
+  const st=(t,tipo)=>lgpdStatus('bk-status',t,tipo);
+  const comMidias=document.getElementById('bk-midias').checked;
+  btn.disabled=true;
+  try{
+    st('Preparando…');
+    await bkCarregarZip();
+    const {data:emp}=await sb.from('companies').select('name, ia_nome').eq('id',alvo).single();
+    const empresa=emp?.name||'Empresa'; const iaNome=emp?.ia_nome||'';
+    st('Lendo conversas…');
+    const convs=await bkTodas(()=>sb.from('conversas').select('id, canal, cliente_nome, cliente_telefone, status, atendido_por, created_at, ultima_msg_at, anonimizada_em').eq('company_id',alvo).order('created_at',{ascending:true}).order('id',{ascending:true}));
+    st(`Lendo mensagens de ${convs.length} conversa${convs.length===1?'':'s'}…`);
+    const msgs=await bkTodas(()=>sb.from('mensagens').select('id, conversa_id, role, content, created_at').eq('company_id',alvo).order('created_at',{ascending:true}).order('id',{ascending:true}));
+    let midias=[];
+    if(comMidias){
+      try{ midias=await bkTodas(()=>sb.from('conversa_midias').select('id, conversa_id, origem, tipo, mimetype, nome_arquivo, legenda, tamanho_bytes, sha256, storage_path, created_at').eq('company_id',alvo).is('apagar_em',null).order('created_at',{ascending:true})); }
+      catch(_e){ midias=[]; }
+    }
+    if(!convs.length){ st('Ainda não há conversas para salvar.'); return; }
+
+    const zip=new JSZip();
+    const manifesto=[];
+    const add=async (caminho, conteudo)=>{
+      const buf = typeof conteudo==='string' ? new TextEncoder().encode(conteudo) : new Uint8Array(conteudo);
+      manifesto.push(`${await bkSha256(buf)}  ${caminho}`);
+      zip.file(caminho, buf);
+    };
+
+    /* Arquivos de mídia */
+    const midiaPorConv={}; let baixadas=0, falhas=0;
+    for(const m of midias){
+      const ext=(m.storage_path.split('.').pop()||'bin').toLowerCase();
+      const rel=`midias/${m.conversa_id}/${bkData(m.created_at).replace(/[^0-9]/g,'').slice(0,14)}_${m.origem}_${m.id.slice(0,8)}.${ext}`;
+      const {data:blob,error}=await sb.storage.from('conversas-midias').download(m.storage_path);
+      if(error||!blob){ falhas++; continue; }
+      await add(rel, await blob.arrayBuffer());
+      (midiaPorConv[m.conversa_id]=midiaPorConv[m.conversa_id]||[]).push({...m, rel});
+      baixadas++;
+      if(baixadas%10===0) st(`Juntando arquivos… ${baixadas}/${midias.length}`);
+    }
+
+    const porConv={}; for(const m of msgs){ (porConv[m.conversa_id]=porConv[m.conversa_id]||[]).push(m); }
+    const geradoEm=bkData(new Date().toISOString());
+    const csv=['conversa_id;data_hora;autor;cliente;telefone;canal;mensagem'];
+    const linhasIndice=[];
+    st('Montando o arquivo…');
+    for(const c of convs){
+      const lista=porConv[c.id]||[];
+      const arqs=midiaPorConv[c.id]||[];
+      const nomeArq=`conversas/${bkData(c.created_at).replace(/\D/g,'').replace(/^(\d{2})(\d{2})(\d{4})(\d{4}).*/,'$3-$2-$1_$4')}_${bkSlug(c.cliente_telefone||'sem-telefone')}_${bkSlug(c.cliente_nome||'')}_${c.id.slice(0,8)}.html`.replace('__','_');
+      const itens=[...lista.map(m=>({q:m.created_at, m})), ...arqs.map(a=>({q:a.created_at, a}))].sort((x,y)=>String(x.q).localeCompare(String(y.q)));
+      const corpo=itens.map(it=>{
+        if(it.m){
+          const m=it.m;
+          csv.push([c.id,bkData(m.created_at),bkAutor(m.role,c,iaNome),c.cliente_nome||'',c.cliente_telefone||'',c.canal||'',m.content].map(bkCsv).join(';'));
+          return `<div class="m ${m.role}"><div class="q"><b>${escapeHtml(bkAutor(m.role,c,iaNome))}</b> · ${bkData(m.created_at)}</div><div class="t">${escapeHtml(m.content||'')}</div></div>`;
+        }
+        const a=it.a; const href='../'+a.rel;
+        const prev = a.tipo==='imagem' || a.tipo==='figurinha' ? `<img class="p" src="${href}" alt="">`
+          : a.tipo==='audio' ? `<audio controls src="${href}"></audio>`
+          : a.tipo==='video' ? `<video controls style="max-width:320px" src="${href}"></video>` : '';
+        csv.push([c.id,bkData(a.created_at),a.origem==='cliente'?'Cliente (arquivo)':'Equipe (arquivo)',c.cliente_nome||'',c.cliente_telefone||'',c.canal||'',`[${a.tipo}] ${a.rel}${a.legenda?' — '+a.legenda:''}`].map(bkCsv).join(';'));
+        return `<div class="m ${a.origem==='cliente'?'cliente':'humano'}"><div class="q"><b>${a.origem==='cliente'?'Cliente':'Equipe'} — arquivo (${escapeHtml(a.tipo)})</b> · ${bkData(a.created_at)}</div>${prev}<div class="arq"><a href="${href}">${escapeHtml(a.nome_arquivo||a.rel.split('/').pop())}</a>${a.legenda?' — '+escapeHtml(a.legenda):''}<br>SHA-256: ${a.sha256||'—'}</div></div>`;
+      }).join('\n');
+      const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Conversa ${escapeHtml(c.cliente_nome||c.cliente_telefone||'')}</title><style>${BK_CSS}</style></head><body><h1>Conversa — ${escapeHtml(c.cliente_nome||'Cliente sem nome')}</h1><div class="meta">Empresa: <b>${escapeHtml(empresa)}</b><br>Telefone do cliente: ${escapeHtml(c.cliente_telefone||'—')}<br>Canal: ${escapeHtml(c.canal||'—')} · Início: ${bkData(c.created_at)} · Última mensagem: ${bkData(c.ultima_msg_at)}<br>Mensagens: ${lista.length}${arqs.length?` · Arquivos: ${arqs.length}`:''}${c.anonimizada_em?`<br>Dados apagados a pedido do titular (LGPD) em ${bkData(c.anonimizada_em)}`:''}<br>Identificador: ${c.id}<br>Cópia gerada em ${geradoEm} (horário de Brasília) pelo painel Mercs.</div>${corpo||'<p>Sem mensagens.</p>'}</body></html>`;
+      await add(nomeArq, html);
+      linhasIndice.push(`<tr><td>${bkData(c.created_at)}</td><td>${escapeHtml(c.cliente_nome||'—')}</td><td>${escapeHtml(c.cliente_telefone||'—')}</td><td>${escapeHtml(c.canal||'')}</td><td>${lista.length}</td><td><a href="${nomeArq}">abrir</a></td></tr>`);
+    }
+    await add('mensagens.csv', '﻿'+csv.join('\r\n'));
+    await add('indice.html', `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Backup das conversas — ${escapeHtml(empresa)}</title><style>${BK_CSS}</style></head><body><h1>Backup das conversas — ${escapeHtml(empresa)}</h1><div class="meta">Gerado em ${geradoEm} (horário de Brasília) · ${convs.length} conversas · ${msgs.length} mensagens${comMidias?` · ${baixadas} arquivos`:''}</div><table><thead><tr><th>Início</th><th>Cliente</th><th>Telefone</th><th>Canal</th><th>Mensagens</th><th></th></tr></thead><tbody>${linhasIndice.join('')}</tbody></table></body></html>`);
+    await add('LEIA-ME.txt', [
+      `Backup das conversas — ${empresa}`,
+      `Gerado em ${geradoEm} (horário de Brasília) pelo painel Mercs.`,
+      '',
+      'Conteúdo:',
+      '- indice.html: lista de todas as conversas (abra no navegador).',
+      '- conversas/: uma página por conversa, com data e hora de cada mensagem. Para gerar PDF, abra e use Imprimir > Salvar como PDF.',
+      '- mensagens.csv: todas as mensagens em planilha (abre no Excel ou Google Planilhas).',
+      comMidias ? '- midias/: áudios, fotos e arquivos originais trocados nas conversas.' : '- (backup gerado sem os arquivos de mídia)',
+      '- manifesto-sha256.txt: código SHA-256 de cada arquivo deste backup. Se um arquivo for alterado, o código deixa de bater —',
+      '  isso comprova que o conteúdo é o mesmo que foi exportado. Os arquivos de mídia também trazem, na página da conversa,',
+      '  o código SHA-256 calculado no momento em que foram recebidos.',
+      '',
+      'Guarde este arquivo em local seguro: ele contém dados pessoais dos seus clientes (LGPD).',
+    ].join('\r\n'));
+    zip.file('manifesto-sha256.txt', manifesto.join('\n')+'\n');
+
+    st('Compactando…');
+    const blob=await zip.generateAsync({type:'blob', compression:'DEFLATE', compressionOptions:{level:6}}, (meta)=>{ if(meta && meta.percent) st(`Compactando… ${Math.round(meta.percent)}%`); });
+    const a=document.createElement('a');
+    const hoje=new Date().toLocaleDateString('sv-SE',{timeZone:'America/Sao_Paulo'});
+    a.href=URL.createObjectURL(blob); a.download=`backup-conversas-${bkSlug(empresa)||'empresa'}-${hoje}.zip`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 8000);
+    st(`✓ Backup baixado: ${convs.length} conversas, ${msgs.length} mensagens${comMidias?`, ${baixadas} arquivos`:''}${falhas?` (${falhas} arquivo${falhas===1?'':'s'} não puderam ser baixados)`:''}.`,'ok');
+  }catch(e){
+    console.error(e);
+    st('Não foi possível gerar o backup: '+(e?.message||'tente de novo.'),'err');
+  }finally{
+    btn.disabled=false;
+  }
+}
+document.getElementById('bk-baixar').addEventListener('click', baixarBackupConversas);
 
 /* SAC: informações gerais da empresa. Textarea única; salvar manda pro
    salvar-sac, que fatia e indexa como conhecimento de empresa (RAG). */
