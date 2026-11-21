@@ -282,7 +282,7 @@
    ============================================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 
-const VERSAO = "totem-2.3.1";
+const VERSAO = "totem-2.3.2";
 const BASE = "https://qskvqnpmxblbgsgjqyex.supabase.co/functions/v1/";
 const FN = BASE + "totem", FN_VOZ = BASE + "totem-voz";
 const GENAI = "https://cdn.jsdelivr.net/npm/@google/genai@2.28.0/+esm";
@@ -666,11 +666,18 @@ class Voz {
     if (this.node) return;
     // Contexto na taxa nativa do aparelho (no iPhone, forçar 16 kHz é instável) e conversão
     // para 16 kHz aqui, por média de amostras.
+    // v2.3.2 — fora do iPhone, o contexto já nasce em 16 kHz e o próprio navegador converte,
+    // com filtro (a média de amostras deixava a voz "suja" no tablet e a transcrição errava).
     const AC = window.AudioContext || window.webkitAudioContext;
-    this.inCtx = new AC();
+    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    let src = null;
+    if (!ios) {
+      try { this.inCtx = new AC({ sampleRate: IN_RATE }); src = this.inCtx.createMediaStreamSource(stream); }
+      catch (_) { try { this.inCtx?.close(); } catch (_e) {} this.inCtx = null; src = null; }
+    }
+    if (!src) { this.inCtx = new AC(); src = this.inCtx.createMediaStreamSource(stream); }
     if (this.inCtx.state === "suspended") await this.inCtx.resume();
     const razao = this.inCtx.sampleRate / IN_RATE;
-    const src = this.inCtx.createMediaStreamSource(stream);
     const node = this.inCtx.createScriptProcessor(4096, 1, 1);
     node.onaudioprocess = (e) => {
       if (!this.ativo || !this.sessao) return;
@@ -1030,7 +1037,9 @@ async function pegarMic(){
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { erroMic = "sem_suporte"; return null; }
   try { if (navigator.audioSession) navigator.audioSession.type = "play-and-record"; } catch (_) {}
   const pedir = (audio) => navigator.mediaDevices.getUserMedia({ audio });
-  try { E.stream = await pedir({ echoCancellation:true, noiseSuppression:true, autoGainControl:true }); return E.stream; }
+  // v2.3.2 — supressão de ruído do Android distorce a voz ("embaixo d'água") e a transcrição erra;
+  // o Gemini lida melhor com o ruído do ambiente do que com a voz deformada.
+  try { E.stream = await pedir({ echoCancellation:true, noiseSuppression:false, autoGainControl:true, channelCount:1 }); return E.stream; }
   catch (e) {
     erroMic = (e && e.name) || "erro";
     if (erroMic === "InvalidStateError") { try { if (navigator.audioSession) navigator.audioSession.type = "auto"; } catch (_) {} }
