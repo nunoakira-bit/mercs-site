@@ -1,0 +1,20 @@
+:root{--bg:#062028;--bg-2:#0A2C36;--line:rgba(140,190,200,.16);--mist:#9BBCC4;--ink:#EAF4F6;--lime:#8BD450}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Instrument Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+header{border-bottom:1px solid var(--line);padding:18px 16px}
+header .in{max-width:780px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+header img{height:28px;display:block}
+header nav{display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+a{color:var(--lime)}
+header nav a{color:var(--mist);text-decoration:none}
+header nav a[aria-current="page"],header nav a:hover{color:var(--ink)}
+main{max-width:780px;margin:0 auto;padding:40px 16px 72px}
+h1{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-size:clamp(28px,5vw,40px);line-height:1.1;letter-spacing:-.02em;margin:0 0 8px}
+.atualizado{color:var(--mist);font-size:14px;margin:0 0 32px}
+h2{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-size:21px;margin:36px 0 10px;letter-spacing:-.01em}
+p,li{font-size:16px;color:#D6E6EA}
+ul{padding-left:22px}
+li{margin:6px 0}
+.caixa{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:20px 0}
+footer{border-top:1px solid var(--line);color:var(--mist);font-size:13px;padding:24px 16px;text-align:center}
