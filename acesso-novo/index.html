@@ -1189,6 +1189,18 @@
 .wa-qr-box{display:none;margin-top:16px;text-align:center;padding:18px;border:1px dashed var(--border);border-radius:12px;}
 .wa-qr-box.visible{display:block;}
 .wa-qr-box img{width:220px;height:220px;image-rendering:pixelated;border-radius:8px;}
+.wa-modos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+@media (max-width:560px){.wa-modos{grid-template-columns:1fr;}}
+.wa-modo{display:flex;flex-direction:column;gap:4px;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;font:inherit;color:var(--text-primary);}
+.wa-modo b{font-size:14px;font-weight:600;}
+.wa-modo span{font-size:12.5px;line-height:1.45;color:var(--text-secondary);}
+.wa-modo[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent) inset;}
+.wa-modo:disabled{opacity:.55;cursor:not-allowed;}
+.wa-meta-box{display:none;margin-top:14px;padding:14px;border:1px solid var(--border);border-radius:12px;background:#FAFAFB;font-size:13px;line-height:1.55;color:var(--text-primary);}
+.wa-meta-box.visible{display:block;}
+.wa-meta-box label{display:flex;gap:8px;align-items:flex-start;margin-top:10px;cursor:pointer;}
+.wa-meta-box input[type=checkbox]{margin-top:3px;accent-color:var(--accent);}
+.wa-provedor-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-dark,#3730A3);font-size:11.5px;font-weight:600;vertical-align:middle;}
 .wa-privacy{margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--accent-soft);font-size:13px;line-height:1.55;color:var(--text-primary);}
 
   /* ===================== RECEBIMENTO (BaaS/Asaas) ===================== */
@@ -2874,6 +2886,25 @@
             <span class="wa-status-num" id="wa-status-num"></span>
           </div>
 
+          <!-- v1.31 — dois jeitos de conectar: QR code (como sempre) ou API
+               oficial da Meta, com o app WhatsApp Business continuando a funcionar. -->
+          <div class="wa-modos" id="wa-modos" role="group" aria-label="Como conectar o WhatsApp">
+            <button type="button" class="wa-modo" id="wa-modo-qr" aria-pressed="true">
+              <b>QR code</b>
+              <span>Lê um QR code no celular, como no WhatsApp Web. Mais rápido de configurar.</span>
+            </button>
+            <button type="button" class="wa-modo" id="wa-modo-meta" aria-pressed="false">
+              <b>API oficial da Meta</b>
+              <span>Conexão oficial do WhatsApp. O app WhatsApp Business do celular continua funcionando.</span>
+            </button>
+          </div>
+
+          <div class="wa-meta-box" id="wa-meta-box">
+            Você vai entrar com a conta do Facebook que administra a empresa e escolher o número do WhatsApp Business. Leva uns 2 minutos.
+            <label><input type="checkbox" id="wa-meta-coexistencia" checked><span><b>Continuar usando o app WhatsApp Business neste número.</b> Sua equipe segue respondendo pelo celular, e o que ela escreve lá pausa a IA na conversa. Requer o app WhatsApp Business atualizado.</span></label>
+            <p class="hint" style="margin:10px 0 0;">Pela API oficial, a Meta cobra por mensagem enviada pela IA ou pelo painel (as primeiras 1.000 do mês são grátis). Mensagens que a equipe manda pelo app do celular não são cobradas. Respostas pelo painel só podem sair até 24 horas depois da última mensagem do cliente.</p>
+          </div>
+
           <div class="wa-qr-box" id="wa-qr-box">
             <img id="wa-qr-img" alt="QR Code do WhatsApp">
             <p class="hint" style="margin:12px 0 0;">Abra o WhatsApp no celular da empresa → Dispositivos conectados → Conectar dispositivo, e escaneie o código acima.</p>
@@ -2888,11 +2919,12 @@
 
           <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
             <button class="btn-primary" id="wa-connect-btn">Conectar WhatsApp</button>
+            <button class="btn-primary" id="wa-meta-btn" style="display:none;">Conectar com a Meta</button>
             <button class="btn-secondary" id="wa-disconnect-btn" style="display:none;">Desconectar</button>
           </div>
 
           <div class="wa-privacy">
-            <strong>Privacidade por design.</strong> A IA processa somente as mensagens de texto recebidas em conversas individuais, iniciadas pelos seus clientes após a conexão. Grupos, status e o histórico anterior à conexão nunca são lidos nem armazenados, e a IA só envia mensagens como resposta dentro de uma conversa ativa.
+            <strong>Privacidade por design.</strong> A IA processa somente as mensagens de texto, áudio e imagem recebidas em conversas individuais, iniciadas pelos seus clientes após a conexão. Grupos, status e o histórico anterior à conexão nunca são lidos nem armazenados, e a IA só envia mensagens como resposta dentro de uma conversa ativa.
           </div>
         </div>
 
@@ -4554,6 +4586,11 @@ async function syncIaPersonaUI(){
 /* ===== Conexão WhatsApp ===== */
 let waPollTimer=null;
 let waInfraConfigured=null;
+/* v1.31 — provedor da conexão: 'evolution' (QR code) ou 'meta' (API oficial). */
+let waProvedor='evolution';
+let waModo='qr';
+let waMeta={disponivel:false};
+let waQrDisponivel=true;
 
 function waSetStatusUI(status, numero){
   const dot=document.getElementById('wa-status-dot');
@@ -4565,8 +4602,23 @@ function waSetStatusUI(status, numero){
   const labels={conectado:'WhatsApp conectado', aguardando_qr:'Aguardando leitura do QR code', desconectado:'WhatsApp não conectado'};
   txt.textContent=labels[status]||labels.desconectado;
   num.textContent=numero ? '+'+numero : '';
-  connBtn.style.display = status==='conectado' ? 'none' : 'inline-flex';
-  discBtn.style.display = status==='conectado' ? 'inline-flex' : 'none';
+  const conectado = status==='conectado';
+  if(conectado){
+    const tag=document.createElement('span');
+    tag.className='wa-provedor-tag';
+    tag.textContent = waProvedor==='meta' ? 'API oficial' : 'QR code';
+    txt.appendChild(tag);
+  }
+  const modos=document.getElementById('wa-modos');
+  const metaBtn=document.getElementById('wa-meta-btn');
+  const metaBox=document.getElementById('wa-meta-box');
+  /* A escolha só aparece quando não há conexão; conectado, mostra por onde está. */
+  if(modos) modos.style.display = conectado || status==='aguardando_qr' ? 'none' : 'grid';
+  const modoMeta = !conectado && waModo==='meta';
+  connBtn.style.display = conectado || modoMeta ? 'none' : 'inline-flex';
+  if(metaBtn) metaBtn.style.display = modoMeta ? 'inline-flex' : 'none';
+  if(metaBox) metaBox.classList.toggle('visible', modoMeta);
+  discBtn.style.display = conectado ? 'inline-flex' : 'none';
   if(status!=='aguardando_qr'){ document.getElementById('wa-qr-box').classList.remove('visible'); }
   if(waInfraConfigured===false){
     connBtn.disabled=true;
@@ -4599,6 +4651,10 @@ async function waFetchStatus(){
   const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'status', company_id:empresaAlvo()}});
   if(error || !data){ return null; }
   waInfraConfigured=data.configured;
+  waProvedor=data.provedor||data.instancia?.provedor||'evolution';
+  waMeta=data.meta||{disponivel:false};
+  waQrDisponivel=data.qr_disponivel!==false;
+  waAtualizarModos();
   waSetStatusUI(data.instancia?.status, data.instancia?.numero_conectado);
   return data;
 }
@@ -4616,6 +4672,98 @@ function waStartPolling(){
     if(!document.getElementById('view-configuracoes').classList.contains('active')) waStopPolling();
   }, 4000);
 }
+
+function waAtualizarModos(){
+  const bQr=document.getElementById('wa-modo-qr');
+  const bMeta=document.getElementById('wa-modo-meta');
+  if(!bQr||!bMeta) return;
+  bMeta.disabled=!waMeta.disponivel;
+  bMeta.querySelector('span').textContent = waMeta.disponivel
+    ? 'Conexão oficial do WhatsApp. O app WhatsApp Business do celular continua funcionando.'
+    : 'Em breve: a conexão oficial do WhatsApp ainda está sendo liberada.';
+  bQr.disabled=!waQrDisponivel;
+  if(waModo==='meta' && !waMeta.disponivel) waModo='qr';
+  if(waModo==='qr' && !waQrDisponivel && waMeta.disponivel) waModo='meta';
+  bQr.setAttribute('aria-pressed', waModo==='qr' ? 'true':'false');
+  bMeta.setAttribute('aria-pressed', waModo==='meta' ? 'true':'false');
+}
+function waEscolherModo(m){
+  waModo=m;
+  waAtualizarModos();
+  const st=document.getElementById('wa-status-dot').className.replace('wa-status-dot','').trim();
+  waSetStatusUI(st||'desconectado', null);
+}
+document.getElementById('wa-modo-qr').addEventListener('click', ()=>waEscolherModo('qr'));
+document.getElementById('wa-modo-meta').addEventListener('click', ()=>waEscolherModo('meta'));
+
+/* Cadastro incorporado da Meta (Embedded Signup). O SDK do Facebook só é
+   carregado quando a pessoa escolhe a API oficial. A Meta devolve um código
+   (trocado pelo token no servidor) e, por mensagem da janela, a conta e o número. */
+let waFbPronto=null;
+function waCarregarFb(){
+  if(waFbPronto) return waFbPronto;
+  waFbPronto=new Promise((resolve, reject)=>{
+    window.fbAsyncInit=function(){
+      FB.init({appId:waMeta.app_id, autoLogAppEvents:true, xfbml:false, version:waMeta.versao||'v23.0'});
+      resolve();
+    };
+    const s=document.createElement('script');
+    s.src='https://connect.facebook.net/pt_BR/sdk.js';
+    s.async=true; s.defer=true; s.crossOrigin='anonymous';
+    s.onerror=()=>{ waFbPronto=null; reject(new Error('sdk')); };
+    document.head.appendChild(s);
+  });
+  return waFbPronto;
+}
+let waEsSessao=null;
+window.addEventListener('message', (ev)=>{
+  if(typeof ev.origin!=='string' || !/(^|\.)facebook\.com$/.test(new URL(ev.origin).hostname)) return;
+  let d=null; try{ d=typeof ev.data==='string' ? JSON.parse(ev.data) : ev.data; }catch(_e){ return; }
+  if(!d || d.type!=='WA_EMBEDDED_SIGNUP' || !waEsSessao) return;
+  if(d.event==='CANCEL'){ waEsSessao.cancelado=d.data?.current_step||true; return; }
+  if(d.event==='ERROR'){ waEsSessao.erro=d.data?.error_message||'erro'; return; }
+  if(String(d.event||'').startsWith('FINISH')){
+    waEsSessao.waba_id=d.data?.waba_id||null;
+    waEsSessao.phone_number_id=d.data?.phone_number_id||null;
+  }
+});
+
+document.getElementById('wa-meta-btn').addEventListener('click', async ()=>{
+  const btn=document.getElementById('wa-meta-btn');
+  if(!waMeta.disponivel){ showToast('A conexão pela API oficial ainda não está liberada.'); return; }
+  const coexistencia=document.getElementById('wa-meta-coexistencia').checked;
+  btn.disabled=true; btn.textContent='Abrindo a Meta…';
+  try{ await waCarregarFb(); }
+  catch(_e){ btn.disabled=false; btn.textContent='Conectar com a Meta'; showToast('Não foi possível abrir a janela da Meta. Verifique se algum bloqueador está impedindo e tente de novo.'); return; }
+  waEsSessao={};
+  const extras={ setup:{}, sessionInfoVersion:'3' };
+  if(coexistencia) extras.featureType='whatsapp_business_app_onboarding';
+  FB.login(async (resp)=>{
+    const code=resp && resp.authResponse && resp.authResponse.code;
+    if(!code){
+      btn.disabled=false; btn.textContent='Conectar com a Meta';
+      showToast(waEsSessao && waEsSessao.erro ? 'A Meta informou um erro: '+waEsSessao.erro : 'Conexão com a Meta cancelada.');
+      waEsSessao=null; return;
+    }
+    /* A mensagem com a conta e o número às vezes chega logo depois do código. */
+    for(let i=0;i<10 && waEsSessao && !waEsSessao.waba_id;i++) await new Promise(r=>setTimeout(r,300));
+    btn.textContent='Concluindo a conexão…';
+    const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{
+      action:'meta_connect', company_id:empresaAlvo(), code, coexistencia,
+      waba_id:waEsSessao?.waba_id||null, phone_number_id:waEsSessao?.phone_number_id||null,
+    }});
+    waEsSessao=null;
+    btn.disabled=false; btn.textContent='Conectar com a Meta';
+    if(error || !data || data.error){
+      let msg=data?.error;
+      if(!msg && error?.context){ try{ msg=(await error.context.json())?.error; }catch(_e){} }
+      showToast(msg || 'Não foi possível concluir a conexão com a Meta. Tente de novo.');
+      return;
+    }
+    showToast('WhatsApp conectado pela API oficial!');
+    await waFetchStatus();
+  }, { config_id:waMeta.config_id, response_type:'code', override_default_response_type:true, extras });
+});
 
 async function loadWhatsappCard(){
   /* v1.23.1: no ambiente de um cliente, a conexão mostrada e gerada é a DO
@@ -4635,7 +4783,11 @@ document.getElementById('wa-connect-btn').addEventListener('click', async ()=>{
   btn.disabled=true; btn.textContent='Gerando QR code…';
   const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'connect', company_id:empresaAlvo()}});
   btn.disabled=false; btn.textContent='Conectar WhatsApp';
-  if(error || data?.error){ showToast(data?.error || 'Não foi possível iniciar a conexão. Tente novamente.'); return; }
+  if(error || data?.error){
+    let msg=data?.error;
+    if(!msg && error?.context){ try{ msg=(await error.context.json())?.error; }catch(_e){} }
+    showToast(msg || 'Não foi possível iniciar a conexão. Tente novamente.'); return;
+  }
   if(data.already_connected){ waSetStatusUI('conectado', null); waFetchStatus(); return; }
   if(data.qr_base64){
     const img=document.getElementById('wa-qr-img');
@@ -4649,10 +4801,14 @@ document.getElementById('wa-connect-btn').addEventListener('click', async ()=>{
 });
 
 document.getElementById('wa-disconnect-btn').addEventListener('click', async ()=>{
-  if(!confirm('Desconectar o WhatsApp? A IA deixará de atender por este canal até uma nova conexão.')) return;
+  const aviso = waProvedor==='meta'
+    ? 'Desconectar a API oficial? A IA deixa de atender por este canal. O número continua funcionando normalmente no app WhatsApp Business.'
+    : 'Desconectar o WhatsApp? A IA deixará de atender por este canal até uma nova conexão.';
+  if(!confirm(aviso)) return;
   const {error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'disconnect', company_id:empresaAlvo()}});
   if(error){ showToast('Erro ao desconectar. Tente novamente.'); return; }
   waStopPolling();
+  waProvedor='evolution';
   waSetStatusUI('desconectado', null);
   showToast('WhatsApp desconectado.');
 });
