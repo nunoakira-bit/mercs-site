@@ -1595,7 +1595,7 @@
           </div>
           <div class="pp-texto">
             <h2>Agora é só conectar seu WhatsApp e começar a vender!</h2>
-            <p>Clique no botão abaixo, gere o QR code e escaneie com o celular que atende seus clientes. Leva menos de um minuto.</p>
+            <p>Clique no botão abaixo e conecte o número da sua empresa pela API oficial do WhatsApp. Leva uns 2 minutos.</p>
           </div>
           <button class="btn-primary pp-btn" id="pp-conectar-wa">Conectar meu WhatsApp</button>
         </div>
@@ -2424,6 +2424,9 @@
             <button class="btn-primary" id="wa-connect-btn">Conectar WhatsApp</button>
             <button class="btn-secondary" id="wa-disconnect-btn" style="display:none;">Desconectar</button>
           </div>
+          <!-- Conexão por QR code só para quem já a usava; as novas são pela API
+               oficial da Meta, disponível no painel novo. -->
+          <p class="hint" id="wa-so-oficial" style="display:none;margin:12px 0 0;">A conexão do WhatsApp agora é feita pela API oficial da Meta. Conecte em <a href="https://www.mercs.com.br/acesso-novo/">mercs.com.br/acesso-novo</a> → Configurações → Conexão WhatsApp.</p>
 
           <div class="wa-privacy">
             <strong>Privacidade por design.</strong> A IA processa somente as mensagens de texto recebidas em conversas individuais, iniciadas pelos seus clientes após a conexão. Grupos, status e o histórico anterior à conexão nunca são lidos nem armazenados, e a IA só envia mensagens como resposta dentro de uma conversa ativa.
@@ -3997,7 +4000,10 @@ function waSetStatusUI(status, numero){
   const labels={conectado:'WhatsApp conectado', aguardando_qr:'Aguardando leitura do QR code', desconectado:'WhatsApp não conectado'};
   txt.textContent=labels[status]||labels.desconectado;
   num.textContent=numero ? '+'+numero : '';
-  connBtn.style.display = status==='conectado' ? 'none' : 'inline-flex';
+  const semQr = !waQrPermitido && status!=='conectado' && status!=='aguardando_qr';
+  connBtn.style.display = status==='conectado' || semQr ? 'none' : 'inline-flex';
+  const soOficial=document.getElementById('wa-so-oficial');
+  if(soOficial) soOficial.style.display = semQr ? 'block' : 'none';
   discBtn.style.display = status==='conectado' ? 'inline-flex' : 'none';
   if(status!=='aguardando_qr'){ document.getElementById('wa-qr-box').classList.remove('visible'); }
   if(waInfraConfigured===false){
@@ -4019,6 +4025,7 @@ function atualizarProximoPasso(status){
   card.style.display = mostrar ? 'flex' : 'none';
 }
 document.getElementById('pp-conectar-wa').addEventListener('click', ()=>{
+  if(!waQrPermitido){ window.location.href='https://www.mercs.com.br/acesso-novo/'; return; }
   switchView('configuracoes');
   const alvo=document.getElementById('wa-connect-btn');
   if(alvo){
@@ -4027,10 +4034,12 @@ document.getElementById('pp-conectar-wa').addEventListener('click', ()=>{
   }
 });
 
+let waQrPermitido=true;
 async function waFetchStatus(){
   const {data, error}=await sb.functions.invoke('whatsapp-admin', {body:{action:'status', company_id:empresaAlvo()}});
   if(error || !data){ return null; }
   waInfraConfigured=data.configured;
+  waQrPermitido=data.qr_disponivel===true;
   waSetStatusUI(data.instancia?.status, data.instancia?.numero_conectado);
   return data;
 }

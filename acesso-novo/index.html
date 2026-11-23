@@ -1200,6 +1200,11 @@
 .wa-meta-box.visible{display:block;}
 .wa-meta-box label{display:flex;gap:8px;align-items:flex-start;margin-top:10px;cursor:pointer;}
 .wa-meta-box input[type=checkbox]{margin-top:3px;accent-color:var(--accent);}
+#wa-disconnect-btn,#wa-meta-btn,#wa-connect-btn{align-items:center;}
+.wa-migrar{display:none;margin-top:14px;padding:14px;border:1px solid #F5D9A8;border-radius:12px;background:#FFF8EC;font-size:13px;line-height:1.55;color:var(--text-primary);}
+.wa-migrar.visible{display:block;}
+.wa-migrar b{display:block;margin-bottom:4px;font-size:13.5px;}
+.wa-migrar .btn-primary{margin-top:10px;}
 .wa-provedor-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-dark,#3730A3);font-size:11.5px;font-weight:600;vertical-align:middle;}
 .bk-opcao{display:flex;gap:8px;align-items:center;margin-top:14px;font-size:13px;color:var(--text-primary);cursor:pointer;}
 .bk-opcao input{accent-color:var(--accent);}
@@ -1787,7 +1792,7 @@
           </div>
           <div class="pp-texto">
             <h2>Agora é só conectar seu WhatsApp e começar a vender!</h2>
-            <p>Clique no botão abaixo, gere o QR code e escaneie com o celular que atende seus clientes. Leva menos de um minuto.</p>
+            <p>Clique no botão abaixo, entre com a conta do Facebook que administra a empresa e escolha o número do WhatsApp Business. Leva uns 2 minutos.</p>
           </div>
           <button class="btn-primary pp-btn" id="pp-conectar-wa">Conectar meu WhatsApp</button>
         </div>
@@ -2888,17 +2893,24 @@
             <span class="wa-status-num" id="wa-status-num"></span>
           </div>
 
-          <!-- v1.31 — dois jeitos de conectar: QR code (como sempre) ou API
-               oficial da Meta, com o app WhatsApp Business continuando a funcionar. -->
-          <div class="wa-modos" id="wa-modos" role="group" aria-label="Como conectar o WhatsApp">
-            <button type="button" class="wa-modo" id="wa-modo-qr" aria-pressed="true">
-              <b>QR code</b>
-              <span>Lê um QR code no celular, como no WhatsApp Web. Mais rápido de configurar.</span>
-            </button>
-            <button type="button" class="wa-modo" id="wa-modo-meta" aria-pressed="false">
-              <b>API oficial da Meta</b>
+          <!-- v1.32 — a conexão é pela API oficial da Meta, com o app WhatsApp
+               Business continuando a funcionar. O QR code (cliente não oficial)
+               só aparece para as empresas que já o usavam, até migrarem. -->
+          <div class="wa-modos" id="wa-modos" role="group" aria-label="Como conectar o WhatsApp" style="display:none;">
+            <button type="button" class="wa-modo" id="wa-modo-meta" aria-pressed="true">
+              <b>API oficial da Meta (recomendado)</b>
               <span>Conexão oficial do WhatsApp. O app WhatsApp Business do celular continua funcionando.</span>
             </button>
+            <button type="button" class="wa-modo" id="wa-modo-qr" aria-pressed="false">
+              <b>QR code (conexão antiga)</b>
+              <span>Disponível só para quem já usava. Não é oficial e pode ser bloqueada pelo WhatsApp.</span>
+            </button>
+          </div>
+
+          <div class="wa-migrar" id="wa-migrar" role="note">
+            <b>Migre para a API oficial do WhatsApp</b>
+            Este número está conectado por QR code, uma conexão não oficial que o WhatsApp pode bloquear a qualquer momento. Pela API oficial você mantém o mesmo número, o app WhatsApp Business continua no celular e as conversas seguem no painel.
+            <div><button type="button" class="btn-primary" id="wa-migrar-btn">Migrar para a API oficial</button></div>
           </div>
 
           <div class="wa-meta-box" id="wa-meta-box">
@@ -4749,9 +4761,11 @@ let waPollTimer=null;
 let waInfraConfigured=null;
 /* v1.31 — provedor da conexão: 'evolution' (QR code) ou 'meta' (API oficial). */
 let waProvedor='evolution';
-let waModo='qr';
+let waModo='meta';
 let waMeta={disponivel:false};
-let waQrDisponivel=true;
+let waQrDisponivel=false;
+/* Empresa conectada por QR code abrindo o cadastro da Meta para migrar. */
+let waMigrando=false;
 
 function waSetStatusUI(status, numero){
   const dot=document.getElementById('wa-status-dot');
@@ -4773,19 +4787,25 @@ function waSetStatusUI(status, numero){
   const modos=document.getElementById('wa-modos');
   const metaBtn=document.getElementById('wa-meta-btn');
   const metaBox=document.getElementById('wa-meta-box');
-  /* A escolha só aparece quando não há conexão; conectado, mostra por onde está. */
-  if(modos) modos.style.display = conectado || status==='aguardando_qr' ? 'none' : 'grid';
-  const modoMeta = !conectado && waModo==='meta';
+  /* A escolha só existe para quem ainda pode usar QR code (qr_legado) e só
+     aparece sem conexão; para os demais, a conexão é sempre pela API oficial. */
+  if(modos) modos.style.display = conectado || status==='aguardando_qr' || !waQrDisponivel ? 'none' : 'grid';
+  if(conectado && waProvedor==='meta') waMigrando=false;
+  const modoMeta = (!conectado && waModo==='meta') || (conectado && waMigrando);
+  const migrar=document.getElementById('wa-migrar');
+  if(migrar) migrar.classList.toggle('visible', conectado && waProvedor!=='meta' && !waMigrando);
   connBtn.style.display = conectado || modoMeta ? 'none' : 'inline-flex';
   if(metaBtn) metaBtn.style.display = modoMeta ? 'inline-flex' : 'none';
   if(metaBox) metaBox.classList.toggle('visible', modoMeta);
   discBtn.style.display = conectado ? 'inline-flex' : 'none';
   if(status!=='aguardando_qr'){ document.getElementById('wa-qr-box').classList.remove('visible'); }
-  if(waInfraConfigured===false){
+  if(waInfraConfigured===false || (!conectado && waModo==='meta' && !waMeta.disponivel)){
     connBtn.disabled=true;
+    if(metaBtn) metaBtn.disabled=true;
     txt.textContent='Em preparação — a conexão será liberada em breve';
   }else{
     connBtn.disabled=false;
+    if(metaBtn) metaBtn.disabled=false;
   }
   atualizarProximoPasso(status);
 }
@@ -4801,7 +4821,7 @@ function atualizarProximoPasso(status){
 }
 document.getElementById('pp-conectar-wa').addEventListener('click', ()=>{
   switchView('configuracoes');
-  const alvo=document.getElementById('wa-connect-btn');
+  const alvo=document.getElementById(waModo==='meta' ? 'wa-meta-btn' : 'wa-connect-btn');
   if(alvo){
     alvo.scrollIntoView({behavior:'smooth', block:'center'});
     setTimeout(()=>alvo.focus(), 300);
@@ -4814,7 +4834,7 @@ async function waFetchStatus(){
   waInfraConfigured=data.configured;
   waProvedor=data.provedor||data.instancia?.provedor||'evolution';
   waMeta=data.meta||{disponivel:false};
-  waQrDisponivel=data.qr_disponivel!==false;
+  waQrDisponivel=data.qr_disponivel===true;
   waAtualizarModos();
   waSetStatusUI(data.instancia?.status, data.instancia?.numero_conectado);
   return data;
@@ -4842,9 +4862,8 @@ function waAtualizarModos(){
   bMeta.querySelector('span').textContent = waMeta.disponivel
     ? 'Conexão oficial do WhatsApp. O app WhatsApp Business do celular continua funcionando.'
     : 'Em breve: a conexão oficial do WhatsApp ainda está sendo liberada.';
-  bQr.disabled=!waQrDisponivel;
-  if(waModo==='meta' && !waMeta.disponivel) waModo='qr';
-  if(waModo==='qr' && !waQrDisponivel && waMeta.disponivel) waModo='meta';
+  bQr.style.display = waQrDisponivel ? '' : 'none';
+  if(!waQrDisponivel) waModo='meta';
   bQr.setAttribute('aria-pressed', waModo==='qr' ? 'true':'false');
   bMeta.setAttribute('aria-pressed', waModo==='meta' ? 'true':'false');
 }
@@ -4856,6 +4875,12 @@ function waEscolherModo(m){
 }
 document.getElementById('wa-modo-qr').addEventListener('click', ()=>waEscolherModo('qr'));
 document.getElementById('wa-modo-meta').addEventListener('click', ()=>waEscolherModo('meta'));
+document.getElementById('wa-migrar-btn').addEventListener('click', ()=>{
+  waMigrando=true;
+  waSetStatusUI('conectado', document.getElementById('wa-status-num').textContent.replace(/\D/g,'')||null);
+  const alvo=document.getElementById('wa-meta-btn');
+  if(alvo) alvo.scrollIntoView({behavior:'smooth', block:'center'});
+});
 
 /* Cadastro incorporado da Meta (Embedded Signup). O SDK do Facebook só é
    carregado quando a pessoa escolhe a API oficial. A Meta devolve um código
